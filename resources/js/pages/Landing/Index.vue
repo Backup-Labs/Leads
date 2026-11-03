@@ -217,19 +217,19 @@ const nextTestimonial = () => {
     <!-- =========================================================
          ARCHITECTURAL TOP NAVIGATION BAR (Matching Landing Grid Vibe)
          ========================================================= -->
-    <header class="sticky top-0 z-50 landing-side-shade backdrop-blur-md border-b border-[#D5CCE2] px-3 sm:px-6 lg:px-10">
+    <header class="sticky top-0 z-50 landing-side-shade backdrop-blur-md border-b border-[#D5CCE2] px-2 sm:px-6 lg:px-10">
       <div class="max-w-6xl mx-auto border-x border-[#D5CCE2] bg-white/95">
-        <div class="h-16 flex items-stretch justify-between">
+        <div class="min-h-[3.75rem] sm:h-16 flex items-stretch justify-between">
           <!-- Left Grid Cell: Brand Identity -->
-          <div class="flex items-center px-5 sm:px-8 border-r border-[#E5E0EC]">
-            <Link href="/" class="flex items-center gap-2.5 group">
+          <div class="flex items-center px-3 sm:px-6 lg:px-8 border-r border-[#E5E0EC] shrink-0">
+            <Link href="/" class="flex items-center gap-2 sm:gap-2.5 group">
               <div
-                class="w-8 h-8 rounded-md bg-[#280047] flex items-center justify-center text-white font-bold text-sm shadow-xs group-hover:bg-[#3a0066] transition-colors"
+                class="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-[#280047] flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-xs group-hover:bg-[#3a0066] transition-colors shrink-0"
               >
                 <span class="text-[#F74D01] mr-0.5">/</span>L
               </div>
               <div class="flex flex-col">
-                <span class="text-sm font-bold tracking-tight text-[#280047] leading-none">Leads</span>
+                <span class="text-xs sm:text-sm font-bold tracking-tight text-[#280047] leading-none">Leads</span>
                 <span class="text-[9px] font-mono-num text-[#6B6578] mt-0.5">LeadFlow CRM</span>
               </div>
             </Link>
@@ -269,14 +269,14 @@ const nextTestimonial = () => {
           </nav>
 
           <!-- Right Grid Cell: Workspace Action Buttons -->
-          <div class="flex items-center gap-2.5 px-5 sm:px-8 border-l border-[#E5E0EC]">
+          <div class="flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-6 lg:px-8 border-l border-[#E5E0EC] shrink-0">
             <template v-if="isLoggedIn">
               <Link
                 href="/dashboard"
-                class="inline-flex items-center gap-2.5 bg-[#280047] text-white text-xs font-semibold pl-3.5 pr-2 py-2 rounded-md hover:bg-[#3a0066] transition-all"
+                class="inline-flex items-center gap-1.5 sm:gap-2.5 bg-[#280047] text-white text-[11px] sm:text-xs font-semibold pl-2.5 sm:pl-3.5 pr-1.5 sm:pr-2 py-1.5 sm:py-2 rounded-md hover:bg-[#3a0066] transition-all"
               >
-                <span>Open Dashboard</span>
-                <span class="w-5 h-5 rounded bg-[#F74D01] text-white flex items-center justify-center">
+                <span>Dashboard</span>
+                <span class="w-5 h-5 rounded bg-[#F74D01] text-white flex items-center justify-center shrink-0">
                   <i class="fa-solid fa-arrow-right text-[9px]"></i>
                 </span>
               </Link>
@@ -290,74 +290,87 @@ const nextTestimonial = () => {
               </Link>
               <Link
                 href="/register"
-                class="inline-flex items-center gap-2.5 bg-[#280047] text-white text-xs font-semibold pl-3.5 pr-2 py-2 rounded-md hover:bg-[#3a0066] transition-all shadow-2xs"
+                class="hidden min-[340px]:inline-flex items-center gap-1.5 sm:gap-2.5 bg-[#280047] text-white text-[11px] sm:text-xs font-semibold pl-2.5 sm:pl-3.5 pr-1.5 sm:pr-2 py-1.5 sm:py-2 rounded-md hover:bg-[#3a0066] transition-all shadow-2xs"
               >
                 <span>Get Started</span>
-                <span class="w-5 h-5 rounded bg-[#F74D01] text-white flex items-center justify-center">
+                <span class="w-5 h-5 rounded bg-[#F74D01] text-white flex items-center justify-center shrink-0">
                   <i class="fa-solid fa-arrow-right text-[9px]"></i>
                 </span>
               </Link>
             </template>
 
-            <!-- Mobile Menu Button -->
+            <!-- Mobile / Tablet Menu Button -->
             <button
               type="button"
+              :aria-expanded="mobileNavOpen"
+              aria-label="Toggle site navigation"
               @click="mobileNavOpen = !mobileNavOpen"
-              class="lg:hidden w-8 h-8 rounded-md border border-[#E5E0EC] flex items-center justify-center text-[#280047]"
+              class="lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-md border border-[#E5E0EC] bg-[#FAFAFB] hover:bg-[#F3F1F6] flex items-center justify-center text-[#280047] cursor-pointer"
             >
               <i :class="mobileNavOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars'" class="text-xs"></i>
             </button>
           </div>
         </div>
 
-        <!-- Mobile Dropdown Drawer -->
-        <div v-if="mobileNavOpen" class="lg:hidden border-t border-[#E5E0EC] bg-white px-5 py-4 space-y-2">
-          <a
-            v-for="item in [
-              { id: 'how-it-works', label: 'How It Works' },
-              { id: 'foundations', label: 'Foundations' },
-              { id: 'features', label: 'Features' },
-              { id: 'capabilities', label: 'Capabilities' },
-              { id: 'pricing', label: 'Pricing' },
-            ]"
-            :key="item.id"
-            :href="`#${item.id}`"
-            @click="mobileNavOpen = false"
-            class="block px-3 py-2 rounded-md text-xs font-semibold text-[#242424] hover:bg-[#F3F1F6]"
-          >
-            {{ item.label }}
-          </a>
-          <div v-if="!isLoggedIn" class="pt-2 border-t border-[#E5E0EC] flex gap-2">
-            <Link href="/login" class="btn-secondary flex-1 text-center">Sign In</Link>
-            <Link href="/register" class="btn-primary flex-1 text-center">Start Free</Link>
+        <!-- Mobile & Tablet Dropdown Drawer -->
+        <div v-if="mobileNavOpen" class="lg:hidden border-t border-[#E5E0EC] bg-white px-4 sm:px-6 py-4 space-y-2">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+            <a
+              v-for="item in [
+                { id: 'how-it-works', label: 'How It Works', icon: 'fa-solid fa-diagram-project' },
+                { id: 'foundations', label: 'Foundations', icon: 'fa-solid fa-layer-group' },
+                { id: 'features', label: 'Features', icon: 'fa-solid fa-bolt' },
+                { id: 'capabilities', label: 'Capabilities', icon: 'fa-solid fa-sliders' },
+                { id: 'pricing', label: 'Pricing', icon: 'fa-solid fa-tag' },
+              ]"
+              :key="item.id"
+              :href="`#${item.id}`"
+              @click="activeSection = item.id; mobileNavOpen = false"
+              class="flex items-center gap-2.5 px-3 py-2.5 rounded-md text-xs font-semibold transition-colors"
+              :class="
+                activeSection === item.id
+                  ? 'bg-[#280047] text-white'
+                  : 'text-[#242424] hover:bg-[#F3F1F6]'
+              "
+            >
+              <i
+                :class="[item.icon, activeSection === item.id ? 'text-[#F74D01]' : 'text-[#280047]']"
+                class="w-4 text-center text-xs"
+              ></i>
+              <span>{{ item.label }}</span>
+            </a>
+          </div>
+          <div v-if="!isLoggedIn" class="pt-3 border-t border-[#E5E0EC] grid grid-cols-1 min-[320px]:grid-cols-2 gap-2">
+            <Link href="/login" class="btn-secondary w-full text-center">Sign In</Link>
+            <Link href="/register" class="btn-primary w-full text-center">Start Free Workspace</Link>
           </div>
         </div>
       </div>
     </header>
 
     <!-- Main Architectural Grid Container with Diagonal Hatched Side Shades -->
-    <div class="px-3 sm:px-6 lg:px-10">
+    <div class="px-2 sm:px-6 lg:px-10">
       <div class="max-w-6xl mx-auto border-x border-[#D5CCE2] bg-white">
       <!-- =========================================================
            1. HERO SECTION (Typewriter Headline + Animated Diagram)
            ========================================================= -->
-      <section class="relative overflow-hidden border-b border-[#E5E0EC] px-6 sm:px-12 pt-12 pb-16 lg:py-20">
+      <section class="relative overflow-hidden border-b border-[#E5E0EC] px-3.5 sm:px-8 lg:px-12 pt-8 sm:pt-12 pb-12 sm:pb-16 lg:py-20">
         <!-- Subtle Architectural Background Grid Lines -->
         <div
           class="absolute inset-0 pointer-events-none opacity-35"
           style="background-image: radial-gradient(#C3B6D3 1px, transparent 1px); background-size: 24px 24px;"
         ></div>
 
-        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
           <!-- Left Column: Copy & CTAs -->
-          <div class="lg:col-span-6 space-y-6">
+          <div class="lg:col-span-6 space-y-5 sm:space-y-6">
             <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#F8F6FA] border border-[#E5E0EC]">
-              <i class="fa-solid fa-bolt text-[#F74D01] text-xs"></i>
-              <span class="text-xs font-semibold text-[#280047]">Lead Management & Revenue Recovery</span>
+              <i class="fa-solid fa-bolt text-[#F74D01] text-xs shrink-0"></i>
+              <span class="text-[11px] sm:text-xs font-semibold text-[#280047]">Lead Management & Revenue Recovery</span>
             </div>
 
-            <div class="space-y-1 min-h-[84px] sm:min-h-[112px]">
-              <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-[#280047] leading-[1.14]">
+            <div class="space-y-1 min-h-[76px] sm:min-h-[112px]">
+              <h1 class="text-2xl min-[360px]:text-3xl sm:text-5xl font-bold tracking-tight text-[#280047] leading-[1.15]">
                 Close 3X more deals
                 <span class="block text-[#F74D01] font-normal mt-1">
                   {{ typedHeroText }}<span class="typewriter-cursor"></span>
@@ -365,25 +378,25 @@ const nextTestimonial = () => {
               </h1>
             </div>
 
-            <p class="text-sm text-[#6B6578] max-w-lg leading-relaxed">
+            <p class="text-xs sm:text-sm text-[#6B6578] max-w-lg leading-relaxed">
               Where every customer inquiry turns into tracked revenue. Capture leads from WhatsApp, phone calls, and your website, send clear quotations in seconds, and recover neglected deals automatically.
             </p>
 
             <!-- Action Buttons -->
-            <div class="flex flex-wrap items-center gap-3 pt-1">
+            <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1">
               <Link
                 :href="isLoggedIn ? '/dashboard' : '/register'"
-                class="inline-flex items-center gap-3 bg-[#280047] text-white text-xs font-semibold pl-4 pr-2.5 py-2.5 rounded-md hover:bg-[#3a0066] transition-all shadow-sm"
+                class="inline-flex items-center justify-center gap-2.5 bg-[#280047] text-white text-xs font-semibold pl-3.5 pr-2.5 py-2.5 rounded-md hover:bg-[#3a0066] transition-all shadow-sm w-full min-[360px]:w-auto"
               >
                 <span>{{ isLoggedIn ? 'Go to Your Workspace' : 'Start Free Workspace' }}</span>
-                <span class="w-6 h-6 rounded bg-[#F74D01] text-white flex items-center justify-center">
+                <span class="w-6 h-6 rounded bg-[#F74D01] text-white flex items-center justify-center shrink-0">
                   <i class="fa-solid fa-arrow-right text-[10px]"></i>
                 </span>
               </Link>
 
               <a
                 href="#pricing"
-                class="btn-secondary py-2.5 px-4 text-xs"
+                class="btn-secondary py-2.5 px-4 text-xs w-full min-[360px]:w-auto"
               >
                 View Plans & Pricing
               </a>
@@ -391,20 +404,20 @@ const nextTestimonial = () => {
 
             <!-- 3 Quick Checkpoints -->
             <ul class="space-y-2 pt-2 text-xs text-[#242424]">
-              <li class="flex items-center gap-2.5">
-                <span class="w-4 h-4 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-[9px]">
+              <li class="flex items-start sm:items-center gap-2.5">
+                <span class="w-4 h-4 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-[9px] shrink-0 mt-0.5 sm:mt-0">
                   <i class="fa-solid fa-check"></i>
                 </span>
                 <span>Capture & assign leads from WhatsApp, calls, and web</span>
               </li>
-              <li class="flex items-center gap-2.5">
-                <span class="w-4 h-4 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-[9px]">
+              <li class="flex items-start sm:items-center gap-2.5">
+                <span class="w-4 h-4 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-[9px] shrink-0 mt-0.5 sm:mt-0">
                   <i class="fa-solid fa-check"></i>
                 </span>
                 <span>Generate shareable client quotations with automatic VAT</span>
               </li>
-              <li class="flex items-center gap-2.5">
-                <span class="w-4 h-4 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-[9px]">
+              <li class="flex items-start sm:items-center gap-2.5">
+                <span class="w-4 h-4 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-[9px] shrink-0 mt-0.5 sm:mt-0">
                   <i class="fa-solid fa-check"></i>
                 </span>
                 <span>Spot stalled deals & overdue follow-ups before revenue is lost</span>
@@ -414,9 +427,9 @@ const nextTestimonial = () => {
 
           <!-- Right Column: Animated Isometric Workflow Diagram -->
           <div class="lg:col-span-6 relative">
-            <div class="relative mx-auto max-w-lg bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-5 sm:p-6 shadow-xs">
+            <div class="relative mx-auto max-w-lg bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-3.5 sm:p-6 shadow-xs">
               <!-- Live Self-Writing Status Bar -->
-              <div class="mb-5 px-3 py-2 rounded-md bg-[#280047] text-white flex items-center justify-between gap-2 text-[11px]">
+              <div class="mb-4 sm:mb-5 px-3 py-2 rounded-md bg-[#280047] text-white flex items-center justify-between gap-2 text-[11px]">
                 <div class="flex items-center gap-2 min-w-0">
                   <span class="w-2 h-2 rounded-full bg-[#F74D01] animate-ping shrink-0"></span>
                   <span class="font-mono-num truncate text-[#FDFEBA]">{{ typedFeedText }}</span>
@@ -425,9 +438,9 @@ const nextTestimonial = () => {
               </div>
 
               <!-- Top Floating Source Node -->
-              <div class="flex items-center justify-between mb-5">
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white border border-[#E5E0EC] shadow-2xs text-xs animate-float">
-                  <span class="w-5 h-5 rounded bg-emerald-500 text-white flex items-center justify-center">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-4 sm:mb-5">
+                <div class="inline-flex flex-wrap items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-md bg-white border border-[#E5E0EC] shadow-2xs text-xs animate-float">
+                  <span class="w-5 h-5 rounded bg-emerald-500 text-white flex items-center justify-center shrink-0">
                     <i class="fa-brands fa-whatsapp text-xs"></i>
                   </span>
                   <span class="font-semibold text-[#242424]">WhatsApp Click-to-Chat</span>
@@ -435,24 +448,24 @@ const nextTestimonial = () => {
                 </div>
 
                 <!-- Floating Status Node -->
-                <div class="w-8 h-8 rounded-full bg-white border border-[#E5E0EC] shadow-xs flex items-center justify-center text-[#F74D01]">
+                <div class="w-8 h-8 rounded-full bg-white border border-[#E5E0EC] shadow-xs flex items-center justify-center text-[#F74D01] shrink-0">
                   <i class="fa-solid fa-bolt text-xs"></i>
                 </div>
               </div>
 
               <!-- Central Hub Box (3D Layered Platform Node) -->
-              <div class="relative bg-white border-2 border-[#280047] rounded-lg p-4 shadow-md mb-5 transition-transform duration-300 hover:-translate-y-0.5">
-                <div class="flex items-center justify-between pb-3 mb-3 border-b border-[#E5E0EC]">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-xs">
+              <div class="relative bg-white border-2 border-[#280047] rounded-lg p-3.5 sm:p-4 shadow-md mb-4 sm:mb-5 transition-transform duration-300 hover:-translate-y-0.5">
+                <div class="flex flex-wrap items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-[#E5E0EC]">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-xs shrink-0">
                       GN
                     </div>
-                    <div>
-                      <p class="text-xs font-bold text-[#242424]">Grace Nakato &bull; Crest Logistics</p>
-                      <p class="text-[11px] text-[#6B6578]">Annual Fleet Maintenance Contract</p>
+                    <div class="min-w-0">
+                      <p class="text-xs font-bold text-[#242424] break-words">Grace Nakato &bull; Crest Logistics</p>
+                      <p class="text-[11px] text-[#6B6578] break-words">Annual Fleet Maintenance Contract</p>
                     </div>
                   </div>
-                  <span class="px-2 py-0.5 rounded bg-[#FDFEBA] text-[#280047] border border-[#C3B6D3] text-[10px] font-bold uppercase">
+                  <span class="px-2 py-0.5 rounded bg-[#FDFEBA] text-[#280047] border border-[#C3B6D3] text-[10px] font-bold uppercase shrink-0">
                     Qualified
                   </span>
                 </div>
@@ -465,7 +478,7 @@ const nextTestimonial = () => {
                   <div class="h-1.5 rounded-full bg-[#E5E0EC]"></div>
                 </div>
 
-                <div class="flex items-center justify-between text-xs">
+                <div class="flex flex-wrap items-center justify-between gap-1.5 text-xs">
                   <span class="text-[#6B6578]">
                     <i class="fa-regular fa-clock text-[#F74D01] mr-1"></i>
                     Follow-up: <strong class="text-[#242424]">Tomorrow, 10:00 AM</strong>
@@ -477,7 +490,7 @@ const nextTestimonial = () => {
               <!-- Connected Quotation & Recovery Cards -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div class="bg-white border border-[#E5E0EC] rounded-md p-3.5 hover:border-[#280047] transition-colors">
-                  <div class="flex items-center justify-between mb-1.5">
+                  <div class="flex flex-wrap items-center justify-between gap-1 mb-1.5">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-[#6B6578]">Quotation Sent</span>
                     <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold">
                       Accepted
@@ -488,7 +501,7 @@ const nextTestimonial = () => {
                 </div>
 
                 <div class="bg-white border border-[#F74D01]/40 rounded-md p-3.5 hover:border-[#F74D01] transition-colors">
-                  <div class="flex items-center justify-between mb-1.5">
+                  <div class="flex flex-wrap items-center justify-between gap-1 mb-1.5">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-[#F74D01]">Recovery Alert</span>
                     <i class="fa-solid fa-bell text-[#F74D01] text-xs"></i>
                   </div>
@@ -507,7 +520,7 @@ const nextTestimonial = () => {
       <section id="how-it-works" class="border-b border-[#E5E0EC]">
         <!-- Infinite Start-to-End Sliding Channel Ticker -->
         <div class="py-5 border-b border-[#E5E0EC] bg-[#FAFAFB] overflow-hidden">
-          <p class="px-6 sm:px-12 text-[11px] font-semibold uppercase tracking-wider text-[#6B6578] mb-3">
+          <p class="px-3.5 sm:px-8 lg:px-12 text-[11px] font-semibold uppercase tracking-wider text-[#6B6578] mb-3">
             Built to capture and convert leads from every business channel
           </p>
           <div class="relative overflow-hidden">
@@ -529,7 +542,7 @@ const nextTestimonial = () => {
         <!-- 3-Column Architectural Visual Cards -->
         <div class="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-[#E5E0EC]">
           <!-- Column 1: Instant Lead Capture -->
-          <div class="reveal-slide-left p-6 sm:p-8 flex flex-col justify-between space-y-6">
+          <div class="reveal-slide-left p-4 sm:p-8 flex flex-col justify-between space-y-5 sm:space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Centralized Lead Capture</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
@@ -538,7 +551,7 @@ const nextTestimonial = () => {
             </div>
 
             <!-- Illustration 1: Floating Source Tags Converging -->
-            <div class="h-44 rounded-lg bg-[#FAFAFB] border border-[#E5E0EC] p-4 flex flex-col justify-between relative overflow-hidden">
+            <div class="min-h-44 rounded-lg bg-[#FAFAFB] border border-[#E5E0EC] p-3.5 sm:p-4 flex flex-col justify-between gap-3 relative overflow-hidden">
               <div class="flex flex-wrap gap-1.5">
                 <span class="px-2.5 py-1 rounded bg-white border border-[#E5E0EC] text-[11px] font-medium text-[#242424] shadow-2xs">
                   <i class="fa-brands fa-whatsapp text-emerald-600 mr-1"></i> WhatsApp Inquiry
@@ -557,7 +570,7 @@ const nextTestimonial = () => {
                 </div>
               </div>
 
-              <div class="bg-white border border-[#E5E0EC] rounded px-3 py-2 flex items-center justify-between text-[11px]">
+              <div class="bg-white border border-[#E5E0EC] rounded px-3 py-2 flex flex-wrap items-center justify-between gap-1 text-[11px]">
                 <span class="font-semibold text-[#280047]">Assigned to Sales Rep</span>
                 <span class="text-[#F74D01] font-bold">Instant</span>
               </div>
@@ -565,7 +578,7 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Column 2: Structured Pipeline & Quotes -->
-          <div class="reveal-section p-6 sm:p-8 flex flex-col justify-between space-y-6">
+          <div class="reveal-section p-4 sm:p-8 flex flex-col justify-between space-y-5 sm:space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Structured Pipeline & Quotes</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
@@ -574,8 +587,8 @@ const nextTestimonial = () => {
             </div>
 
             <!-- Illustration 2: Connected Workflow Nodes -->
-            <div class="h-44 rounded-lg bg-[#FAFAFB] border border-[#E5E0EC] p-4 flex flex-col justify-between">
-              <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="min-h-44 rounded-lg bg-[#FAFAFB] border border-[#E5E0EC] p-3.5 sm:p-4 flex flex-col justify-between gap-3">
+              <div class="grid grid-cols-1 min-[340px]:grid-cols-3 gap-2 text-center">
                 <div class="p-2 rounded bg-white border border-[#E5E0EC]">
                   <p class="text-[10px] text-[#6B6578]">Stage 1</p>
                   <p class="text-[11px] font-bold text-[#280047]">Qualified</p>
@@ -590,7 +603,7 @@ const nextTestimonial = () => {
                 </div>
               </div>
 
-              <div class="bg-white border border-[#D5CCE2] rounded-md p-2.5 flex items-center justify-between text-xs">
+              <div class="bg-white border border-[#D5CCE2] rounded-md p-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div>
                   <p class="font-bold text-[#242424]">Quote #QUO-2026-019</p>
                   <p class="text-[10px] text-[#6B6578]">18% VAT Calculated Automatically</p>
@@ -603,7 +616,7 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Column 3: Revenue Recovery Radar -->
-          <div class="reveal-slide-right p-6 sm:p-8 flex flex-col justify-between space-y-6">
+          <div class="reveal-slide-right p-4 sm:p-8 flex flex-col justify-between space-y-5 sm:space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Automatic Revenue Recovery</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
@@ -613,10 +626,10 @@ const nextTestimonial = () => {
 
             <!-- Illustration 3: Pinpoint Grid Illustration -->
             <div
-              class="h-44 rounded-lg bg-[#FAFAFB] border border-[#E5E0EC] p-4 flex flex-col justify-between relative"
+              class="min-h-44 rounded-lg bg-[#FAFAFB] border border-[#E5E0EC] p-3.5 sm:p-4 flex flex-col justify-between gap-3 relative"
               style="background-image: linear-gradient(to right, #E5E0EC 1px, transparent 1px), linear-gradient(to bottom, #E5E0EC 1px, transparent 1px); background-size: 28px 28px;"
             >
-              <div class="flex items-center justify-between">
+              <div class="flex flex-wrap items-center justify-between gap-1.5">
                 <span class="px-2 py-0.5 rounded bg-[#F74D01] text-white text-[10px] font-bold">
                   <i class="fa-solid fa-triangle-exclamation mr-1"></i> 4 Days Silent
                 </span>
@@ -625,7 +638,7 @@ const nextTestimonial = () => {
                 </span>
               </div>
 
-              <div class="my-auto flex items-center justify-around">
+              <div class="my-auto flex items-center justify-around py-2">
                 <div class="w-7 h-7 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-xs shadow animate-float">
                   <i class="fa-solid fa-bell"></i>
                 </div>
@@ -634,9 +647,9 @@ const nextTestimonial = () => {
                 </div>
               </div>
 
-              <div class="bg-white border border-[#E5E0EC] rounded px-3 py-1.5 text-[11px] font-medium text-[#242424] flex items-center justify-between">
+              <div class="bg-white border border-[#E5E0EC] rounded px-3 py-1.5 text-[11px] font-medium text-[#242424] flex items-center justify-between gap-1">
                 <span>Action: Call client today</span>
-                <i class="fa-solid fa-arrow-right text-[#F74D01] text-[10px]"></i>
+                <i class="fa-solid fa-arrow-right text-[#F74D01] text-[10px] shrink-0"></i>
               </div>
             </div>
           </div>
@@ -646,19 +659,19 @@ const nextTestimonial = () => {
       <!-- =========================================================
            3. "BUILT ON STRONG FOUNDATIONS" (2x3 Bento Grid)
            ========================================================= -->
-      <section id="foundations" class="reveal-section px-6 sm:px-12 py-16 border-b border-[#E5E0EC]">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <section id="foundations" class="reveal-section px-3.5 sm:px-8 lg:px-12 py-10 sm:py-16 border-b border-[#E5E0EC]">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           <!-- Cell 1: Section Title Block -->
           <div class="p-2 flex flex-col justify-between">
             <div>
-              <h2 class="text-2xl font-bold text-[#280047] tracking-tight leading-snug">
+              <h2 class="text-xl sm:text-2xl font-bold text-[#280047] tracking-tight leading-snug">
                 Built on strong foundations
               </h2>
               <p class="text-xs text-[#6B6578] mt-3 leading-relaxed">
                 Designed for clarity and speed. Every tool in Leads works together so your sales team spends less time filling forms and more time closing business.
               </p>
             </div>
-            <div class="pt-6">
+            <div class="pt-5 sm:pt-6">
               <Link
                 :href="isLoggedIn ? '/dashboard' : '/register'"
                 class="inline-flex items-center gap-1.5 text-xs font-bold text-[#F74D01] hover:text-[#280047] transition-colors"
@@ -670,11 +683,11 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Cell 2 -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-5 sm:p-6 flex flex-col justify-between min-h-[175px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
             <div class="w-9 h-9 rounded-md bg-white border border-[#E5E0EC] text-[#280047] flex items-center justify-center">
               <i class="fa-solid fa-list-check text-sm"></i>
             </div>
-            <div class="pt-8">
+            <div class="pt-6 sm:pt-8">
               <h3 class="text-sm font-bold text-[#242424]">Step-by-Step Forms</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
                 No long, overwhelming pages. Capture leads and create quotations in 3 guided steps with a live summary card.
@@ -683,11 +696,11 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Cell 3 -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-5 sm:p-6 flex flex-col justify-between min-h-[175px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
             <div class="w-9 h-9 rounded-md bg-white border border-[#E5E0EC] text-[#F74D01] flex items-center justify-center">
               <i class="fa-solid fa-coins text-sm"></i>
             </div>
-            <div class="pt-8">
+            <div class="pt-6 sm:pt-8">
               <h3 class="text-sm font-bold text-[#242424]">Auto Currency Conversion</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
                 Switch your workspace between UGX, KES, TZS, RWF, USD, EUR, or GBP and watch all deal values convert automatically.
@@ -696,11 +709,11 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Cell 4 -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-5 sm:p-6 flex flex-col justify-between min-h-[175px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
             <div class="w-9 h-9 rounded-md bg-white border border-[#E5E0EC] text-[#280047] flex items-center justify-center">
               <i class="fa-solid fa-calendar-check text-sm"></i>
             </div>
-            <div class="pt-8">
+            <div class="pt-6 sm:pt-8">
               <h3 class="text-sm font-bold text-[#242424]">Follow-up Accountability</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
                 Schedule calls and WhatsApp check-ins with custom date and time pickers, and log every conversation outcome.
@@ -709,11 +722,11 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Cell 5 -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-5 sm:p-6 flex flex-col justify-between min-h-[175px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
             <div class="w-9 h-9 rounded-md bg-white border border-[#E5E0EC] text-[#F74D01] flex items-center justify-center">
               <i class="fa-solid fa-bolt text-sm"></i>
             </div>
-            <div class="pt-8">
+            <div class="pt-6 sm:pt-8">
               <h3 class="text-sm font-bold text-[#242424]">Proactive Deal Recovery</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
                 Automatically detect high-value deals that have gone quiet and give your team clear next steps to win them back.
@@ -722,11 +735,11 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Cell 6 -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-5 sm:p-6 flex flex-col justify-between min-h-[175px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
             <div class="w-9 h-9 rounded-md bg-white border border-[#E5E0EC] text-[#280047] flex items-center justify-center">
               <i class="fa-solid fa-users-gear text-sm"></i>
             </div>
-            <div class="pt-8">
+            <div class="pt-6 sm:pt-8">
               <h3 class="text-sm font-bold text-[#242424]">Multi-Tenant Team Control</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
                 Invite owners, managers, and sales reps with role-based permissions and track individual conversion performance.
@@ -739,33 +752,33 @@ const nextTestimonial = () => {
       <!-- =========================================================
            4. "POWERFUL FEATURES FOR EVERYDAY SALES WORK" (3 UI Cards)
            ========================================================= -->
-      <section id="features" class="reveal-section px-6 sm:px-12 py-16 border-b border-[#E5E0EC]">
-        <div class="max-w-xl mb-10">
-          <h2 class="text-2xl sm:text-3xl font-bold text-[#280047] tracking-tight">
+      <section id="features" class="reveal-section px-3.5 sm:px-8 lg:px-12 py-10 sm:py-16 border-b border-[#E5E0EC]">
+        <div class="max-w-xl mb-8 sm:mb-10">
+          <h2 class="text-xl sm:text-3xl font-bold text-[#280047] tracking-tight">
             Powerful features
-            <span class="block text-[#6B6578] font-normal text-xl sm:text-2xl mt-0.5">
+            <span class="block text-[#6B6578] font-normal text-lg sm:text-2xl mt-0.5">
               built for everyday sales work
             </span>
           </h2>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
           <!-- Feature Card 1: Visual Pipeline & Stage Control -->
-          <div class="border border-[#E5E0EC] rounded-lg bg-[#FAFAFB] p-5 flex flex-col justify-between space-y-5 hover:border-[#280047] transition-all">
+          <div class="border border-[#E5E0EC] rounded-lg bg-[#FAFAFB] p-4 sm:p-5 flex flex-col justify-between space-y-5 hover:border-[#280047] transition-all">
             <div class="bg-white border border-[#E5E0EC] rounded-md p-3.5 space-y-2.5 shadow-2xs">
-              <div class="flex items-center justify-between text-xs">
+              <div class="flex flex-wrap items-center justify-between gap-1 text-xs">
                 <span class="font-semibold text-[#242424]">
                   <i class="fa-solid fa-circle-check text-[#280047] mr-1.5"></i> Qualification Complete
                 </span>
                 <span class="text-[10px] font-mono-num text-[#6B6578]">10:15 AM</span>
               </div>
-              <div class="flex items-center justify-between text-xs">
+              <div class="flex flex-wrap items-center justify-between gap-1 text-xs">
                 <span class="font-semibold text-[#242424]">
                   <i class="fa-solid fa-file-invoice text-[#F74D01] mr-1.5"></i> Quotation #QUO-042 Sent
                 </span>
                 <span class="text-[10px] font-mono-num text-[#6B6578]">10:18 AM</span>
               </div>
-              <div class="pt-2 border-t border-[#E5E0EC] flex items-center justify-between">
+              <div class="pt-2 border-t border-[#E5E0EC] flex flex-wrap items-center justify-between gap-1.5">
                 <span class="text-[11px] text-[#6B6578]">Move Lead Stage</span>
                 <span class="px-2.5 py-1 rounded bg-[#280047] text-white text-[10px] font-semibold">
                   Negotiation <i class="fa-solid fa-chevron-down ml-1 text-[8px]"></i>
@@ -782,7 +795,7 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Feature Card 2: Revenue Recovery Action Card -->
-          <div class="border border-[#E5E0EC] rounded-lg bg-[#FAFAFB] p-5 flex flex-col justify-between space-y-5 hover:border-[#F74D01] transition-all">
+          <div class="border border-[#E5E0EC] rounded-lg bg-[#FAFAFB] p-4 sm:p-5 flex flex-col justify-between space-y-5 hover:border-[#F74D01] transition-all">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Proactive Revenue Recovery</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
@@ -790,10 +803,10 @@ const nextTestimonial = () => {
               </p>
             </div>
 
-            <div class="bg-white border border-[#E5E0EC] rounded-md p-4 space-y-3 shadow-2xs">
-              <div class="flex items-center justify-between">
+            <div class="bg-white border border-[#E5E0EC] rounded-md p-3.5 sm:p-4 space-y-3 shadow-2xs">
+              <div class="flex flex-wrap items-center justify-between gap-1.5">
                 <div class="flex items-center gap-2">
-                  <span class="w-6 h-6 rounded-full bg-[#F74D01]/10 text-[#F74D01] flex items-center justify-center text-xs">
+                  <span class="w-6 h-6 rounded-full bg-[#F74D01]/10 text-[#F74D01] flex items-center justify-center text-xs shrink-0">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                   </span>
                   <span class="text-xs font-bold text-[#242424]">High-Value Quote Stalled</span>
@@ -805,17 +818,17 @@ const nextTestimonial = () => {
 
               <div>
                 <p class="text-[11px] text-[#6B6578]">Revenue at Risk</p>
-                <p class="text-lg font-bold text-[#F74D01] font-mono-num">UGX 18,500,000</p>
+                <p class="text-base sm:text-lg font-bold text-[#F74D01] font-mono-num">UGX 18,500,000</p>
               </div>
 
-              <div class="w-full py-2 rounded bg-[#F74D01] text-white text-xs font-semibold text-center">
+              <div class="w-full py-2 px-2 rounded bg-[#F74D01] text-white text-xs font-semibold text-center">
                 Schedule Follow-up Now <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
               </div>
             </div>
           </div>
 
           <!-- Feature Card 3: Instant Client Quotations -->
-          <div class="border border-[#E5E0EC] rounded-lg bg-[#FAFAFB] p-5 flex flex-col justify-between space-y-5 hover:border-[#280047] transition-all">
+          <div class="border border-[#E5E0EC] rounded-lg bg-[#FAFAFB] p-4 sm:p-5 flex flex-col justify-between space-y-5 hover:border-[#280047] transition-all">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Shareable Client Quotations</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
@@ -823,18 +836,18 @@ const nextTestimonial = () => {
               </p>
             </div>
 
-            <div class="bg-white border border-[#E5E0EC] rounded-md p-4 space-y-2.5 shadow-2xs">
-              <div class="flex items-center justify-between pb-2 border-b border-[#E5E0EC]">
+            <div class="bg-white border border-[#E5E0EC] rounded-md p-3.5 sm:p-4 space-y-2.5 shadow-2xs">
+              <div class="flex flex-wrap items-center justify-between gap-1.5 pb-2 border-b border-[#E5E0EC]">
                 <span class="text-xs font-bold text-[#280047] font-mono-num">#QUO-2026-0089</span>
                 <span class="px-2 py-0.5 rounded bg-[#FDFEBA] text-[#280047] text-[10px] font-bold">
                   18% VAT Included
                 </span>
               </div>
-              <div class="flex justify-between text-xs">
+              <div class="flex flex-wrap justify-between gap-1 text-xs">
                 <span class="text-[#6B6578]">Solar Inverter Installation</span>
                 <span class="font-mono-num font-semibold text-[#242424]">$4,200</span>
               </div>
-              <div class="pt-2 flex items-center justify-between">
+              <div class="pt-2 flex flex-wrap items-center justify-between gap-1.5">
                 <span class="text-[10px] text-emerald-700 font-semibold">
                   <i class="fa-solid fa-link mr-1"></i> Client Link Active
                 </span>
@@ -850,16 +863,16 @@ const nextTestimonial = () => {
       <!-- =========================================================
            5. EDITORIAL TESTIMONIAL + INTERACTIVE COMPANY TABS
            ========================================================= -->
-      <section class="reveal-section px-6 sm:px-12 py-16 border-b border-[#E5E0EC]">
+      <section class="reveal-section px-3.5 sm:px-8 lg:px-12 py-10 sm:py-16 border-b border-[#E5E0EC]">
         <div class="max-w-3xl min-h-[96px]">
-          <p class="text-xl sm:text-2xl font-medium text-[#242424] leading-relaxed transition-all duration-300">
+          <p class="text-lg sm:text-2xl font-medium text-[#242424] leading-relaxed transition-all duration-300">
             "{{ activeTestimonial.quote }}"
           </p>
         </div>
 
-        <div class="mt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-sm">
+            <div class="w-10 h-10 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-sm shrink-0">
               {{ activeTestimonial.author.charAt(0) }}
             </div>
             <div>
@@ -874,15 +887,17 @@ const nextTestimonial = () => {
           <div class="flex items-center gap-2">
             <button
               type="button"
+              aria-label="Previous testimonial"
               @click="prevTestimonial"
-              class="w-8 h-8 rounded-md bg-[#280047] text-white hover:bg-[#3a0066] flex items-center justify-center cursor-pointer transition-colors"
+              class="w-9 h-9 rounded-md bg-[#280047] text-white hover:bg-[#3a0066] flex items-center justify-center cursor-pointer transition-colors"
             >
               <i class="fa-solid fa-arrow-left text-xs"></i>
             </button>
             <button
               type="button"
+              aria-label="Next testimonial"
               @click="nextTestimonial"
-              class="w-8 h-8 rounded-md bg-[#280047] text-white hover:bg-[#3a0066] flex items-center justify-center cursor-pointer transition-colors"
+              class="w-9 h-9 rounded-md bg-[#280047] text-white hover:bg-[#3a0066] flex items-center justify-center cursor-pointer transition-colors"
             >
               <i class="fa-solid fa-arrow-right text-xs"></i>
             </button>
@@ -890,21 +905,21 @@ const nextTestimonial = () => {
         </div>
 
         <!-- Interactive Company Selector Bar -->
-        <div class="mt-8 grid grid-cols-2 sm:grid-cols-5 border border-[#E5E0EC] rounded-lg overflow-hidden">
+        <div class="mt-6 sm:mt-8 grid grid-cols-1 min-[380px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 border border-[#E5E0EC] rounded-lg overflow-hidden divide-y min-[380px]:divide-y-0 divide-[#E5E0EC]">
           <button
             v-for="(item, idx) in testimonials"
             :key="item.company"
             type="button"
             @click="activeTestimonialIndex = idx"
-            class="px-4 py-3.5 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer border-r last:border-r-0 border-[#E5E0EC]"
+            class="px-3.5 py-3.5 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer border-b lg:border-b-0 border-r last:border-r-0 border-[#E5E0EC]"
             :class="
               activeTestimonialIndex === idx
                 ? 'bg-[#280047] text-white'
                 : 'bg-white text-[#6B6578] hover:bg-[#FAFAFB] hover:text-[#242424]'
             "
           >
-            <i :class="[item.icon, activeTestimonialIndex === idx ? 'text-[#F74D01]' : 'text-[#6B6578]']"></i>
-            <span class="truncate">{{ item.company }}</span>
+            <i :class="[item.icon, activeTestimonialIndex === idx ? 'text-[#F74D01]' : 'text-[#6B6578]']" class="shrink-0"></i>
+            <span class="text-center leading-tight">{{ item.company }}</span>
           </button>
         </div>
       </section>
@@ -912,20 +927,20 @@ const nextTestimonial = () => {
       <!-- =========================================================
            6. "ADVANCED CAPABILITIES. SIMPLE EXPERIENCE." (3 + 2 Bento)
            ========================================================= -->
-      <section id="capabilities" class="reveal-section px-6 sm:px-12 py-16 border-b border-[#E5E0EC] bg-[#FAFAFB]">
-        <div class="mb-10">
+      <section id="capabilities" class="reveal-section px-3.5 sm:px-8 lg:px-12 py-10 sm:py-16 border-b border-[#E5E0EC] bg-[#FAFAFB]">
+        <div class="mb-8 sm:mb-10">
           <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F74D01] mb-1">
             <i class="fa-solid fa-wand-magic-sparkles"></i> Built for Growth
           </div>
-          <h2 class="text-2xl sm:text-3xl font-bold text-[#280047] tracking-tight">
+          <h2 class="text-xl sm:text-3xl font-bold text-[#280047] tracking-tight">
             Advanced Capabilities.
             <span class="block text-[#242424]">Simple Experience.</span>
           </h2>
         </div>
 
         <!-- Top 3 Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-          <div class="app-card p-6 flex flex-col justify-between space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 mb-4 sm:mb-5">
+          <div class="app-card p-5 sm:p-6 flex flex-col justify-between space-y-5 sm:space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Custom Threshold Rules</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
@@ -936,14 +951,14 @@ const nextTestimonial = () => {
               <div class="w-8 h-8 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center shrink-0">
                 <i class="fa-solid fa-sliders text-xs"></i>
               </div>
-              <div class="flex-1 text-xs">
+              <div class="flex-1 text-xs min-w-0">
                 <p class="font-bold text-[#242424]">Stale Lead Threshold</p>
                 <p class="text-[11px] text-[#6B6578]">Flag after 3 days without contact</p>
               </div>
             </div>
           </div>
 
-          <div class="app-card p-6 flex flex-col justify-between space-y-6">
+          <div class="app-card p-5 sm:p-6 flex flex-col justify-between space-y-5 sm:space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">One-Click CSV Export</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
@@ -951,20 +966,20 @@ const nextTestimonial = () => {
               </p>
             </div>
             <div class="p-3.5 rounded-md bg-[#FAFAFB] border border-[#E5E0EC] flex items-center justify-center gap-2">
-              <span class="px-3 py-1.5 rounded bg-white border border-[#D5CCE2] text-xs font-semibold text-[#280047] shadow-2xs">
+              <span class="px-3 py-1.5 rounded bg-white border border-[#D5CCE2] text-xs font-semibold text-[#280047] shadow-2xs text-center">
                 <i class="fa-solid fa-download text-[#F74D01] mr-1.5"></i> Export Leads CSV
               </span>
             </div>
           </div>
 
-          <div class="app-card p-6 flex flex-col justify-between space-y-6">
+          <div class="app-card p-5 sm:p-6 flex flex-col justify-between space-y-5 sm:space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Channel ROI Analytics</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
                 See which lead sources—WhatsApp, calls, referrals, or website—bring in the highest closed-won revenue.
               </p>
             </div>
-            <div class="p-3.5 rounded-md bg-[#FAFAFB] border border-[#E5E0EC] flex items-center justify-between text-xs">
+            <div class="p-3.5 rounded-md bg-[#FAFAFB] border border-[#E5E0EC] flex flex-wrap items-center justify-between gap-1.5 text-xs">
               <span class="font-medium text-[#242424]">
                 <i class="fa-solid fa-chart-line text-[#280047] mr-1.5"></i> Top Source: Referrals
               </span>
@@ -974,45 +989,45 @@ const nextTestimonial = () => {
         </div>
 
         <!-- Bottom 2 Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="app-card p-6 flex flex-col justify-between space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+          <div class="app-card p-5 sm:p-6 flex flex-col justify-between space-y-5 sm:space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Complete Team & Activity Audit Trail</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
                 Every stage update, note, follow-up completion, and quotation status change is logged with a timestamp and team member name.
               </p>
             </div>
-            <div class="p-4 rounded-md bg-[#FAFAFB] border border-[#E5E0EC] space-y-2.5 text-xs">
-              <div class="flex items-center justify-between">
+            <div class="p-3.5 sm:p-4 rounded-md bg-[#FAFAFB] border border-[#E5E0EC] space-y-2 text-xs">
+              <div class="flex flex-wrap items-center justify-between gap-1">
                 <span class="font-semibold text-[#280047]">
                   <i class="fa-solid fa-user-check text-[#F74D01] mr-1.5"></i> Diane M. completed follow-up call
                 </span>
                 <span class="text-[10px] font-mono-num text-[#6B6578]">2m ago</span>
               </div>
-              <p class="text-[11px] text-[#6B6578] pl-5">
+              <p class="text-[11px] text-[#6B6578] sm:pl-5">
                 "Client approved the revised maintenance scope and requested final invoice."
               </p>
             </div>
           </div>
 
-          <div class="app-card p-6 flex flex-col justify-between space-y-6">
+          <div class="app-card p-5 sm:p-6 flex flex-col justify-between space-y-5 sm:space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Multi-Company Workspace Switching</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
                 Run multiple businesses or branches? Switch between isolated company workspaces from the sidebar with a single click.
               </p>
             </div>
-            <div class="p-4 rounded-md bg-[#FAFAFB] border border-[#E5E0EC] flex items-center justify-between text-xs">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold">
+            <div class="p-3.5 sm:p-4 rounded-md bg-[#FAFAFB] border border-[#E5E0EC] flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-8 h-8 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold shrink-0">
                   C
                 </div>
-                <div>
-                  <p class="font-bold text-[#242424]">Crest Logistics Ltd</p>
-                  <p class="text-[10px] text-[#6B6578]">Isolated Tenant Workspace &bull; UGX / USD</p>
+                <div class="min-w-0">
+                  <p class="font-bold text-[#242424] break-words">Crest Logistics Ltd</p>
+                  <p class="text-[10px] text-[#6B6578] break-words">Isolated Tenant Workspace &bull; UGX / USD</p>
                 </div>
               </div>
-              <span class="px-2 py-1 rounded bg-[#FDFEBA] text-[#280047] border border-[#C3B6D3] text-[10px] font-bold">
+              <span class="px-2 py-1 rounded bg-[#FDFEBA] text-[#280047] border border-[#C3B6D3] text-[10px] font-bold shrink-0">
                 Active
               </span>
             </div>
@@ -1023,22 +1038,22 @@ const nextTestimonial = () => {
       <!-- =========================================================
            7. PRICING & SUBSCRIPTION PLANS (3 Public Plans + Custom Enterprise)
            ========================================================= -->
-      <section id="pricing" class="reveal-section px-6 sm:px-12 py-16 border-b border-[#E5E0EC]">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+      <section id="pricing" class="reveal-section px-3.5 sm:px-8 lg:px-12 py-10 sm:py-16 border-b border-[#E5E0EC]">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 sm:mb-10">
           <div>
             <span class="text-[11px] font-bold uppercase tracking-wider text-[#F74D01]">Subscription Packages</span>
-            <h2 class="text-2xl sm:text-3xl font-bold text-[#280047] tracking-tight mt-0.5">
+            <h2 class="text-xl sm:text-3xl font-bold text-[#280047] tracking-tight mt-0.5">
               Smarter plans for
-              <span class="block text-[#6B6578] font-normal text-xl sm:text-2xl mt-0.5">
+              <span class="block text-[#6B6578] font-normal text-lg sm:text-2xl mt-0.5">
                 every stage of your sales growth
               </span>
             </h2>
           </div>
 
           <!-- Currency & Billing Cycle Controls -->
-          <div class="flex flex-wrap items-center gap-3">
+          <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
             <!-- Currency Selector Pills -->
-            <div class="inline-flex bg-[#FAFAFB] p-1 rounded-md border border-[#E5E0EC]">
+            <div class="inline-flex flex-wrap bg-[#FAFAFB] p-1 rounded-md border border-[#E5E0EC]">
               <button
                 v-for="curr in (['USD', 'UGX', 'KES', 'RWF'] as const)"
                 :key="curr"
@@ -1056,7 +1071,7 @@ const nextTestimonial = () => {
             </div>
 
             <!-- Monthly / Annual Toggle -->
-            <div class="inline-flex bg-[#FAFAFB] p-1 rounded-md border border-[#E5E0EC]">
+            <div class="inline-flex flex-wrap bg-[#FAFAFB] p-1 rounded-md border border-[#E5E0EC]">
               <button
                 type="button"
                 @click="billingCycle = 'monthly'"
@@ -1078,13 +1093,13 @@ const nextTestimonial = () => {
         </div>
 
         <!-- 3 Public Launch Plans (Starter $19, Professional $49, Agency $99) -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
           <!-- A. Starter Plan ($19/mo) -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between hover:border-[#C3B6D3] transition-all">
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-5 sm:p-6 flex flex-col justify-between hover:border-[#C3B6D3] transition-all">
             <div>
-              <div class="flex items-center justify-between mb-2">
+              <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded bg-white border border-[#E5E0EC] text-[#280047] flex items-center justify-center text-xs">
+                  <div class="w-7 h-7 rounded bg-white border border-[#E5E0EC] text-[#280047] flex items-center justify-center text-xs shrink-0">
                     <i class="fa-solid fa-seedling"></i>
                   </div>
                   <h3 class="text-base font-bold text-[#242424]">Starter</h3>
@@ -1095,36 +1110,36 @@ const nextTestimonial = () => {
                 For individuals, freelancers, and startups organizing customer inquiries and follow-ups.
               </p>
 
-              <div class="my-5 p-3.5 rounded-md bg-white border border-[#E5E0EC] flex items-baseline gap-1.5">
-                <span class="text-2xl font-bold text-[#280047] font-mono-num">
+              <div class="my-5 p-3.5 rounded-md bg-white border border-[#E5E0EC] flex flex-wrap items-baseline gap-1.5">
+                <span class="text-xl sm:text-2xl font-bold text-[#280047] font-mono-num">
                   {{ formatPlanPrice(19) }}
                 </span>
                 <span class="text-xs text-[#6B6578]">/ month</span>
               </div>
 
               <ul class="space-y-2.5 text-xs text-[#242424]">
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px] mt-1 shrink-0"></i>
                   <span><strong>1 user account</strong> & up to <strong>100 active leads</strong></span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px] mt-1 shrink-0"></i>
                   <span>Centralized lead profiles & contact info</span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px] mt-1 shrink-0"></i>
                   <span>Standard sales pipeline & status tracking</span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px] mt-1 shrink-0"></i>
                   <span>Follow-up scheduling and reminders</span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px] mt-1 shrink-0"></i>
                   <span>Basic quotation tracking & WhatsApp click-to-chat</span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px] mt-1 shrink-0"></i>
                   <span>Basic sales dashboard & activity history</span>
                 </li>
               </ul>
@@ -1138,15 +1153,15 @@ const nextTestimonial = () => {
           </div>
 
           <!-- B. Professional Plan ($49/mo) -->
-          <div class="bg-[#FAFAFB] border-2 border-[#280047] rounded-lg p-6 flex flex-col justify-between relative shadow-sm">
-            <span class="absolute -top-3 right-5 px-2.5 py-0.5 rounded bg-[#280047] text-[#FDFEBA] text-[10px] font-bold uppercase tracking-wider">
+          <div class="bg-[#FAFAFB] border-2 border-[#280047] rounded-lg p-5 sm:p-6 flex flex-col justify-between relative shadow-sm">
+            <span class="absolute -top-3 right-4 sm:right-5 px-2.5 py-0.5 rounded bg-[#280047] text-[#FDFEBA] text-[10px] font-bold uppercase tracking-wider">
               Most Popular
             </span>
 
             <div>
-              <div class="flex items-center justify-between mb-2">
+              <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-xs">
+                  <div class="w-7 h-7 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-xs shrink-0">
                     <i class="fa-solid fa-briefcase"></i>
                   </div>
                   <h3 class="text-base font-bold text-[#242424]">Professional</h3>
@@ -1157,36 +1172,36 @@ const nextTestimonial = () => {
                 For growing SMEs coordinating sales teams, opportunities, and conversion performance.
               </p>
 
-              <div class="my-5 p-3.5 rounded-md bg-white border border-[#E5E0EC] flex items-baseline gap-1.5">
-                <span class="text-2xl font-bold text-[#F74D01] font-mono-num">
+              <div class="my-5 p-3.5 rounded-md bg-white border border-[#E5E0EC] flex flex-wrap items-baseline gap-1.5">
+                <span class="text-xl sm:text-2xl font-bold text-[#F74D01] font-mono-num">
                   {{ formatPlanPrice(49) }}
                 </span>
                 <span class="text-xs text-[#6B6578]">/ month</span>
               </div>
 
               <ul class="space-y-2.5 text-xs text-[#242424]">
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#F74D01] text-[10px] mt-1 shrink-0"></i>
                   <span>Everything in Starter, plus:</span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#F74D01] text-[10px] mt-1 shrink-0"></i>
                   <span><strong>Up to 5 users</strong> & <strong>1,000 active leads</strong></span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#F74D01] text-[10px] mt-1 shrink-0"></i>
                   <span>Lead assignment to team members</span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#F74D01] text-[10px] mt-1 shrink-0"></i>
                   <span>Customizable sales pipeline & advanced follow-ups</span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#F74D01] text-[10px] mt-1 shrink-0"></i>
                   <span>Quotation status tracking & source analytics</span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#F74D01] text-[10px] mt-1 shrink-0"></i>
                   <span>Sales conversion reports & team activity overview</span>
                 </li>
               </ul>
@@ -1200,11 +1215,11 @@ const nextTestimonial = () => {
           </div>
 
           <!-- C. Agency Plan ($99/mo) -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between hover:border-[#C3B6D3] transition-all">
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-5 sm:p-6 flex flex-col justify-between hover:border-[#C3B6D3] transition-all">
             <div>
-              <div class="flex items-center justify-between mb-2">
+              <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded bg-white border border-[#E5E0EC] text-[#F74D01] flex items-center justify-center text-xs">
+                  <div class="w-7 h-7 rounded bg-white border border-[#E5E0EC] text-[#F74D01] flex items-center justify-center text-xs shrink-0">
                     <i class="fa-solid fa-building"></i>
                   </div>
                   <h3 class="text-base font-bold text-[#242424]">Agency</h3>
@@ -1215,36 +1230,36 @@ const nextTestimonial = () => {
                 For agencies & high-volume service companies handling many quotations and sales reps.
               </p>
 
-              <div class="my-5 p-3.5 rounded-md bg-white border border-[#E5E0EC] flex items-baseline gap-1.5">
-                <span class="text-2xl font-bold text-[#280047] font-mono-num">
+              <div class="my-5 p-3.5 rounded-md bg-white border border-[#E5E0EC] flex flex-wrap items-baseline gap-1.5">
+                <span class="text-xl sm:text-2xl font-bold text-[#280047] font-mono-num">
                   {{ formatPlanPrice(99) }}
                 </span>
                 <span class="text-xs text-[#6B6578]">/ month</span>
               </div>
 
               <ul class="space-y-2.5 text-xs text-[#242424]">
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px] mt-1 shrink-0"></i>
                   <span>Everything in Professional, plus:</span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px] mt-1 shrink-0"></i>
                   <span><strong>Up to 15 users</strong> & <strong>5,000 active leads</strong></span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px] mt-1 shrink-0"></i>
                   <span>Advanced team performance & pipeline reports</span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px] mt-1 shrink-0"></i>
                   <span>Lead ownership, reassignment & custom fields</span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px] mt-1 shrink-0"></i>
                   <span>Custom quotation templates & lost deal analysis</span>
                 </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px] mt-1 shrink-0"></i>
                   <span>Advanced activity tracking & priority support</span>
                 </li>
               </ul>
@@ -1259,7 +1274,7 @@ const nextTestimonial = () => {
         </div>
 
         <!-- D. Business — $199/month (Custom / Enterprise Consultation Callout) -->
-        <div class="mt-6 p-6 rounded-lg bg-[#F8F6FA] border border-[#D5CCE2] flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div class="mt-6 p-4 sm:p-6 rounded-lg bg-[#F8F6FA] border border-[#D5CCE2] flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
           <div class="space-y-1.5 max-w-2xl">
             <div class="flex flex-wrap items-center gap-2">
               <span class="px-2 py-0.5 rounded bg-[#280047] text-[#FDFEBA] text-[10px] font-bold uppercase tracking-wider">
@@ -1275,7 +1290,7 @@ const nextTestimonial = () => {
           </div>
 
           <div class="shrink-0">
-            <Link :href="isLoggedIn ? '/settings' : '/register'" class="btn-secondary text-xs py-2.5 px-4">
+            <Link :href="isLoggedIn ? '/settings' : '/register'" class="btn-secondary text-xs py-2.5 px-4 w-full sm:w-auto">
               <i class="fa-regular fa-comments text-[#280047]"></i> Request Enterprise Consultation
             </Link>
           </div>
@@ -1285,16 +1300,16 @@ const nextTestimonial = () => {
       <!-- =========================================================
            8. DARK INDIGO FRAMED CTA CARD + SLIDING GIANT WORDMARK
            ========================================================= -->
-      <section class="bg-[#280047] p-6 sm:p-10 lg:p-12 overflow-hidden">
+      <section class="bg-[#280047] p-3.5 sm:p-8 lg:p-12 overflow-hidden">
         <!-- Inner White CTA Card with Connected Nodes -->
-        <div class="bg-white rounded-lg p-8 sm:p-12 text-center relative overflow-hidden">
+        <div class="bg-white rounded-lg p-5 sm:p-10 lg:p-12 text-center relative overflow-hidden">
           <div
             class="absolute inset-0 pointer-events-none opacity-30"
             style="background-image: radial-gradient(#C3B6D3 1px, transparent 1px); background-size: 20px 20px;"
           ></div>
 
-          <div class="relative z-10 max-w-xl mx-auto space-y-5">
-            <h2 class="text-2xl sm:text-4xl font-bold text-[#280047] tracking-tight leading-tight">
+          <div class="relative z-10 max-w-xl mx-auto space-y-4 sm:space-y-5">
+            <h2 class="text-xl sm:text-4xl font-bold text-[#280047] tracking-tight leading-tight">
               Ready to close more deals with
               <span class="text-[#F74D01]">complete clarity?</span>
             </h2>
@@ -1302,36 +1317,36 @@ const nextTestimonial = () => {
               Set up your company workspace in under 2 minutes. Capture every lead, send fast quotations, and never let revenue slip away again.
             </p>
 
-            <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
+            <div class="pt-2 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
               <Link
                 :href="isLoggedIn ? '/dashboard' : '/register'"
-                class="inline-flex items-center gap-3 bg-[#280047] text-white text-xs font-semibold pl-4 pr-2.5 py-2.5 rounded-md hover:bg-[#3a0066] transition-colors"
+                class="inline-flex items-center justify-center gap-2.5 bg-[#280047] text-white text-xs font-semibold pl-4 pr-2.5 py-2.5 rounded-md hover:bg-[#3a0066] transition-colors w-full min-[360px]:w-auto"
               >
                 <span>{{ isLoggedIn ? 'Open Dashboard' : 'Get Started Now' }}</span>
-                <span class="w-6 h-6 rounded bg-[#F74D01] text-white flex items-center justify-center">
+                <span class="w-6 h-6 rounded bg-[#F74D01] text-white flex items-center justify-center shrink-0">
                   <i class="fa-solid fa-arrow-right text-[10px]"></i>
                 </span>
               </Link>
               <Link
                 v-if="!isLoggedIn"
                 href="/login"
-                class="btn-secondary py-2.5 px-4 text-xs"
+                class="btn-secondary py-2.5 px-4 text-xs w-full min-[360px]:w-auto"
               >
                 Try Demo Account
               </Link>
             </div>
 
             <!-- Decorative Isometric Mini Diagram at Bottom of Card -->
-            <div class="pt-8 flex items-center justify-center gap-4 sm:gap-8">
-              <div class="w-9 h-9 rounded-full bg-[#FAFAFB] border border-[#E5E0EC] text-[#F74D01] flex items-center justify-center shadow-2xs animate-float">
+            <div class="pt-6 sm:pt-8 flex items-center justify-center gap-3 sm:gap-8">
+              <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#FAFAFB] border border-[#E5E0EC] text-[#F74D01] flex items-center justify-center shadow-2xs animate-float shrink-0">
                 <i class="fa-brands fa-whatsapp text-sm"></i>
               </div>
-              <div class="h-px w-12 sm:w-20 bg-[#C3B6D3]"></div>
-              <div class="w-12 h-12 rounded-lg bg-[#280047] text-[#FDFEBA] flex items-center justify-center shadow-md font-bold text-sm">
+              <div class="h-px w-8 sm:w-20 bg-[#C3B6D3]"></div>
+              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-[#280047] text-[#FDFEBA] flex items-center justify-center shadow-md font-bold text-sm shrink-0">
                 <i class="fa-solid fa-layer-group"></i>
               </div>
-              <div class="h-px w-12 sm:w-20 bg-[#C3B6D3]"></div>
-              <div class="w-9 h-9 rounded-full bg-[#FAFAFB] border border-[#E5E0EC] text-emerald-600 flex items-center justify-center shadow-2xs animate-float">
+              <div class="h-px w-8 sm:w-20 bg-[#C3B6D3]"></div>
+              <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#FAFAFB] border border-[#E5E0EC] text-emerald-600 flex items-center justify-center shadow-2xs animate-float shrink-0">
                 <i class="fa-solid fa-check text-sm"></i>
               </div>
             </div>
@@ -1339,12 +1354,12 @@ const nextTestimonial = () => {
         </div>
 
         <!-- Giant Sliding Brand Wordmark Banner -->
-        <div class="pt-8 pb-2 overflow-hidden select-none">
+        <div class="pt-6 sm:pt-8 pb-2 overflow-hidden select-none">
           <div class="animate-marquee-fast gap-8 items-center">
             <span
               v-for="n in 6"
               :key="n"
-              class="text-3xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white/90 whitespace-nowrap"
+              class="text-2xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white/90 whitespace-nowrap"
             >
               Leads . Platform <span class="text-[#F74D01] mx-4">&bull;</span>
             </span>
@@ -1355,8 +1370,8 @@ const nextTestimonial = () => {
       <!-- =========================================================
            9. CLEAN MINIMAL FOOTER
            ========================================================= -->
-      <footer class="px-6 sm:px-12 py-12 bg-white border-t border-[#E5E0EC]">
-        <div class="grid grid-cols-2 sm:grid-cols-6 gap-8 pb-10 border-b border-[#E5E0EC] text-xs">
+      <footer class="px-3.5 sm:px-8 lg:px-12 py-8 sm:py-12 bg-white border-t border-[#E5E0EC]">
+        <div class="grid grid-cols-1 min-[340px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 pb-8 sm:pb-10 border-b border-[#E5E0EC] text-xs">
           <div>
             <p class="font-bold text-[#242424] mb-3">Platform</p>
             <ul class="space-y-2 text-[#6B6578]">
@@ -1395,20 +1410,21 @@ const nextTestimonial = () => {
             </ul>
           </div>
 
-          <div class="col-span-2">
+          <div class="min-[340px]:col-span-2 lg:col-span-2">
             <p class="font-bold text-[#242424] mb-2">Get Sales & Product Updates</p>
             <p class="text-[11px] text-[#6B6578] mb-3">
               Practical tips on closing more B2B deals and recovering stalled quotations.
             </p>
-            <form @submit.prevent class="flex items-center gap-2">
+            <form @submit.prevent class="flex flex-col min-[340px]:flex-row items-stretch min-[340px]:items-center gap-2">
               <input
                 type="email"
                 placeholder="Enter your work email"
-                class="app-input text-xs"
+                class="app-input text-xs flex-1"
               />
               <button
                 type="submit"
-                class="w-9 h-9 rounded-md bg-[#280047] text-white hover:bg-[#F74D01] flex items-center justify-center shrink-0 transition-colors cursor-pointer"
+                aria-label="Subscribe"
+                class="h-9 px-3 rounded-md bg-[#280047] text-white hover:bg-[#F74D01] flex items-center justify-center shrink-0 transition-colors cursor-pointer"
               >
                 <i class="fa-solid fa-arrow-right text-xs"></i>
               </button>
@@ -1416,9 +1432,9 @@ const nextTestimonial = () => {
           </div>
         </div>
 
-        <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#6B6578]">
+        <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#6B6578] text-center sm:text-left">
           <p>&copy; {{ new Date().getFullYear() }} Leads Platform. All rights reserved.</p>
-          <div class="flex items-center gap-6">
+          <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <span>Terms of Service</span>
             <span>Privacy Policy</span>
             <span>Security</span>

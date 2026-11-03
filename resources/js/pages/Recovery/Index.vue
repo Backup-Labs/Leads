@@ -47,7 +47,7 @@ const formatMoney = (amount: number) => {
             Identify neglected deals, overdue quotations, and stalled leads before revenue is lost.
           </p>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
           <Link href="/follow-ups?status=overdue" class="btn-secondary text-xs">
             <i class="fa-regular fa-clock text-[#F74D01]"></i> Overdue Follow-ups
           </Link>
@@ -59,14 +59,14 @@ const formatMoney = (amount: number) => {
 
       <!-- Summary Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="app-card p-5 border-t-2 border-t-[#F74D01]">
+        <div class="app-card p-4 sm:p-5 border-t-2 border-t-[#F74D01]">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-medium text-[#6B6578]">Total Revenue at Risk</span>
-            <div class="w-8 h-8 rounded-md bg-[#F74D01]/10 text-[#F74D01] flex items-center justify-center">
+            <div class="w-8 h-8 rounded-md bg-[#F74D01]/10 text-[#F74D01] flex items-center justify-center shrink-0">
               <i class="fa-solid fa-triangle-exclamation text-xs"></i>
             </div>
           </div>
-          <p class="text-2xl font-bold text-[#242424] font-mono-num">
+          <p class="text-xl sm:text-2xl font-bold text-[#242424] font-mono-num break-all sm:break-normal">
             {{ formatMoney(totalRevenueAtRisk) }}
           </p>
           <p class="text-[11px] text-[#6B6578] mt-1">
@@ -74,23 +74,23 @@ const formatMoney = (amount: number) => {
           </p>
         </div>
 
-        <div class="app-card p-5 border-t-2 border-t-[#280047]">
+        <div class="app-card p-4 sm:p-5 border-t-2 border-t-[#280047]">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-medium text-[#6B6578]">Critical Alerts</span>
-            <div class="w-8 h-8 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center">
+            <div class="w-8 h-8 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center shrink-0">
               <i class="fa-solid fa-bolt text-xs"></i>
             </div>
           </div>
-          <p class="text-2xl font-bold text-[#242424] font-mono-num">{{ counts.critical }}</p>
+          <p class="text-xl sm:text-2xl font-bold text-[#242424] font-mono-num">{{ counts.critical }}</p>
           <p class="text-[11px] text-[#6B6578] mt-1">
             Plus <strong class="text-[#242424]">{{ counts.warning }}</strong> warning-level alerts
           </p>
         </div>
 
-        <div class="app-card p-5 border-t-2 border-t-[#C3B6D3]">
+        <div class="app-card p-4 sm:p-5 border-t-2 border-t-[#C3B6D3]">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-medium text-[#6B6578]">Recommended Action</span>
-            <div class="w-8 h-8 rounded-md bg-[#FDFEBA] text-[#280047] flex items-center justify-center">
+            <div class="w-8 h-8 rounded-md bg-[#FDFEBA] text-[#280047] flex items-center justify-center shrink-0">
               <i class="fa-solid fa-phone-volume text-xs"></i>
             </div>
           </div>
@@ -101,17 +101,17 @@ const formatMoney = (amount: number) => {
 
       <!-- At-Risk Deals List -->
       <div class="app-card overflow-hidden">
-        <div class="px-5 py-4 border-b border-[#E5E0EC] flex items-center justify-between">
+        <div class="px-4 sm:px-5 py-4 border-b border-[#E5E0EC] flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 class="text-sm font-bold text-[#242424]">Deals Requiring Follow-up</h2>
             <p class="text-xs text-[#6B6578]">Sorted by urgency and potential deal value</p>
           </div>
-          <span class="px-2.5 py-1 rounded text-xs font-semibold bg-[#F3F1F6] text-[#280047] font-mono-num">
+          <span class="px-2.5 py-1 rounded text-xs font-semibold bg-[#F3F1F6] text-[#280047] font-mono-num shrink-0">
             {{ alerts.total }} Alerts
           </span>
         </div>
 
-        <div v-if="alerts.data.length === 0" class="p-12 text-center">
+        <div v-if="alerts.data.length === 0" class="p-8 sm:p-12 text-center">
           <div class="w-10 h-10 rounded-md bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto mb-2.5">
             <i class="fa-solid fa-check text-sm"></i>
           </div>
@@ -125,7 +125,7 @@ const formatMoney = (amount: number) => {
             :key="item.id"
             class="p-4 sm:p-5 hover:bg-[#FAFAFB] transition-colors flex flex-col lg:flex-row lg:items-center justify-between gap-4"
           >
-            <div class="space-y-1.5">
+            <div class="space-y-1.5 min-w-0">
               <div class="flex flex-wrap items-center gap-2">
                 <span
                   class="px-2 py-0.5 rounded text-[10px] font-bold uppercase"
@@ -156,9 +156,9 @@ const formatMoney = (amount: number) => {
               </p>
             </div>
 
-            <div class="flex items-center justify-between lg:justify-end gap-4 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-[#E5E0EC]">
+            <div class="flex flex-wrap items-center justify-between lg:justify-end gap-3 sm:gap-4 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-[#E5E0EC]">
               <div class="lg:text-right">
-                <p class="text-sm font-bold text-[#280047] font-mono-num">
+                <p class="text-sm font-bold text-[#280047] font-mono-num break-all sm:break-normal">
                   {{ formatMoney(Number(item.potential_revenue_at_risk)) }}
                 </p>
                 <p class="text-[11px] text-[#6B6578]">
@@ -166,7 +166,7 @@ const formatMoney = (amount: number) => {
                 </p>
               </div>
 
-              <div class="flex items-center gap-2">
+              <div class="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   @click="dismissAlert(item.id)"
@@ -184,6 +184,33 @@ const formatMoney = (amount: number) => {
                 </Link>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div
+          v-if="alerts.last_page > 1"
+          class="px-4 py-3 border-t border-[#E5E0EC] bg-[#FAFAFB] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
+        >
+          <span class="text-[#6B6578]">
+            Showing <strong class="text-[#242424]">{{ alerts.from }}</strong> to
+            <strong class="text-[#242424]">{{ alerts.to }}</strong> of
+            <strong class="text-[#242424]">{{ alerts.total }}</strong> alerts
+          </span>
+          <div class="flex flex-wrap items-center gap-1">
+            <template v-for="(link, idx) in alerts.links" :key="idx">
+              <Link
+                v-if="link.url"
+                :href="link.url"
+                v-html="link.label"
+                class="px-2.5 py-1 rounded border text-xs transition-colors"
+                :class="
+                  link.active
+                    ? 'bg-[#280047] text-white border-[#280047] font-semibold'
+                    : 'bg-white text-[#242424] border-[#E5E0EC] hover:bg-[#F3F1F6]'
+                "
+              />
+            </template>
           </div>
         </div>
       </div>

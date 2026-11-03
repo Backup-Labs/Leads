@@ -76,7 +76,8 @@
             text-align: right;
         }
         .totals-table {
-            width: 320px;
+            width: 100%;
+            max-width: 320px;
             margin-left: auto;
             border-collapse: collapse;
         }
@@ -98,6 +99,36 @@
             color: #4B5563;
             margin-top: 40px;
             white-space: pre-line;
+        }
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+        @media (max-width: 640px) {
+            body {
+                padding: 16px;
+            }
+            .header {
+                flex-direction: column;
+                gap: 16px;
+            }
+            .quote-badge {
+                text-align: left;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .info-box {
+                text-align: left !important;
+            }
+            .brand-title {
+                font-size: 22px;
+            }
+            th, td {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
         }
         @media print {
             body { padding: 0; }
@@ -142,6 +173,7 @@
         </div>
     </div>
 
+    <div class="table-wrap">
     <table>
         <thead>
             <tr>
@@ -162,6 +194,7 @@
             @endforeach
         </tbody>
     </table>
+    </div>
 
     <table class="totals-table">
         <tr>

@@ -72,28 +72,28 @@ const formatMoney = (amount: number) => {
 
       <!-- Shareable Link Box -->
       <div class="app-card p-4 bg-[#F8F6FA] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div class="flex items-center gap-3 min-w-0">
+        <div class="flex items-start sm:items-center gap-3 min-w-0">
           <div class="w-8 h-8 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center shrink-0">
             <i class="fa-solid fa-link text-xs"></i>
           </div>
           <div class="min-w-0">
             <p class="text-xs font-bold text-[#242424]">Client Shareable Quotation Link</p>
-            <p class="text-[11px] text-[#6B6578] font-mono-num truncate">{{ publicUrl }}</p>
+            <p class="text-[11px] text-[#6B6578] font-mono-num break-all">{{ publicUrl }}</p>
           </div>
         </div>
-        <button type="button" @click="copyShareLink" class="btn-secondary text-xs shrink-0">
+        <button type="button" @click="copyShareLink" class="btn-secondary text-xs shrink-0 self-start sm:self-auto">
           <i :class="copied ? 'fa-solid fa-check text-emerald-600' : 'fa-regular fa-copy'"></i>
           {{ copied ? 'Copied!' : 'Copy Link' }}
         </button>
       </div>
 
       <!-- Quotation Document Card -->
-      <div class="app-card p-6 sm:p-8 space-y-6 border-t-4 border-t-[#280047]">
+      <div class="app-card p-4 sm:p-8 space-y-6 border-t-4 border-t-[#280047]">
         <!-- Document Header -->
         <div class="flex flex-col sm:flex-row justify-between gap-4 pb-6 border-b border-[#E5E0EC]">
           <div>
             <span class="text-[11px] font-bold uppercase tracking-wider text-[#F74D01]">Official Quotation</span>
-            <h1 class="text-2xl font-bold text-[#280047] font-mono-num mt-0.5">{{ quotation.quotation_number }}</h1>
+            <h1 class="text-xl sm:text-2xl font-bold text-[#280047] font-mono-num mt-0.5 break-all">{{ quotation.quotation_number }}</h1>
             <p class="text-xs text-[#6B6578] mt-1">
               Prepared by <strong class="text-[#242424]">{{ quotation.created_by?.name || 'Sales Team' }}</strong>
             </p>
@@ -118,20 +118,50 @@ const formatMoney = (amount: number) => {
             <p class="text-[11px] font-bold uppercase tracking-wider text-[#6B6578] mb-1">Prepared For</p>
             <p class="text-sm font-bold text-[#242424]">{{ quotation.customer_name }}</p>
             <p class="text-[#6B6578]">{{ quotation.company_name || 'Individual Client' }}</p>
-            <p class="font-mono-num text-[#242424] mt-1">{{ quotation.customer_phone }}</p>
+            <p class="font-mono-num text-[#242424] mt-1 break-all">{{ quotation.customer_phone }}</p>
           </div>
 
           <div class="p-4 rounded-md bg-[#FAFAFB] border border-[#E5E0EC] flex flex-col justify-center sm:text-right">
             <p class="text-[11px] font-bold uppercase tracking-wider text-[#6B6578] mb-1">Total Payable</p>
-            <p class="text-2xl font-bold text-[#280047] font-mono-num">
+            <p class="text-xl sm:text-2xl font-bold text-[#280047] font-mono-num break-all sm:break-normal">
               {{ formatMoney(Number(quotation.total_amount)) }}
             </p>
             <p class="text-[11px] text-[#6B6578]">Includes {{ quotation.tax_rate }}% VAT</p>
           </div>
         </div>
 
-        <!-- Items Table -->
-        <div class="overflow-x-auto border border-[#E5E0EC] rounded-md">
+        <!-- Items Mobile Stacked Cards (< 640px) — Zero Content Loss -->
+        <div class="sm:hidden border border-[#E5E0EC] rounded-md divide-y divide-[#E5E0EC] text-xs">
+          <div
+            v-for="(item, index) in quotation.items"
+            :key="`mob-item-${item.id || index}`"
+            class="p-3.5 space-y-2 bg-white"
+          >
+            <div class="flex items-start justify-between gap-2">
+              <span class="font-medium text-[#242424]">
+                <strong class="font-mono-num text-[#6B6578] mr-1">#{{ index + 1 }}</strong>
+                {{ item.description }}
+              </span>
+            </div>
+            <div class="grid grid-cols-2 min-[340px]:grid-cols-3 gap-2 pt-2 border-t border-[#F0EDF5]">
+              <div>
+                <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Qty</p>
+                <p class="font-mono-num text-[#242424] mt-0.5">{{ item.quantity }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Unit Price</p>
+                <p class="font-mono-num text-[#242424] mt-0.5">{{ formatMoney(Number(item.unit_price)) }}</p>
+              </div>
+              <div class="col-span-2 min-[340px]:col-span-1">
+                <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Line Total</p>
+                <p class="font-mono-num font-semibold text-[#280047] mt-0.5">{{ formatMoney(Number(item.total_price)) }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items Table (>= 640px) -->
+        <div class="hidden sm:block overflow-x-auto border border-[#E5E0EC] rounded-md">
           <table class="w-full text-left border-collapse text-xs">
             <thead>
               <tr class="bg-[#F8F6FA] border-b border-[#E5E0EC] text-[11px] font-semibold uppercase text-[#6B6578]">

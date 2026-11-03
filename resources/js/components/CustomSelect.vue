@@ -98,10 +98,12 @@ onBeforeUnmount(() => {
     <button
       type="button"
       :disabled="disabled"
+      :aria-expanded="isOpen"
+      aria-haspopup="listbox"
       @click="toggleDropdown"
       class="w-full flex items-center justify-between gap-2 bg-white border rounded-md text-left transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       :class="[
-        size === 'sm' ? 'px-2.5 py-1.5 text-xs min-h-[32px]' : 'px-3 py-2 text-xs min-h-[38px]',
+        size === 'sm' ? 'px-2.5 py-1.5 text-xs min-h-[34px]' : 'px-3 py-2 text-xs min-h-[38px]',
         isOpen
           ? 'border-[#280047] ring-2 ring-[#280047]/10'
           : 'border-[#D5CCE2] hover:border-[#280047]/60',
@@ -138,7 +140,8 @@ onBeforeUnmount(() => {
     <!-- Dropdown Panel -->
     <div
       v-if="isOpen"
-      class="absolute top-full mt-1 min-w-full w-max max-w-xs bg-white border border-[#D5CCE2] rounded-md shadow-lg z-50 overflow-hidden"
+      role="listbox"
+      class="absolute top-full mt-1 min-w-full w-full sm:w-max max-w-[min(20rem,calc(100vw-1.5rem))] bg-white border border-[#D5CCE2] rounded-md shadow-lg z-50 overflow-hidden"
       :class="align === 'right' ? 'right-0' : 'left-0'"
     >
       <!-- Optional Search Input -->

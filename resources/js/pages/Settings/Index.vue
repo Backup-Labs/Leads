@@ -54,7 +54,7 @@ const submit = () => {
         </div>
 
         <!-- Section Tabs -->
-        <div class="inline-flex bg-white p-1 rounded-md border border-[#E5E0EC]">
+        <div class="flex flex-wrap bg-white p-1 rounded-md border border-[#E5E0EC] gap-1 w-full sm:w-auto">
           <button
             v-for="tab in [
               { id: 1, label: '1. Company Profile' },
@@ -76,7 +76,7 @@ const submit = () => {
         </div>
       </div>
 
-      <form @submit.prevent="submit" class="app-card p-6 space-y-5">
+      <form @submit.prevent="submit" class="app-card p-4 sm:p-6 space-y-5">
         <!-- TAB 1: COMPANY PROFILE -->
         <div v-if="activeTab === 1" class="space-y-4">
           <div class="pb-3 border-b border-[#E5E0EC]">
@@ -169,9 +169,9 @@ const submit = () => {
           </div>
         </div>
 
-        <div class="flex items-center justify-between pt-4 border-t border-[#E5E0EC]">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-[#E5E0EC]">
           <span class="text-xs text-[#6B6578]">Changes apply across your entire workspace.</span>
-          <button type="submit" :disabled="form.processing" class="btn-primary">
+          <button type="submit" :disabled="form.processing" class="btn-primary self-start sm:self-auto">
             <i class="fa-solid fa-check text-xs"></i>
             {{ form.processing ? 'Saving...' : 'Save Settings' }}
           </button>

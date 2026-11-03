@@ -99,14 +99,14 @@ const priorityBadge: Record<string, string> = {
   <AppLayout>
     <div class="space-y-5">
       <!-- Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
           <h1 class="text-xl font-bold text-[#242424]">All Leads</h1>
           <p class="text-xs text-[#6B6578] mt-0.5">
             Showing <span class="font-semibold text-[#242424] font-mono-num">{{ leads.total }}</span> leads in your workspace
           </p>
         </div>
-        <div class="flex items-center gap-2.5">
+        <div class="flex flex-wrap items-center gap-2">
           <a href="/leads/export" class="btn-secondary text-xs">
             <i class="fa-solid fa-download text-[#280047]"></i> Export CSV
           </a>
@@ -122,7 +122,7 @@ const priorityBadge: Record<string, string> = {
       <!-- Filter Bar with Custom Dropdowns -->
       <div class="app-card p-3.5">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5">
-          <div class="lg:col-span-2 relative">
+          <div class="sm:col-span-2 relative">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6578] text-xs"></i>
             <input
               v-model="search"
@@ -139,7 +139,7 @@ const priorityBadge: Record<string, string> = {
           <CustomSelect v-model="assigned_to" :options="ownerFilterOptions" placeholder="All Owners" />
 
           <div class="flex items-center gap-2">
-            <div class="flex-1">
+            <div class="flex-1 min-w-0">
               <CustomSelect v-model="status" :options="statusFilterOptions" placeholder="All Statuses" align="right" />
             </div>
             <button
@@ -147,7 +147,8 @@ const priorityBadge: Record<string, string> = {
               type="button"
               @click="clearFilters"
               title="Reset filters"
-              class="h-[38px] px-2.5 rounded-md border border-[#D5CCE2] text-[#6B6578] hover:text-[#242424] hover:bg-[#F3F1F6] text-xs cursor-pointer"
+              aria-label="Reset filters"
+              class="h-[38px] px-2.5 rounded-md border border-[#D5CCE2] text-[#6B6578] hover:text-[#242424] hover:bg-[#F3F1F6] text-xs cursor-pointer shrink-0"
             >
               <i class="fa-solid fa-xmark"></i>
             </button>
@@ -155,118 +156,189 @@ const priorityBadge: Record<string, string> = {
         </div>
       </div>
 
-      <!-- Leads Table -->
+      <!-- Leads Responsive Container (Mobile Card List + Desktop Table) -->
       <div class="app-card overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-[#F8F6FA] border-b border-[#E5E0EC] text-[11px] font-semibold uppercase tracking-wider text-[#6B6578]">
-                <th class="px-4 py-3">Contact & Company</th>
-                <th class="px-4 py-3">Service & Source</th>
-                <th class="px-4 py-3">Stage</th>
-                <th class="px-4 py-3">Deal Value</th>
-                <th class="px-4 py-3">Priority</th>
-                <th class="px-4 py-3">Owner</th>
-                <th class="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-[#E5E0EC] text-xs">
-              <tr v-if="leads.data.length === 0">
-                <td colspan="7" class="px-6 py-12 text-center">
-                  <div class="w-10 h-10 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center mx-auto mb-2.5">
-                    <i class="fa-solid fa-address-book text-sm"></i>
+        <!-- Empty State -->
+        <div v-if="leads.data.length === 0" class="px-4 sm:px-6 py-12 text-center">
+          <div class="w-10 h-10 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center mx-auto mb-2.5">
+            <i class="fa-solid fa-address-book text-sm"></i>
+          </div>
+          <p class="font-semibold text-[#242424] text-sm">No matching leads found</p>
+          <p class="text-xs text-[#6B6578] mt-0.5 mb-4">Try clearing your filters or add a new lead to get started.</p>
+          <Link href="/leads/create" class="btn-primary text-xs">
+            <i class="fa-solid fa-plus"></i> Add New Lead
+          </Link>
+        </div>
+
+        <template v-else>
+          <!-- Mobile & Small Tablet Card Presentation (< 768px) — Preserves 100% of Table Columns -->
+          <div class="md:hidden divide-y divide-[#E5E0EC]">
+            <div
+              v-for="lead in leads.data"
+              :key="`card-${lead.id}`"
+              class="p-4 space-y-3 hover:bg-[#FAFAFB] transition-colors text-xs"
+            >
+              <div class="flex items-start justify-between gap-2.5">
+                <div class="flex items-start gap-2.5 min-w-0">
+                  <div class="w-8 h-8 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                    {{ lead.customer_name.charAt(0).toUpperCase() }}
                   </div>
-                  <p class="font-semibold text-[#242424] text-sm">No matching leads found</p>
-                  <p class="text-xs text-[#6B6578] mt-0.5 mb-4">Try clearing your filters or add a new lead to get started.</p>
-                  <Link href="/leads/create" class="btn-primary text-xs">
-                    <i class="fa-solid fa-plus"></i> Add New Lead
-                  </Link>
-                </td>
-              </tr>
-
-              <tr
-                v-for="lead in leads.data"
-                :key="lead.id"
-                class="hover:bg-[#FAFAFB] transition-colors"
-              >
-                <td class="px-4 py-3.5">
-                  <div class="flex items-start gap-2.5">
-                    <div class="w-8 h-8 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                      {{ lead.customer_name.charAt(0).toUpperCase() }}
-                    </div>
-                    <div class="min-w-0">
-                      <Link
-                        :href="`/leads/${lead.id}`"
-                        class="font-semibold text-[#242424] hover:text-[#F74D01] transition-colors truncate block"
-                      >
-                        {{ lead.customer_name }}
-                      </Link>
-                      <p class="text-[#6B6578] truncate">{{ lead.company_name || 'Individual Client' }}</p>
-                      <p class="text-[11px] text-[#6B6578] font-mono-num mt-0.5">{{ lead.phone || lead.email || '—' }}</p>
-                    </div>
-                  </div>
-                </td>
-
-                <td class="px-4 py-3.5">
-                  <p class="font-medium text-[#242424]">{{ lead.requested_service || 'General Inquiry' }}</p>
-                  <span class="inline-flex items-center gap-1 text-[11px] text-[#6B6578] mt-0.5">
-                    <i class="fa-solid fa-tag text-[9px] text-[#C3B6D3]"></i>
-                    {{ lead.source?.name || 'Direct' }}
-                  </span>
-                </td>
-
-                <td class="px-4 py-3.5">
-                  <span
-                    class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border bg-[#F3F1F6] text-[#280047] border-[#C3B6D3]"
-                  >
-                    {{ lead.stage?.name || 'Active' }}
-                  </span>
-                </td>
-
-                <td class="px-4 py-3.5 font-mono-num font-semibold text-[#242424]">
-                  {{ formatMoney(Number(lead.estimated_value), lead.currency) }}
-                </td>
-
-                <td class="px-4 py-3.5">
-                  <span class="capitalize flex items-center gap-1.5" :class="priorityBadge[lead.priority]">
-                    <i class="fa-solid fa-circle text-[6px]"></i>
-                    {{ lead.priority }}
-                  </span>
-                </td>
-
-                <td class="px-4 py-3.5 text-[#242424]">
-                  <span class="font-medium">{{ lead.assigned_to?.name || 'Unassigned' }}</span>
-                </td>
-
-                <td class="px-4 py-3.5 text-right">
-                  <div class="inline-flex items-center gap-1.5">
-                    <Link
-                      :href="`/quotations/create?lead_id=${lead.id}`"
-                      class="px-2 py-1 rounded border border-[#E5E0EC] text-[#280047] hover:bg-[#F3F1F6] text-[11px] font-medium"
-                      title="Create Quotation"
-                    >
-                      <i class="fa-solid fa-file-invoice"></i> Quote
-                    </Link>
+                  <div class="min-w-0">
                     <Link
                       :href="`/leads/${lead.id}`"
-                      class="px-2.5 py-1 rounded bg-[#280047] text-white hover:bg-[#3a0066] text-[11px] font-medium"
+                      class="font-bold text-[#242424] hover:text-[#F74D01] transition-colors block break-words text-sm"
                     >
-                      View
+                      {{ lead.customer_name }}
                     </Link>
+                    <p class="text-[#6B6578] break-words">{{ lead.company_name || 'Individual Client' }}</p>
+                    <p class="text-[11px] text-[#6B6578] font-mono-num mt-0.5 break-all">{{ lead.phone || lead.email || '—' }}</p>
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                </div>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border bg-[#F3F1F6] text-[#280047] border-[#C3B6D3] shrink-0">
+                  {{ lead.stage?.name || 'Active' }}
+                </span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2.5 pt-2.5 border-t border-[#F3F1F6]">
+                <div>
+                  <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Service & Source</p>
+                  <p class="font-medium text-[#242424] mt-0.5">{{ lead.requested_service || 'General Inquiry' }}</p>
+                  <p class="text-[11px] text-[#6B6578]">
+                    <i class="fa-solid fa-tag text-[9px] text-[#C3B6D3] mr-1"></i>{{ lead.source?.name || 'Direct' }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Deal Value</p>
+                  <p class="font-mono-num font-bold text-[#280047] text-sm mt-0.5">
+                    {{ formatMoney(Number(lead.estimated_value), lead.currency) }}
+                  </p>
+                  <p class="text-[11px] capitalize flex items-center gap-1 mt-0.5" :class="priorityBadge[lead.priority]">
+                    <i class="fa-solid fa-circle text-[6px]"></i> {{ lead.priority }} Priority
+                  </p>
+                </div>
+              </div>
+
+              <div class="pt-2.5 border-t border-[#F3F1F6] flex flex-wrap items-center justify-between gap-2">
+                <span class="text-[11px] text-[#6B6578]">
+                  Owner: <strong class="text-[#242424]">{{ lead.assigned_to?.name || 'Unassigned' }}</strong>
+                </span>
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <Link
+                    :href="`/quotations/create?lead_id=${lead.id}`"
+                    class="px-2.5 py-1.5 rounded border border-[#E5E0EC] text-[#280047] hover:bg-[#F3F1F6] text-[11px] font-semibold"
+                  >
+                    <i class="fa-solid fa-file-invoice mr-1"></i> Quote
+                  </Link>
+                  <Link
+                    :href="`/leads/${lead.id}`"
+                    class="px-3 py-1.5 rounded bg-[#280047] text-white hover:bg-[#3a0066] text-[11px] font-semibold"
+                  >
+                    View Lead
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tablet & Desktop Full Data Table (>= 768px) -->
+          <div class="hidden md:block overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-[#F8F6FA] border-b border-[#E5E0EC] text-[11px] font-semibold uppercase tracking-wider text-[#6B6578]">
+                  <th class="px-4 py-3">Contact & Company</th>
+                  <th class="px-4 py-3">Service & Source</th>
+                  <th class="px-4 py-3">Stage</th>
+                  <th class="px-4 py-3">Deal Value</th>
+                  <th class="px-4 py-3">Priority</th>
+                  <th class="px-4 py-3">Owner</th>
+                  <th class="px-4 py-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#E5E0EC] text-xs">
+                <tr
+                  v-for="lead in leads.data"
+                  :key="lead.id"
+                  class="hover:bg-[#FAFAFB] transition-colors"
+                >
+                  <td class="px-4 py-3.5">
+                    <div class="flex items-start gap-2.5">
+                      <div class="w-8 h-8 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                        {{ lead.customer_name.charAt(0).toUpperCase() }}
+                      </div>
+                      <div class="min-w-0">
+                        <Link
+                          :href="`/leads/${lead.id}`"
+                          class="font-semibold text-[#242424] hover:text-[#F74D01] transition-colors block"
+                        >
+                          {{ lead.customer_name }}
+                        </Link>
+                        <p class="text-[#6B6578]">{{ lead.company_name || 'Individual Client' }}</p>
+                        <p class="text-[11px] text-[#6B6578] font-mono-num mt-0.5">{{ lead.phone || lead.email || '—' }}</p>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="px-4 py-3.5">
+                    <p class="font-medium text-[#242424]">{{ lead.requested_service || 'General Inquiry' }}</p>
+                    <span class="inline-flex items-center gap-1 text-[11px] text-[#6B6578] mt-0.5">
+                      <i class="fa-solid fa-tag text-[9px] text-[#C3B6D3]"></i>
+                      {{ lead.source?.name || 'Direct' }}
+                    </span>
+                  </td>
+
+                  <td class="px-4 py-3.5">
+                    <span
+                      class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border bg-[#F3F1F6] text-[#280047] border-[#C3B6D3]"
+                    >
+                      {{ lead.stage?.name || 'Active' }}
+                    </span>
+                  </td>
+
+                  <td class="px-4 py-3.5 font-mono-num font-semibold text-[#242424]">
+                    {{ formatMoney(Number(lead.estimated_value), lead.currency) }}
+                  </td>
+
+                  <td class="px-4 py-3.5">
+                    <span class="capitalize flex items-center gap-1.5" :class="priorityBadge[lead.priority]">
+                      <i class="fa-solid fa-circle text-[6px]"></i>
+                      {{ lead.priority }}
+                    </span>
+                  </td>
+
+                  <td class="px-4 py-3.5 text-[#242424]">
+                    <span class="font-medium">{{ lead.assigned_to?.name || 'Unassigned' }}</span>
+                  </td>
+
+                  <td class="px-4 py-3.5 text-right">
+                    <div class="inline-flex items-center gap-1.5">
+                      <Link
+                        :href="`/quotations/create?lead_id=${lead.id}`"
+                        class="px-2 py-1 rounded border border-[#E5E0EC] text-[#280047] hover:bg-[#F3F1F6] text-[11px] font-medium"
+                        title="Create Quotation"
+                      >
+                        <i class="fa-solid fa-file-invoice"></i> Quote
+                      </Link>
+                      <Link
+                        :href="`/leads/${lead.id}`"
+                        class="px-2.5 py-1 rounded bg-[#280047] text-white hover:bg-[#3a0066] text-[11px] font-medium"
+                      >
+                        View
+                      </Link>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </template>
 
         <!-- Pagination -->
         <div
           v-if="leads.last_page > 1"
-          class="px-4 py-3 border-t border-[#E5E0EC] flex items-center justify-between text-xs text-[#6B6578] bg-[#FAFAFB]"
+          class="px-4 py-3 border-t border-[#E5E0EC] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#6B6578] bg-[#FAFAFB]"
         >
           <span>Showing page {{ leads.current_page }} of {{ leads.last_page }} ({{ leads.total }} total)</span>
-          <div class="flex gap-1">
+          <div class="flex flex-wrap justify-center gap-1">
             <Link
               v-for="link in leads.links"
               :key="link.label"

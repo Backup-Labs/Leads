@@ -43,7 +43,7 @@ const stageSum = (stage: PipelineStage) => {
           <h1 class="text-xl font-bold text-[#242424]">Sales Pipeline</h1>
           <p class="text-xs text-[#6B6578] mt-0.5">Track leads across stages and move deals forward.</p>
         </div>
-        <div class="flex items-center gap-2.5">
+        <div class="flex flex-wrap items-center gap-2.5">
           <Link href="/leads" class="btn-secondary text-xs">
             <i class="fa-solid fa-list text-[#280047]"></i> Table View
           </Link>
@@ -54,11 +54,11 @@ const stageSum = (stage: PipelineStage) => {
       </div>
 
       <!-- Horizontal Pipeline Board -->
-      <div class="flex gap-4 overflow-x-auto pb-4">
+      <div class="flex gap-3 sm:gap-4 overflow-x-auto pb-4">
         <div
           v-for="stage in stages"
           :key="stage.id"
-          class="w-72 shrink-0 flex flex-col bg-[#F4F2F7] rounded-lg border border-[#E5E0EC]"
+          class="w-[min(18rem,calc(100vw-2.5rem))] sm:w-72 shrink-0 flex flex-col bg-[#F4F2F7] rounded-lg border border-[#E5E0EC]"
         >
           <!-- Column Header -->
           <div class="p-3.5 border-b border-[#E5E0EC] bg-white rounded-t-lg">
@@ -106,13 +106,13 @@ const stageSum = (stage: PipelineStage) => {
                 </p>
               </div>
 
-              <div class="pt-2.5 border-t border-[#E5E0EC] flex items-center justify-between gap-2">
+              <div class="pt-2.5 border-t border-[#E5E0EC] flex flex-wrap items-center justify-between gap-2">
                 <span class="text-[11px] text-[#6B6578] truncate">
                   <i class="fa-regular fa-user text-[10px] mr-1"></i>
                   {{ lead.assigned_to?.name?.split(' ')[0] || 'Unassigned' }}
                 </span>
 
-                <div class="w-36">
+                <div class="w-full min-[320px]:w-36">
                   <CustomSelect
                     :model-value="stage.id"
                     :options="stageOptions"

@@ -126,13 +126,13 @@ const selectedStageName = computed(() => {
         </div>
 
         <!-- Step Indicator -->
-        <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-lg border border-[#E5E0EC]">
+        <div class="grid grid-cols-1 min-[380px]:grid-cols-3 sm:flex items-center gap-1.5 bg-white p-1.5 rounded-lg border border-[#E5E0EC] w-full sm:w-auto">
           <button
             v-for="step in steps"
             :key="step.number"
             type="button"
             @click="step.number < currentStep ? (currentStep = step.number) : null"
-            class="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
+            class="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
             :class="
               currentStep === step.number
                 ? 'bg-[#280047] text-white'
@@ -142,7 +142,7 @@ const selectedStageName = computed(() => {
             "
           >
             <span
-              class="w-5 h-5 rounded flex items-center justify-center text-[11px] font-bold"
+              class="w-5 h-5 rounded flex items-center justify-center text-[11px] font-bold shrink-0"
               :class="
                 currentStep === step.number
                   ? 'bg-[#F74D01] text-white'
@@ -154,7 +154,7 @@ const selectedStageName = computed(() => {
               <i v-if="currentStep > step.number" class="fa-solid fa-check text-[9px]"></i>
               <span v-else>{{ step.number }}</span>
             </span>
-            <span class="hidden sm:inline">{{ step.title }}</span>
+            <span class="truncate">{{ step.title }}</span>
           </button>
         </div>
       </div>
@@ -162,7 +162,7 @@ const selectedStageName = computed(() => {
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Form Card -->
         <div class="lg:col-span-2">
-          <form @submit.prevent="submit" class="app-card p-6">
+          <form @submit.prevent="submit" class="app-card p-4 sm:p-6">
             <!-- STEP 1: CONTACT DETAILS -->
             <div v-if="currentStep === 1" class="space-y-5">
               <div class="pb-4 border-b border-[#E5E0EC] flex items-center justify-between">
@@ -236,7 +236,7 @@ const selectedStageName = computed(() => {
                 </div>
               </div>
 
-              <div class="flex items-center justify-between pt-4 border-t border-[#E5E0EC]">
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-4 border-t border-[#E5E0EC]">
                 <Link href="/leads" class="btn-secondary">Cancel</Link>
                 <button
                   type="button"
@@ -251,13 +251,13 @@ const selectedStageName = computed(() => {
 
             <!-- STEP 2: SERVICE & VALUE -->
             <div v-if="currentStep === 2" class="space-y-5">
-              <div class="pb-4 border-b border-[#E5E0EC] flex items-center justify-between">
+              <div class="pb-4 border-b border-[#E5E0EC] flex items-center justify-between gap-3">
                 <div>
                   <span class="text-[11px] font-semibold uppercase tracking-wider text-[#F74D01]">Step 2 of 3</span>
                   <h2 class="text-base font-bold text-[#242424] mt-0.5">Service Interest & Deal Value</h2>
                   <p class="text-xs text-[#6B6578]">Select how this lead found you, initial stage, and potential revenue.</p>
                 </div>
-                <div class="w-9 h-9 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center">
+                <div class="w-9 h-9 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center shrink-0">
                   <i class="fa-solid fa-briefcase text-sm"></i>
                 </div>
               </div>
@@ -320,7 +320,7 @@ const selectedStageName = computed(() => {
                 </div>
               </div>
 
-              <div class="flex items-center justify-between pt-4 border-t border-[#E5E0EC]">
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-4 border-t border-[#E5E0EC]">
                 <button type="button" @click="prevStep" class="btn-secondary">
                   <i class="fa-solid fa-arrow-left text-xs"></i> Back
                 </button>
@@ -332,13 +332,13 @@ const selectedStageName = computed(() => {
 
             <!-- STEP 3: ASSIGNMENT & NOTES -->
             <div v-if="currentStep === 3" class="space-y-5">
-              <div class="pb-4 border-b border-[#E5E0EC] flex items-center justify-between">
+              <div class="pb-4 border-b border-[#E5E0EC] flex items-center justify-between gap-3">
                 <div>
                   <span class="text-[11px] font-semibold uppercase tracking-wider text-[#F74D01]">Step 3 of 3</span>
                   <h2 class="text-base font-bold text-[#242424] mt-0.5">Priority, Owner & Notes</h2>
                   <p class="text-xs text-[#6B6578]">Set urgency level, assign a team member, and add initial context.</p>
                 </div>
-                <div class="w-9 h-9 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center">
+                <div class="w-9 h-9 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center shrink-0">
                   <i class="fa-solid fa-user-check text-sm"></i>
                 </div>
               </div>
@@ -346,7 +346,7 @@ const selectedStageName = computed(() => {
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-xs font-medium text-[#242424] mb-1.5">Priority Level</label>
-                  <div class="grid grid-cols-2 gap-2">
+                  <div class="grid grid-cols-1 min-[320px]:grid-cols-2 gap-2">
                     <button
                       v-for="p in priorities"
                       :key="p.value"
@@ -385,7 +385,7 @@ const selectedStageName = computed(() => {
                 ></textarea>
               </div>
 
-              <div class="flex items-center justify-between pt-4 border-t border-[#E5E0EC]">
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-4 border-t border-[#E5E0EC]">
                 <button type="button" @click="prevStep" class="btn-secondary">
                   <i class="fa-solid fa-arrow-left text-xs"></i> Back
                 </button>

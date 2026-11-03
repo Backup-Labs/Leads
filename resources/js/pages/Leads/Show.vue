@@ -151,14 +151,14 @@ const formatMoney = (amount: number) => {
             </div>
           </div>
 
-          <div class="flex flex-wrap items-center gap-6">
+          <div class="flex flex-wrap items-center gap-4 sm:gap-6">
             <div>
               <p class="text-[11px] uppercase tracking-wider text-[#6B6578] font-medium">Estimated Value</p>
-              <p class="text-xl font-bold text-[#280047] font-mono-num">
+              <p class="text-lg sm:text-xl font-bold text-[#280047] font-mono-num break-all sm:break-normal">
                 {{ formatMoney(Number(lead.estimated_value)) }}
               </p>
             </div>
-            <div class="pl-6 border-l border-[#E5E0EC]">
+            <div class="sm:pl-6 sm:border-l border-[#E5E0EC]">
               <p class="text-[11px] uppercase tracking-wider text-[#6B6578] font-medium">Assigned Owner</p>
               <p class="text-sm font-semibold text-[#242424] mt-0.5">
                 {{ lead.assigned_to?.name || 'Unassigned' }}
@@ -172,7 +172,7 @@ const formatMoney = (amount: number) => {
           <p class="text-[11px] font-semibold uppercase tracking-wider text-[#6B6578] mb-2">
             Pipeline Stage (Click to update)
           </p>
-          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-1.5">
+          <div class="grid grid-cols-1 min-[340px]:grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-1.5">
             <button
               v-for="s in stages"
               :key="s.id"
@@ -200,24 +200,24 @@ const formatMoney = (amount: number) => {
         <!-- Left Column: Contact Info, Follow-ups, Quotations -->
         <div class="space-y-5">
           <!-- Contact Card -->
-          <div class="app-card p-5">
+          <div class="app-card p-4 sm:p-5">
             <h2 class="text-xs font-bold uppercase tracking-wider text-[#280047] pb-3 mb-3 border-b border-[#E5E0EC]">
               Contact Details
             </h2>
             <dl class="space-y-3 text-xs">
-              <div class="flex items-center justify-between">
+              <div class="flex flex-col min-[360px]:flex-row min-[360px]:items-center justify-between gap-0.5">
                 <dt class="text-[#6B6578] flex items-center gap-2">
                   <i class="fa-solid fa-phone w-4 text-center text-[#280047]"></i> Phone
                 </dt>
-                <dd class="font-mono-num font-semibold text-[#242424]">{{ lead.phone || 'Not provided' }}</dd>
+                <dd class="font-mono-num font-semibold text-[#242424] break-all">{{ lead.phone || 'Not provided' }}</dd>
               </div>
-              <div class="flex items-center justify-between">
+              <div class="flex flex-col min-[360px]:flex-row min-[360px]:items-center justify-between gap-0.5">
                 <dt class="text-[#6B6578] flex items-center gap-2">
                   <i class="fa-regular fa-envelope w-4 text-center text-[#280047]"></i> Email
                 </dt>
-                <dd class="font-medium text-[#242424]">{{ lead.email || 'Not provided' }}</dd>
+                <dd class="font-medium text-[#242424] break-all">{{ lead.email || 'Not provided' }}</dd>
               </div>
-              <div class="flex items-center justify-between">
+              <div class="flex flex-col min-[360px]:flex-row min-[360px]:items-center justify-between gap-0.5">
                 <dt class="text-[#6B6578] flex items-center gap-2">
                   <i class="fa-solid fa-bullhorn w-4 text-center text-[#280047]"></i> Lead Source
                 </dt>
@@ -360,9 +360,9 @@ const formatMoney = (amount: number) => {
       <!-- Schedule Follow-up Modal (2 Steps with Custom DatePicker & CustomSelect) -->
       <div
         v-if="showFollowUpModal"
-        class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+        class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4"
       >
-        <div class="app-card w-full max-w-md p-6">
+        <div class="app-card w-full max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#E5E0EC]">
             <div>
               <span class="text-[11px] font-semibold uppercase tracking-wider text-[#F74D01]">
@@ -401,7 +401,7 @@ const formatMoney = (amount: number) => {
                 />
               </div>
 
-              <div class="flex justify-end gap-2 pt-3 border-t border-[#E5E0EC]">
+              <div class="flex flex-wrap justify-end gap-2 pt-3 border-t border-[#E5E0EC]">
                 <button type="button" @click="showFollowUpModal = false" class="btn-secondary">Cancel</button>
                 <button type="button" @click="followUpStep = 2" class="btn-indigo">
                   Next <i class="fa-solid fa-arrow-right text-xs"></i>
@@ -429,7 +429,7 @@ const formatMoney = (amount: number) => {
                 ></textarea>
               </div>
 
-              <div class="flex justify-between gap-2 pt-3 border-t border-[#E5E0EC]">
+              <div class="flex flex-wrap justify-between gap-2 pt-3 border-t border-[#E5E0EC]">
                 <button type="button" @click="followUpStep = 1" class="btn-secondary">Back</button>
                 <button type="submit" :disabled="followUpForm.processing" class="btn-primary">
                   Save Follow-up
@@ -443,9 +443,9 @@ const formatMoney = (amount: number) => {
       <!-- Add Note Modal -->
       <div
         v-if="showNoteModal"
-        class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+        class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4"
       >
-        <div class="app-card w-full max-w-md p-6">
+        <div class="app-card w-full max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <h3 class="text-base font-bold text-[#242424] mb-1">Add Activity Note</h3>
           <p class="text-xs text-[#6B6578] mb-4">Record a call summary, meeting update, or internal note.</p>
           <form @submit.prevent="submitNote" class="space-y-4">
@@ -458,7 +458,7 @@ const formatMoney = (amount: number) => {
                 class="app-input"
               ></textarea>
             </div>
-            <div class="flex justify-end gap-2">
+            <div class="flex flex-wrap justify-end gap-2">
               <button type="button" @click="showNoteModal = false" class="btn-secondary">Cancel</button>
               <button type="submit" :disabled="noteForm.processing" class="btn-primary">Save Note</button>
             </div>
@@ -469,9 +469,9 @@ const formatMoney = (amount: number) => {
       <!-- Mark as Lost Modal -->
       <div
         v-if="showLostModal"
-        class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+        class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4"
       >
-        <div class="app-card w-full max-w-md p-6">
+        <div class="app-card w-full max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <h3 class="text-base font-bold text-[#242424] mb-1">Mark Deal as Lost</h3>
           <p class="text-xs text-[#6B6578] mb-4">Please record why this opportunity did not close.</p>
           <form @submit.prevent="submitLostStage" class="space-y-4">
@@ -485,7 +485,7 @@ const formatMoney = (amount: number) => {
                 class="app-input"
               ></textarea>
             </div>
-            <div class="flex justify-end gap-2">
+            <div class="flex flex-wrap justify-end gap-2">
               <button type="button" @click="showLostModal = false" class="btn-secondary">Cancel</button>
               <button type="submit" class="btn-primary">Confirm Lost</button>
             </div>

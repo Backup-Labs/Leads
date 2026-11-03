@@ -40,7 +40,7 @@ const submit = () => {
 <template>
     <AuthLayout>
         <div class="mb-5">
-            <div class="flex items-center justify-between mb-1">
+            <div class="flex flex-wrap items-center justify-between gap-1 mb-1">
                 <h2 class="text-xl font-bold text-[#280047]">Create Account</h2>
                 <span class="text-xs font-semibold text-[#F74D01]">Step {{ currentStep }} of 2</span>
             </div>
@@ -73,7 +73,7 @@ const submit = () => {
 
                 <div>
                     <label class="block text-xs font-semibold text-[#242424] mb-1.5">Default Currency</label>
-                    <div class="grid grid-cols-3 gap-2">
+                    <div class="grid grid-cols-2 min-[380px]:grid-cols-3 gap-2">
                         <button
                             v-for="curr in currencies"
                             :key="curr.code"
@@ -85,7 +85,7 @@ const submit = () => {
                                 : 'border-[#D5CCE2] bg-white text-[#242424] hover:border-[#280047]'"
                         >
                             <p class="text-xs font-bold">{{ curr.code }}</p>
-                            <p class="text-[10px] opacity-80 truncate">{{ curr.label }}</p>
+                            <p class="text-[10px] opacity-80 leading-tight mt-0.5">{{ curr.label }}</p>
                         </button>
                     </div>
                 </div>

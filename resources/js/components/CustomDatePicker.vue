@@ -205,12 +205,20 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 };
 
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    isOpen.value = false;
+  }
+};
+
 onMounted(() => {
   document.addEventListener('mousedown', handleClickOutside);
+  document.addEventListener('keydown', handleKeydown);
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener('mousedown', handleClickOutside);
+  document.removeEventListener('keydown', handleKeydown);
 });
 </script>
 
@@ -219,6 +227,7 @@ onBeforeUnmount(() => {
     <!-- Trigger Button -->
     <button
       type="button"
+      :aria-expanded="isOpen"
       @click="isOpen = !isOpen"
       class="w-full min-h-[38px] px-3 py-2 bg-white border rounded-md flex items-center justify-between gap-2 text-xs transition-all cursor-pointer"
       :class="
@@ -240,10 +249,10 @@ onBeforeUnmount(() => {
     <!-- Custom Calendar Popover -->
     <div
       v-if="isOpen"
-      class="absolute left-0 top-full mt-1.5 w-72 bg-white border border-[#D5CCE2] rounded-lg shadow-xl z-50 p-3.5 space-y-3"
+      class="absolute left-0 top-full mt-1.5 w-full sm:w-72 max-w-[min(18rem,calc(100vw-1.5rem))] bg-white border border-[#D5CCE2] rounded-lg shadow-xl z-50 p-3 sm:p-3.5 space-y-3"
     >
       <!-- Quick Presets -->
-      <div class="grid grid-cols-4 gap-1 pb-2.5 border-b border-[#E5E0EC]">
+      <div class="grid grid-cols-2 min-[320px]:grid-cols-4 gap-1 pb-2.5 border-b border-[#E5E0EC]">
         <button
           v-for="preset in [
             { label: 'Today', days: 0 },
@@ -315,7 +324,7 @@ onBeforeUnmount(() => {
 
       <!-- Custom Time Selector (for datetime mode) -->
       <div v-if="mode === 'datetime'" class="pt-3 border-t border-[#E5E0EC] space-y-2.5">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-wrap items-center justify-between gap-1.5">
           <span class="text-[11px] font-semibold text-[#280047] flex items-center gap-1.5">
             <i class="fa-regular fa-clock text-[#F74D01]"></i> Time
           </span>
@@ -368,7 +377,7 @@ onBeforeUnmount(() => {
         </div>
 
         <!-- Quick Time Presets -->
-        <div class="grid grid-cols-4 gap-1">
+        <div class="grid grid-cols-2 min-[320px]:grid-cols-4 gap-1">
           <button
             v-for="slot in [
               { label: '09:00', h: 9, m: 0 },

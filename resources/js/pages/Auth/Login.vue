@@ -80,30 +80,30 @@ const submit = () => {
         <!-- Demo Accounts -->
         <div class="mt-6 pt-5 border-t border-gray-100">
             <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Quick Demo Login</p>
-            <div class="grid grid-cols-3 gap-2">
+            <div class="grid grid-cols-1 min-[380px]:grid-cols-3 gap-2">
                 <button
                     type="button"
                     @click="fillDemo('admin@leads.test')"
-                    class="p-2 rounded-md border border-[#E5E0EC] hover:border-[#280047] text-left transition-colors cursor-pointer"
+                    class="p-2.5 rounded-md border border-[#E5E0EC] hover:border-[#280047] text-left transition-colors cursor-pointer"
                 >
                     <p class="text-xs font-bold text-[#280047]">Owner</p>
-                    <p class="text-[10px] text-gray-500 truncate">admin@leads.test</p>
+                    <p class="text-[10px] text-gray-500 break-all">admin@leads.test</p>
                 </button>
                 <button
                     type="button"
                     @click="fillDemo('diane@leads.test')"
-                    class="p-2 rounded-md border border-[#E5E0EC] hover:border-[#280047] text-left transition-colors cursor-pointer"
+                    class="p-2.5 rounded-md border border-[#E5E0EC] hover:border-[#280047] text-left transition-colors cursor-pointer"
                 >
                     <p class="text-xs font-bold text-[#280047]">Manager</p>
-                    <p class="text-[10px] text-gray-500 truncate">diane@leads.test</p>
+                    <p class="text-[10px] text-gray-500 break-all">diane@leads.test</p>
                 </button>
                 <button
                     type="button"
                     @click="fillDemo('eric@leads.test')"
-                    class="p-2 rounded-md border border-[#E5E0EC] hover:border-[#280047] text-left transition-colors cursor-pointer"
+                    class="p-2.5 rounded-md border border-[#E5E0EC] hover:border-[#280047] text-left transition-colors cursor-pointer"
                 >
                     <p class="text-xs font-bold text-[#280047]">Sales Rep</p>
-                    <p class="text-[10px] text-gray-500 truncate">eric@leads.test</p>
+                    <p class="text-[10px] text-gray-500 break-all">eric@leads.test</p>
                 </button>
             </div>
         </div>

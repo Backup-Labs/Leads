@@ -56,20 +56,49 @@ import { Link } from '@inertiajs/vue3';
     </div>
 
     <!-- Right Form Area -->
-    <div class="flex-1 flex flex-col justify-center py-10 px-6 sm:px-12">
-      <div class="sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="lg:hidden flex items-center justify-between mb-6">
+    <div class="flex-1 flex flex-col justify-center py-6 sm:py-10 px-3 sm:px-6 lg:px-12">
+      <div class="mx-auto w-full max-w-md space-y-5">
+        <!-- Mobile / Tablet Header -->
+        <div class="lg:hidden flex items-center justify-between gap-2">
           <Link href="/" class="flex items-center gap-2.5">
             <div class="w-8 h-8 rounded-md bg-[#280047] flex items-center justify-center text-white font-bold">L</div>
             <span class="text-xl font-bold text-[#280047]">Leads</span>
           </Link>
-          <Link href="/" class="text-xs font-semibold text-[#280047] hover:text-[#F74D01]">
-            <i class="fa-solid fa-arrow-left text-[10px]"></i> Home
+          <Link href="/" class="text-xs font-semibold text-[#280047] hover:text-[#F74D01] flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[10px]"></i> Back to Website
           </Link>
         </div>
 
-        <div class="app-card p-7 sm:p-8">
+        <div class="app-card p-4 sm:p-7 md:p-8">
           <slot />
+        </div>
+
+        <!-- Mobile / Tablet Brand Context Banner (Preserves Left Panel Content on < 1024px) -->
+        <div class="lg:hidden rounded-lg bg-[#280047] text-white p-4 sm:p-5 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="inline-block text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-[#FDFEBA] text-[#280047]">
+              Lead Management & Sales Platform
+            </span>
+            <span class="text-[10px] text-[#C3B6D3]">Secure Multi-Company Workspace</span>
+          </div>
+          <p class="text-sm font-bold text-white leading-snug">
+            Turn Every Customer Inquiry Into a Paying Client.
+          </p>
+          <p class="text-xs text-[#C3B6D3] leading-relaxed">
+            Organize inquiries from WhatsApp, Instagram, phone calls, and your website in one place. Track quotations, schedule follow-ups, and never lose a deal.
+          </p>
+          <div class="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2.5 pt-1">
+            <div class="p-3 rounded-md bg-white/6 border border-white/10">
+              <i class="fa-solid fa-table-columns text-[#FDFEBA] text-xs mb-1 block"></i>
+              <p class="text-xs font-semibold text-white">Clear Sales Pipeline</p>
+              <p class="text-[11px] text-[#C3B6D3] mt-0.5">Track every inquiry from start to close.</p>
+            </div>
+            <div class="p-3 rounded-md bg-white/6 border border-white/10">
+              <i class="fa-solid fa-file-invoice-dollar text-[#FDFEBA] text-xs mb-1 block"></i>
+              <p class="text-xs font-semibold text-white">Fast Quotations</p>
+              <p class="text-[11px] text-[#C3B6D3] mt-0.5">Send professional quotes and track replies.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

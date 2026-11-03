@@ -21,26 +21,26 @@ const formatMoney = (amount: number) => {
 
 <template>
   <Head :title="`Quotation ${quotation.quotation_number}`" />
-  <div class="min-h-screen bg-[#FAFAFB] text-[#242424] py-10 px-4">
+  <div class="min-h-screen bg-[#FAFAFB] text-[#242424] py-6 sm:py-10 px-3 sm:px-4">
     <div class="max-w-3xl mx-auto space-y-5">
       <!-- Top Action Banner -->
       <div class="app-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-9 h-9 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold shrink-0">
             <i class="fa-solid fa-file-invoice text-sm"></i>
           </div>
-          <div>
+          <div class="min-w-0">
             <p class="text-xs font-bold text-[#242424]">
               {{ quotation.organization?.name || 'Official Quotation' }}
             </p>
-            <p class="text-[11px] text-[#6B6578] font-mono-num">
+            <p class="text-[11px] text-[#6B6578] font-mono-num break-all sm:break-normal">
               Reference: {{ quotation.quotation_number }} &bull; Status:
               <strong class="uppercase text-[#280047]">{{ quotation.status }}</strong>
             </p>
           </div>
         </div>
 
-        <div v-if="quotation.status === 'sent' || quotation.status === 'draft'" class="flex items-center gap-2">
+        <div v-if="quotation.status === 'sent' || quotation.status === 'draft'" class="flex flex-wrap items-center gap-2">
           <button type="button" @click="respond('reject')" class="btn-secondary text-xs">
             Decline
           </button>
@@ -48,19 +48,19 @@ const formatMoney = (amount: number) => {
             <i class="fa-solid fa-check"></i> Accept Quotation
           </button>
         </div>
-        <div v-else class="px-3 py-1.5 rounded-md bg-[#FDFEBA] text-[#280047] text-xs font-bold uppercase border border-[#C3B6D3]">
+        <div v-else class="px-3 py-1.5 rounded-md bg-[#FDFEBA] text-[#280047] text-xs font-bold uppercase border border-[#C3B6D3] self-start sm:self-auto">
           {{ quotation.status }}
         </div>
       </div>
 
       <!-- Quotation Document -->
-      <div class="app-card p-6 sm:p-8 space-y-6 border-t-4 border-t-[#280047]">
+      <div class="app-card p-4 sm:p-8 space-y-6 border-t-4 border-t-[#280047]">
         <div class="flex flex-col sm:flex-row justify-between gap-4 pb-6 border-b border-[#E5E0EC]">
           <div>
-            <h1 class="text-xl font-bold text-[#280047]">
+            <h1 class="text-lg sm:text-xl font-bold text-[#280047]">
               {{ quotation.organization?.name || 'Quotation' }}
             </h1>
-            <p v-if="quotation.organization?.billing_email" class="text-xs text-[#6B6578]">
+            <p v-if="quotation.organization?.billing_email" class="text-xs text-[#6B6578] break-all">
               {{ quotation.organization.billing_email }}
             </p>
             <p v-if="quotation.organization?.phone" class="text-xs text-[#6B6578] font-mono-num">
@@ -68,7 +68,7 @@ const formatMoney = (amount: number) => {
             </p>
           </div>
           <div class="sm:text-right">
-            <p class="text-lg font-bold font-mono-num text-[#242424]">{{ quotation.quotation_number }}</p>
+            <p class="text-base sm:text-lg font-bold font-mono-num text-[#242424] break-all">{{ quotation.quotation_number }}</p>
             <p v-if="quotation.created_at" class="text-xs text-[#6B6578] font-mono-num">
               Date: {{ new Date(quotation.created_at).toLocaleDateString() }}
             </p>
@@ -84,18 +84,43 @@ const formatMoney = (amount: number) => {
             <p class="text-[11px] font-bold uppercase tracking-wider text-[#6B6578] mb-1">Prepared For</p>
             <p class="text-sm font-bold text-[#242424]">{{ quotation.customer_name }}</p>
             <p class="text-[#6B6578]">{{ quotation.company_name || '' }}</p>
-            <p class="font-mono-num text-[#242424] mt-1">{{ quotation.customer_phone }}</p>
+            <p class="font-mono-num text-[#242424] mt-1 break-all">{{ quotation.customer_phone }}</p>
           </div>
           <div class="p-4 rounded-md bg-[#FAFAFB] border border-[#E5E0EC] flex flex-col justify-center sm:text-right">
             <p class="text-[11px] font-bold uppercase tracking-wider text-[#6B6578] mb-1">Total Amount</p>
-            <p class="text-2xl font-bold text-[#280047] font-mono-num">
+            <p class="text-xl sm:text-2xl font-bold text-[#280047] font-mono-num break-all sm:break-normal">
               {{ formatMoney(Number(quotation.total_amount)) }}
             </p>
           </div>
         </div>
 
-        <!-- Line Items -->
-        <div class="overflow-x-auto border border-[#E5E0EC] rounded-md">
+        <!-- Line Items Mobile Cards (< 640px) — Zero Content Loss -->
+        <div class="sm:hidden border border-[#E5E0EC] rounded-md divide-y divide-[#E5E0EC] text-xs">
+          <div
+            v-for="(item, i) in quotation.items"
+            :key="`pub-mob-item-${i}`"
+            class="p-3.5 space-y-2 bg-white"
+          >
+            <p class="font-medium text-[#242424]">{{ item.description }}</p>
+            <div class="grid grid-cols-2 min-[340px]:grid-cols-3 gap-2 pt-2 border-t border-[#F0EDF5]">
+              <div>
+                <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Qty</p>
+                <p class="font-mono-num text-[#242424] mt-0.5">{{ item.quantity }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Unit Price</p>
+                <p class="font-mono-num text-[#242424] mt-0.5">{{ formatMoney(Number(item.unit_price)) }}</p>
+              </div>
+              <div class="col-span-2 min-[340px]:col-span-1">
+                <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Total</p>
+                <p class="font-mono-num font-semibold text-[#280047] mt-0.5">{{ formatMoney(Number(item.total_price)) }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Line Items Table (>= 640px) -->
+        <div class="hidden sm:block overflow-x-auto border border-[#E5E0EC] rounded-md">
           <table class="w-full text-left border-collapse text-xs">
             <thead>
               <tr class="bg-[#F8F6FA] border-b border-[#E5E0EC] text-[11px] font-semibold uppercase text-[#6B6578]">

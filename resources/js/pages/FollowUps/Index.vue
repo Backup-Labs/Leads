@@ -53,7 +53,7 @@ const submitComplete = () => {
       </div>
 
       <!-- Status Tabs -->
-      <div class="flex items-center gap-2 border-b border-[#E5E0EC] pb-3">
+      <div class="flex flex-wrap items-center gap-2 border-b border-[#E5E0EC] pb-3">
         <button
           type="button"
           @click="setFilter('upcoming')"
@@ -99,7 +99,7 @@ const submitComplete = () => {
 
       <!-- Follow-ups List -->
       <div class="app-card overflow-hidden">
-        <div v-if="followUps.data.length === 0" class="p-12 text-center">
+        <div v-if="followUps.data.length === 0" class="p-8 sm:p-12 text-center">
           <div class="w-10 h-10 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center mx-auto mb-2.5">
             <i class="fa-regular fa-calendar-check text-sm"></i>
           </div>
@@ -113,7 +113,7 @@ const submitComplete = () => {
             :key="fu.id"
             class="p-4 hover:bg-[#FAFAFB] transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
           >
-            <div class="flex items-start gap-3.5">
+            <div class="flex items-start gap-3.5 min-w-0">
               <div
                 class="w-9 h-9 rounded-md flex items-center justify-center shrink-0 mt-0.5"
                 :class="
@@ -125,7 +125,7 @@ const submitComplete = () => {
                 <i class="fa-regular fa-calendar-check text-sm"></i>
               </div>
 
-              <div>
+              <div class="min-w-0">
                 <div class="flex flex-wrap items-center gap-2">
                   <Link
                     v-if="fu.lead"
@@ -141,7 +141,7 @@ const submitComplete = () => {
 
                 <p v-if="fu.notes" class="text-xs text-[#242424] mt-1">{{ fu.notes }}</p>
 
-                <div class="flex flex-wrap items-center gap-4 text-[11px] text-[#6B6578] mt-1.5">
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-[#6B6578] mt-1.5">
                   <span class="font-mono-num">
                     <i class="fa-regular fa-calendar mr-1"></i>
                     Due: {{ new Date(fu.scheduled_at).toLocaleString() }}
@@ -161,7 +161,7 @@ const submitComplete = () => {
               </div>
             </div>
 
-            <div class="flex items-center gap-2 shrink-0">
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
               <Link
                 v-if="fu.lead"
                 :href="`/leads/${fu.lead.id}`"
@@ -180,14 +180,41 @@ const submitComplete = () => {
             </div>
           </div>
         </div>
+
+        <!-- Pagination -->
+        <div
+          v-if="followUps.last_page > 1"
+          class="px-4 py-3 border-t border-[#E5E0EC] bg-[#FAFAFB] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
+        >
+          <span class="text-[#6B6578]">
+            Showing <strong class="text-[#242424]">{{ followUps.from }}</strong> to
+            <strong class="text-[#242424]">{{ followUps.to }}</strong> of
+            <strong class="text-[#242424]">{{ followUps.total }}</strong> follow-ups
+          </span>
+          <div class="flex flex-wrap items-center gap-1">
+            <template v-for="(link, idx) in followUps.links" :key="idx">
+              <Link
+                v-if="link.url"
+                :href="link.url"
+                v-html="link.label"
+                class="px-2.5 py-1 rounded border text-xs transition-colors"
+                :class="
+                  link.active
+                    ? 'bg-[#280047] text-white border-[#280047] font-semibold'
+                    : 'bg-white text-[#242424] border-[#E5E0EC] hover:bg-[#F3F1F6]'
+                "
+              />
+            </template>
+          </div>
+        </div>
       </div>
 
       <!-- Complete Follow-up Modal -->
       <div
         v-if="completingFollowUp"
-        class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+        class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4"
       >
-        <div class="app-card w-full max-w-md p-6">
+        <div class="app-card w-full max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <h3 class="text-base font-bold text-[#242424]">Complete Follow-up</h3>
           <p class="text-xs text-[#6B6578] mt-0.5 mb-4">
             Record the outcome of your conversation with
@@ -206,7 +233,7 @@ const submitComplete = () => {
               ></textarea>
             </div>
 
-            <div class="flex justify-end gap-2">
+            <div class="flex flex-wrap justify-end gap-2">
               <button type="button" @click="completingFollowUp = null" class="btn-secondary">Cancel</button>
               <button type="submit" :disabled="completeForm.processing" class="btn-primary">
                 Save Outcome

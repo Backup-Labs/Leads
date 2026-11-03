@@ -98,7 +98,7 @@ const submit = () => {
         </div>
 
         <!-- Step Buttons -->
-        <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-lg border border-[#E5E0EC]">
+        <div class="grid grid-cols-1 min-[380px]:grid-cols-3 sm:flex items-center gap-1.5 bg-white p-1.5 rounded-lg border border-[#E5E0EC] w-full sm:w-auto">
           <button
             v-for="s in [
               { n: 1, label: 'Client Details' },
@@ -108,7 +108,7 @@ const submit = () => {
             :key="s.n"
             type="button"
             @click="currentStep = s.n"
-            class="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer"
+            class="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer"
             :class="
               currentStep === s.n
                 ? 'bg-[#280047] text-white'
@@ -116,12 +116,12 @@ const submit = () => {
             "
           >
             <span
-              class="w-5 h-5 rounded flex items-center justify-center text-[11px] font-bold"
+              class="w-5 h-5 rounded flex items-center justify-center text-[11px] font-bold shrink-0"
               :class="currentStep === s.n ? 'bg-[#F74D01] text-white' : 'bg-[#F3F1F6] text-[#280047]'"
             >
               {{ s.n }}
             </span>
-            <span class="hidden sm:inline">{{ s.label }}</span>
+            <span class="truncate">{{ s.label }}</span>
           </button>
         </div>
       </div>
@@ -129,7 +129,7 @@ const submit = () => {
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Form Column -->
         <div class="lg:col-span-2">
-          <form @submit.prevent="submit" class="app-card p-6">
+          <form @submit.prevent="submit" class="app-card p-4 sm:p-6">
             <!-- STEP 1: CLIENT DETAILS -->
             <div v-if="currentStep === 1" class="space-y-5">
               <div class="pb-4 border-b border-[#E5E0EC]">
@@ -160,7 +160,7 @@ const submit = () => {
                 </div>
               </div>
 
-              <div class="flex justify-between pt-4 border-t border-[#E5E0EC]">
+              <div class="flex flex-wrap justify-between gap-2 pt-4 border-t border-[#E5E0EC]">
                 <Link href="/quotations" class="btn-secondary">Cancel</Link>
                 <button type="button" @click="currentStep = 2" class="btn-indigo">
                   Continue to Line Items <i class="fa-solid fa-arrow-right text-xs"></i>
@@ -176,8 +176,8 @@ const submit = () => {
                   <h2 class="text-base font-bold text-[#242424] mt-0.5">Quotation Line Items</h2>
                   <p class="text-xs text-[#6B6578]">Add the services or products included in this quotation.</p>
                 </div>
-                <div class="flex items-center gap-2">
-                  <div class="w-44">
+                <div class="flex flex-wrap items-center gap-2">
+                  <div class="w-full min-[360px]:w-44">
                     <CustomSelect
                       :model-value="activeCurrency"
                       :options="CURRENCY_OPTIONS"
@@ -243,7 +243,7 @@ const submit = () => {
                 </div>
               </div>
 
-              <div class="flex justify-between pt-4 border-t border-[#E5E0EC]">
+              <div class="flex flex-wrap justify-between gap-2 pt-4 border-t border-[#E5E0EC]">
                 <button type="button" @click="currentStep = 1" class="btn-secondary">
                   <i class="fa-solid fa-arrow-left text-xs"></i> Back
                 </button>
@@ -285,7 +285,7 @@ const submit = () => {
                 <textarea v-model="form.terms_and_conditions" rows="3" class="app-input"></textarea>
               </div>
 
-              <div class="flex justify-between pt-4 border-t border-[#E5E0EC]">
+              <div class="flex flex-wrap justify-between gap-2 pt-4 border-t border-[#E5E0EC]">
                 <button type="button" @click="currentStep = 2" class="btn-secondary">
                   <i class="fa-solid fa-arrow-left text-xs"></i> Back
                 </button>

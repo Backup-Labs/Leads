@@ -59,7 +59,7 @@ const formatMoney = (amount: number) => {
         </div>
 
         <!-- Period Selector -->
-        <div class="inline-flex bg-white p-1 rounded-md border border-[#E5E0EC]">
+        <div class="flex flex-wrap bg-white p-1 rounded-md border border-[#E5E0EC] gap-1 self-start sm:self-auto">
           <button
             v-for="p in [
               { days: 30, label: 'Last 30 Days' },
@@ -83,9 +83,9 @@ const formatMoney = (amount: number) => {
 
       <!-- KPI Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="app-card p-5 border-t-2 border-t-[#280047]">
+        <div class="app-card p-4 sm:p-5 border-t-2 border-t-[#280047]">
           <span class="text-xs font-medium text-[#6B6578]">Closed-Won Revenue</span>
-          <p class="text-xl font-bold text-[#242424] font-mono-num mt-1.5">
+          <p class="text-lg sm:text-xl font-bold text-[#242424] font-mono-num mt-1.5 break-all sm:break-normal">
             {{ formatMoney(metrics.won_revenue) }}
           </p>
           <p class="text-[11px] text-[#6B6578] mt-1">
@@ -93,9 +93,9 @@ const formatMoney = (amount: number) => {
           </p>
         </div>
 
-        <div class="app-card p-5 border-t-2 border-t-[#F74D01]">
+        <div class="app-card p-4 sm:p-5 border-t-2 border-t-[#F74D01]">
           <span class="text-xs font-medium text-[#6B6578]">Lead Conversion Rate</span>
-          <p class="text-xl font-bold text-[#242424] font-mono-num mt-1.5">
+          <p class="text-lg sm:text-xl font-bold text-[#242424] font-mono-num mt-1.5">
             {{ metrics.conversion_rate }}%
           </p>
           <p class="text-[11px] text-[#6B6578] mt-1">
@@ -103,17 +103,17 @@ const formatMoney = (amount: number) => {
           </p>
         </div>
 
-        <div class="app-card p-5 border-t-2 border-t-[#280047]">
+        <div class="app-card p-4 sm:p-5 border-t-2 border-t-[#280047]">
           <span class="text-xs font-medium text-[#6B6578]">Average Deal Size</span>
-          <p class="text-xl font-bold text-[#242424] font-mono-num mt-1.5">
+          <p class="text-lg sm:text-xl font-bold text-[#242424] font-mono-num mt-1.5 break-all sm:break-normal">
             {{ formatMoney(metrics.avg_deal_value) }}
           </p>
           <p class="text-[11px] text-[#6B6578] mt-1">Average value per won opportunity</p>
         </div>
 
-        <div class="app-card p-5 border-t-2 border-t-[#C3B6D3]">
+        <div class="app-card p-4 sm:p-5 border-t-2 border-t-[#C3B6D3]">
           <span class="text-xs font-medium text-[#6B6578]">Quotation Acceptance</span>
-          <p class="text-xl font-bold text-[#242424] font-mono-num mt-1.5">
+          <p class="text-lg sm:text-xl font-bold text-[#242424] font-mono-num mt-1.5">
             {{ metrics.quote_acceptance_rate }}%
           </p>
           <p class="text-[11px] text-[#6B6578] mt-1">Percentage of sent quotes approved</p>
@@ -124,12 +124,40 @@ const formatMoney = (amount: number) => {
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <!-- Performance by Lead Source -->
         <div class="app-card overflow-hidden">
-          <div class="px-5 py-4 border-b border-[#E5E0EC]">
+          <div class="px-4 sm:px-5 py-4 border-b border-[#E5E0EC]">
             <h2 class="text-sm font-bold text-[#242424]">Performance by Lead Source</h2>
             <p class="text-xs text-[#6B6578]">Which acquisition channels generate the most revenue</p>
           </div>
 
-          <div class="overflow-x-auto">
+          <!-- Mobile Stacked Source Cards (< 640px) — Zero Content Loss -->
+          <div class="sm:hidden divide-y divide-[#E5E0EC] text-xs">
+            <div
+              v-for="src in sourceStats"
+              :key="`mob-src-${src.name}`"
+              class="p-4 space-y-2 hover:bg-[#FAFAFB]"
+            >
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-bold text-[#242424]">{{ src.name }}</span>
+                <span class="font-mono-num font-bold text-[#280047]">{{ formatMoney(src.won_revenue) }}</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-2 border-t border-[#F0EDF5]">
+                <div>
+                  <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Leads</p>
+                  <p class="font-mono-num text-[#242424] mt-0.5">{{ src.total_leads }}</p>
+                </div>
+                <div>
+                  <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Won</p>
+                  <p class="font-mono-num text-[#242424] mt-0.5">{{ src.won_leads }}</p>
+                </div>
+                <div>
+                  <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Win Rate</p>
+                  <p class="font-mono-num font-semibold text-[#F74D01] mt-0.5">{{ src.conversion_rate }}%</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hidden sm:block overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="bg-[#F8F6FA] border-b border-[#E5E0EC] text-[11px] font-semibold uppercase text-[#6B6578]">
@@ -159,12 +187,43 @@ const formatMoney = (amount: number) => {
 
         <!-- Team Performance -->
         <div class="app-card overflow-hidden">
-          <div class="px-5 py-4 border-b border-[#E5E0EC]">
+          <div class="px-4 sm:px-5 py-4 border-b border-[#E5E0EC]">
             <h2 class="text-sm font-bold text-[#242424]">Team Performance</h2>
             <p class="text-xs text-[#6B6578]">Individual conversion rates, assigned leads, and closed revenue</p>
           </div>
 
-          <div class="overflow-x-auto">
+          <!-- Mobile Stacked Team Cards (< 640px) — Zero Content Loss -->
+          <div class="sm:hidden divide-y divide-[#E5E0EC] text-xs">
+            <div
+              v-for="member in teamStats"
+              :key="`mob-team-${member.id}`"
+              class="p-4 space-y-2 hover:bg-[#FAFAFB]"
+            >
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <p class="font-bold text-[#242424]">{{ member.name }}</p>
+                  <p class="text-[10px] text-[#6B6578] capitalize">{{ member.role }}</p>
+                </div>
+                <span class="font-mono-num font-bold text-[#280047]">{{ formatMoney(member.won_revenue) }}</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-2 border-t border-[#F0EDF5]">
+                <div>
+                  <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Leads</p>
+                  <p class="font-mono-num text-[#242424] mt-0.5">{{ member.assigned_leads }}</p>
+                </div>
+                <div>
+                  <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Won</p>
+                  <p class="font-mono-num text-[#242424] mt-0.5">{{ member.won_leads }}</p>
+                </div>
+                <div>
+                  <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Win Rate</p>
+                  <p class="font-mono-num font-semibold text-[#F74D01] mt-0.5">{{ member.win_rate }}%</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hidden sm:block overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="bg-[#F8F6FA] border-b border-[#E5E0EC] text-[11px] font-semibold uppercase text-[#6B6578]">
