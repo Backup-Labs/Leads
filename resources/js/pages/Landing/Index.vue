@@ -16,7 +16,7 @@ const activeSection = ref('how-it-works');
 const heroPhrases = [
   'without losing leads',
   'without forgotten quotes',
-  'without messy spreadsheets',
+  'without messy sheets',
   'without micromanaging',
 ];
 const typedHeroText = ref('');
@@ -213,12 +213,12 @@ const nextTestimonial = () => {
 <template>
   <Head title="Leads — Close More Deals Without Losing Leads" />
 
-  <div class="min-h-screen bg-[#FAFAFB] text-[#242424] font-sans selection:bg-[#280047] selection:text-[#FDFEBA]">
+  <div class="min-h-screen landing-side-shade text-[#242424] font-sans selection:bg-[#280047] selection:text-[#FDFEBA]">
     <!-- =========================================================
          ARCHITECTURAL TOP NAVIGATION BAR (Matching Landing Grid Vibe)
          ========================================================= -->
-    <header class="sticky top-0 z-50 bg-[#FAFAFB]/90 backdrop-blur-md border-b border-[#E5E0EC]">
-      <div class="max-w-6xl mx-auto border-x border-[#E5E0EC] bg-white/95">
+    <header class="sticky top-0 z-50 landing-side-shade backdrop-blur-md border-b border-[#D5CCE2] px-3 sm:px-6 lg:px-10">
+      <div class="max-w-6xl mx-auto border-x border-[#D5CCE2] bg-white/95">
         <div class="h-16 flex items-stretch justify-between">
           <!-- Left Grid Cell: Brand Identity -->
           <div class="flex items-center px-5 sm:px-8 border-r border-[#E5E0EC]">
@@ -335,8 +335,9 @@ const nextTestimonial = () => {
       </div>
     </header>
 
-    <!-- Main Architectural Grid Container -->
-    <div class="max-w-6xl mx-auto border-x border-[#E5E0EC] bg-white">
+    <!-- Main Architectural Grid Container with Diagonal Hatched Side Shades -->
+    <div class="px-3 sm:px-6 lg:px-10">
+      <div class="max-w-6xl mx-auto border-x border-[#D5CCE2] bg-white">
       <!-- =========================================================
            1. HERO SECTION (Typewriter Headline + Animated Diagram)
            ========================================================= -->
@@ -1424,6 +1425,7 @@ const nextTestimonial = () => {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   </div>
 </template>
