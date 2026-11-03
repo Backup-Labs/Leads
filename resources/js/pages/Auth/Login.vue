@@ -23,13 +23,13 @@ const submit = () => {
 <template>
     <AuthLayout>
         <div class="mb-6">
-            <h2 class="text-xl font-bold text-[#280047]">Sign In</h2>
+            <h2 class="text-xl font-bold text-brand-indigo">Sign In</h2>
             <p class="text-xs text-gray-500 mt-1">Enter your email and password to open your workspace.</p>
         </div>
 
         <form @submit.prevent="submit" class="space-y-4">
             <div>
-                <label for="email" class="block text-xs font-semibold text-[#242424] mb-1">Email Address</label>
+                <label for="email" class="block text-xs font-semibold text-brand-dark mb-1">Email Address</label>
                 <input
                     id="email"
                     v-model="form.email"
@@ -39,11 +39,11 @@ const submit = () => {
                     placeholder="you@company.com"
                     class="app-input w-full"
                 />
-                <p v-if="form.errors.email" class="mt-1 text-xs text-[#F74D01] font-medium">{{ form.errors.email }}</p>
+                <p v-if="form.errors.email" class="mt-1 text-xs text-brand-orange font-medium">{{ form.errors.email }}</p>
             </div>
 
             <div>
-                <label for="password" class="block text-xs font-semibold text-[#242424] mb-1">Password</label>
+                <label for="password" class="block text-xs font-semibold text-brand-dark mb-1">Password</label>
                 <input
                     id="password"
                     v-model="form.password"
@@ -53,7 +53,7 @@ const submit = () => {
                     placeholder="••••••••"
                     class="app-input w-full"
                 />
-                <p v-if="form.errors.password" class="mt-1 text-xs text-[#F74D01] font-medium">{{ form.errors.password }}</p>
+                <p v-if="form.errors.password" class="mt-1 text-xs text-brand-orange font-medium">{{ form.errors.password }}</p>
             </div>
 
             <div class="flex items-center justify-between">
@@ -61,7 +61,7 @@ const submit = () => {
                     <input
                         v-model="form.remember"
                         type="checkbox"
-                        class="rounded border-[#C3B6D3] text-[#280047] focus:ring-[#280047] w-3.5 h-3.5"
+                        class="rounded border-brand-purple text-brand-indigo focus:ring-brand-indigo w-3.5 h-3.5"
                     />
                     <span class="ml-2 text-xs text-gray-600">Remember me</span>
                 </label>
@@ -84,25 +84,25 @@ const submit = () => {
                 <button
                     type="button"
                     @click="fillDemo('admin@leads.test')"
-                    class="p-2.5 rounded-md border border-[#E5E0EC] hover:border-[#280047] text-left transition-colors cursor-pointer"
+                    class="p-2.5 rounded-md border border-brand-light hover:border-brand-indigo text-left transition-colors cursor-pointer"
                 >
-                    <p class="text-xs font-bold text-[#280047]">Owner</p>
+                    <p class="text-xs font-bold text-brand-indigo">Owner</p>
                     <p class="text-[10px] text-gray-500 break-all">admin@leads.test</p>
                 </button>
                 <button
                     type="button"
                     @click="fillDemo('diane@leads.test')"
-                    class="p-2.5 rounded-md border border-[#E5E0EC] hover:border-[#280047] text-left transition-colors cursor-pointer"
+                    class="p-2.5 rounded-md border border-brand-light hover:border-brand-indigo text-left transition-colors cursor-pointer"
                 >
-                    <p class="text-xs font-bold text-[#280047]">Manager</p>
+                    <p class="text-xs font-bold text-brand-indigo">Manager</p>
                     <p class="text-[10px] text-gray-500 break-all">diane@leads.test</p>
                 </button>
                 <button
                     type="button"
                     @click="fillDemo('eric@leads.test')"
-                    class="p-2.5 rounded-md border border-[#E5E0EC] hover:border-[#280047] text-left transition-colors cursor-pointer"
+                    class="p-2.5 rounded-md border border-brand-light hover:border-brand-indigo text-left transition-colors cursor-pointer"
                 >
-                    <p class="text-xs font-bold text-[#280047]">Sales Rep</p>
+                    <p class="text-xs font-bold text-brand-indigo">Sales Rep</p>
                     <p class="text-[10px] text-gray-500 break-all">eric@leads.test</p>
                 </button>
             </div>
@@ -110,7 +110,7 @@ const submit = () => {
 
         <div class="mt-5 text-center text-xs text-gray-500">
             Don't have an account?
-            <Link href="/register" class="font-bold text-[#280047] hover:text-[#F74D01] ml-1">Create Account</Link>
+            <Link href="/register" class="font-bold text-brand-indigo hover:text-brand-orange ml-1">Create Account</Link>
         </div>
     </AuthLayout>
 </template>

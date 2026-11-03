@@ -20,3 +20,4 @@ foreach ($directories as $directory) {
 }
 
 require __DIR__ . '/../public/index.php';
+

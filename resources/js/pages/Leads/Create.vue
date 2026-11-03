@@ -115,13 +115,13 @@ const selectedStageName = computed(() => {
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E5E0EC]">
         <div>
           <div class="flex items-center gap-2 text-xs text-[#6B6578] mb-1">
-            <Link href="/leads" class="hover:text-[#280047] transition-colors flex items-center gap-1.5 font-medium">
+            <Link href="/leads" class="hover:text-brand-indigo transition-colors flex items-center gap-1.5 font-medium">
               <i class="fa-solid fa-arrow-left text-[10px]"></i> Leads
             </Link>
             <span>/</span>
-            <span class="text-[#242424] font-medium">New Lead</span>
+            <span class="text-brand-dark font-medium">New Lead</span>
           </div>
-          <h1 class="text-xl font-bold text-[#242424]">Add New Lead</h1>
+          <h1 class="text-xl font-bold text-brand-dark">Add New Lead</h1>
           <p class="text-xs text-[#6B6578] mt-0.5">Complete the 3 steps below to register a new lead and assign an owner.</p>
         </div>
 
@@ -135,9 +135,9 @@ const selectedStageName = computed(() => {
             class="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
             :class="
               currentStep === step.number
-                ? 'bg-[#280047] text-white'
+                ? 'bg-brand-indigo text-white'
                 : currentStep > step.number
-                  ? 'bg-[#280047]/5 text-[#280047] hover:bg-[#280047]/10 cursor-pointer'
+                  ? 'bg-brand-indigo/5 text-brand-indigo hover:bg-brand-indigo/10 cursor-pointer'
                   : 'text-[#6B6578] cursor-default'
             "
           >
@@ -145,9 +145,9 @@ const selectedStageName = computed(() => {
               class="w-5 h-5 rounded flex items-center justify-center text-[11px] font-bold shrink-0"
               :class="
                 currentStep === step.number
-                  ? 'bg-[#F74D01] text-white'
+                  ? 'bg-brand-orange text-white'
                   : currentStep > step.number
-                    ? 'bg-[#280047] text-white'
+                    ? 'bg-brand-indigo text-white'
                     : 'bg-[#F3F1F6] text-[#6B6578]'
               "
             >
@@ -167,19 +167,19 @@ const selectedStageName = computed(() => {
             <div v-if="currentStep === 1" class="space-y-5">
               <div class="pb-4 border-b border-[#E5E0EC] flex items-center justify-between">
                 <div>
-                  <span class="text-[11px] font-semibold uppercase tracking-wider text-[#F74D01]">Step 1 of 3</span>
-                  <h2 class="text-base font-bold text-[#242424] mt-0.5">Contact Information</h2>
+                  <span class="text-[11px] font-semibold uppercase tracking-wider text-brand-orange">Step 1 of 3</span>
+                  <h2 class="text-base font-bold text-brand-dark mt-0.5">Contact Information</h2>
                   <p class="text-xs text-[#6B6578]">Enter the client's name, company, and primary contact details.</p>
                 </div>
-                <div class="w-9 h-9 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center">
+                <div class="w-9 h-9 rounded-md bg-[#F3F1F6] text-brand-indigo flex items-center justify-center">
                   <i class="fa-solid fa-address-card text-sm"></i>
                 </div>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-xs font-medium text-[#242424] mb-1.5">
-                    Contact Full Name <span class="text-[#F74D01]">*</span>
+                  <label class="block text-xs font-medium text-brand-dark mb-1.5">
+                    Contact Full Name <span class="text-brand-orange">*</span>
                   </label>
                   <div class="relative">
                     <i class="fa-regular fa-user absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6578] text-xs"></i>
@@ -195,7 +195,7 @@ const selectedStageName = computed(() => {
                 </div>
 
                 <div>
-                  <label class="block text-xs font-medium text-[#242424] mb-1.5">Company / Organization</label>
+                  <label class="block text-xs font-medium text-brand-dark mb-1.5">Company / Organization</label>
                   <div class="relative">
                     <i class="fa-regular fa-building absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6578] text-xs"></i>
                     <input
@@ -208,7 +208,7 @@ const selectedStageName = computed(() => {
                 </div>
 
                 <div>
-                  <label class="block text-xs font-medium text-[#242424] mb-1.5">Phone / WhatsApp Number</label>
+                  <label class="block text-xs font-medium text-brand-dark mb-1.5">Phone / WhatsApp Number</label>
                   <div class="relative">
                     <i class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6578] text-xs"></i>
                     <input
@@ -222,7 +222,7 @@ const selectedStageName = computed(() => {
                 </div>
 
                 <div>
-                  <label class="block text-xs font-medium text-[#242424] mb-1.5">Email Address</label>
+                  <label class="block text-xs font-medium text-brand-dark mb-1.5">Email Address</label>
                   <div class="relative">
                     <i class="fa-regular fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6578] text-xs"></i>
                     <input
@@ -253,18 +253,18 @@ const selectedStageName = computed(() => {
             <div v-if="currentStep === 2" class="space-y-5">
               <div class="pb-4 border-b border-[#E5E0EC] flex items-center justify-between gap-3">
                 <div>
-                  <span class="text-[11px] font-semibold uppercase tracking-wider text-[#F74D01]">Step 2 of 3</span>
-                  <h2 class="text-base font-bold text-[#242424] mt-0.5">Service Interest & Deal Value</h2>
+                  <span class="text-[11px] font-semibold uppercase tracking-wider text-brand-orange">Step 2 of 3</span>
+                  <h2 class="text-base font-bold text-brand-dark mt-0.5">Service Interest & Deal Value</h2>
                   <p class="text-xs text-[#6B6578]">Select how this lead found you, initial stage, and potential revenue.</p>
                 </div>
-                <div class="w-9 h-9 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center shrink-0">
+                <div class="w-9 h-9 rounded-md bg-[#F3F1F6] text-brand-indigo flex items-center justify-center shrink-0">
                   <i class="fa-solid fa-briefcase text-sm"></i>
                 </div>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-xs font-medium text-[#242424] mb-1.5">Lead Source</label>
+                  <label class="block text-xs font-medium text-brand-dark mb-1.5">Lead Source</label>
                   <CustomSelect
                     v-model="form.lead_source_id"
                     :options="sourceOptions"
@@ -273,7 +273,7 @@ const selectedStageName = computed(() => {
                 </div>
 
                 <div>
-                  <label class="block text-xs font-medium text-[#242424] mb-1.5">Pipeline Stage</label>
+                  <label class="block text-xs font-medium text-brand-dark mb-1.5">Pipeline Stage</label>
                   <CustomSelect
                     v-model="form.pipeline_stage_id"
                     :options="stageOptions"
@@ -282,7 +282,7 @@ const selectedStageName = computed(() => {
                 </div>
 
                 <div class="sm:col-span-2">
-                  <label class="block text-xs font-medium text-[#242424] mb-1.5">Service or Product Needed</label>
+                  <label class="block text-xs font-medium text-brand-dark mb-1.5">Service or Product Needed</label>
                   <div class="relative">
                     <i class="fa-solid fa-briefcase absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6578] text-xs"></i>
                     <input
@@ -295,7 +295,7 @@ const selectedStageName = computed(() => {
                 </div>
 
                 <div>
-                  <label class="block text-xs font-medium text-[#242424] mb-1.5">Currency (Auto-converts value)</label>
+                  <label class="block text-xs font-medium text-brand-dark mb-1.5">Currency (Auto-converts value)</label>
                   <CustomSelect
                     :model-value="form.currency"
                     :options="CURRENCY_OPTIONS"
@@ -304,7 +304,7 @@ const selectedStageName = computed(() => {
                 </div>
 
                 <div>
-                  <label class="block text-xs font-medium text-[#242424] mb-1.5">
+                  <label class="block text-xs font-medium text-brand-dark mb-1.5">
                     Estimated Value ({{ form.currency }})
                   </label>
                   <div class="relative">
@@ -334,18 +334,18 @@ const selectedStageName = computed(() => {
             <div v-if="currentStep === 3" class="space-y-5">
               <div class="pb-4 border-b border-[#E5E0EC] flex items-center justify-between gap-3">
                 <div>
-                  <span class="text-[11px] font-semibold uppercase tracking-wider text-[#F74D01]">Step 3 of 3</span>
-                  <h2 class="text-base font-bold text-[#242424] mt-0.5">Priority, Owner & Notes</h2>
+                  <span class="text-[11px] font-semibold uppercase tracking-wider text-brand-orange">Step 3 of 3</span>
+                  <h2 class="text-base font-bold text-brand-dark mt-0.5">Priority, Owner & Notes</h2>
                   <p class="text-xs text-[#6B6578]">Set urgency level, assign a team member, and add initial context.</p>
                 </div>
-                <div class="w-9 h-9 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center shrink-0">
+                <div class="w-9 h-9 rounded-md bg-[#F3F1F6] text-brand-indigo flex items-center justify-center shrink-0">
                   <i class="fa-solid fa-user-check text-sm"></i>
                 </div>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-xs font-medium text-[#242424] mb-1.5">Priority Level</label>
+                  <label class="block text-xs font-medium text-brand-dark mb-1.5">Priority Level</label>
                   <div class="grid grid-cols-1 min-[320px]:grid-cols-2 gap-2">
                     <button
                       v-for="p in priorities"
@@ -355,8 +355,8 @@ const selectedStageName = computed(() => {
                       class="p-2.5 rounded-md border text-xs font-medium flex items-center gap-2 transition-colors cursor-pointer"
                       :class="
                         form.priority === p.value
-                          ? 'border-[#F74D01] bg-[#F74D01] text-white'
-                          : 'border-[#E5E0EC] bg-white text-[#242424] hover:border-[#C3B6D3]'
+                          ? 'border-brand-orange bg-brand-orange text-white'
+                          : 'border-[#E5E0EC] bg-white text-brand-dark hover:border-brand-purple'
                       "
                     >
                       <i class="fa-solid fa-flag text-[11px]"></i>
@@ -366,7 +366,7 @@ const selectedStageName = computed(() => {
                 </div>
 
                 <div>
-                  <label class="block text-xs font-medium text-[#242424] mb-1.5">Assign Lead Owner</label>
+                  <label class="block text-xs font-medium text-brand-dark mb-1.5">Assign Lead Owner</label>
                   <CustomSelect
                     v-model="form.assigned_to_user_id"
                     :options="teamOptions"
@@ -376,7 +376,7 @@ const selectedStageName = computed(() => {
               </div>
 
               <div>
-                <label class="block text-xs font-medium text-[#242424] mb-1.5">Initial Notes & Requirements</label>
+                <label class="block text-xs font-medium text-brand-dark mb-1.5">Initial Notes & Requirements</label>
                 <textarea
                   v-model="form.description"
                   rows="3"
@@ -402,8 +402,8 @@ const selectedStageName = computed(() => {
         <div>
           <div class="app-card p-5 sticky top-6">
             <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#E5E0EC]">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-[#280047]">Lead Summary</h3>
-              <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-[#FDFEBA] text-[#280047] border border-[#E5E0EC]">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-brand-indigo">Lead Summary</h3>
+              <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-brand-yellow text-brand-indigo border border-[#E5E0EC]">
                 Step {{ currentStep }} of 3
               </span>
             </div>
@@ -411,24 +411,24 @@ const selectedStageName = computed(() => {
             <div class="space-y-3 text-xs">
               <div>
                 <p class="text-[#6B6578]">Contact & Company</p>
-                <p class="font-semibold text-[#242424] text-sm mt-0.5">{{ form.customer_name || 'Not entered yet' }}</p>
+                <p class="font-semibold text-brand-dark text-sm mt-0.5">{{ form.customer_name || 'Not entered yet' }}</p>
                 <p class="text-[#6B6578]">{{ form.company_name || 'Individual Client' }}</p>
               </div>
 
               <div class="grid grid-cols-2 gap-2 pt-3 border-t border-[#E5E0EC]">
                 <div>
                   <p class="text-[#6B6578]">Phone</p>
-                  <p class="font-mono-num font-medium text-[#242424] mt-0.5">{{ form.phone || '—' }}</p>
+                  <p class="font-mono-num font-medium text-brand-dark mt-0.5">{{ form.phone || '—' }}</p>
                 </div>
                 <div>
                   <p class="text-[#6B6578]">Source</p>
-                  <p class="font-medium text-[#242424] mt-0.5">{{ selectedSourceName }}</p>
+                  <p class="font-medium text-brand-dark mt-0.5">{{ selectedSourceName }}</p>
                 </div>
               </div>
 
               <div class="pt-3 border-t border-[#E5E0EC]">
                 <p class="text-[#6B6578]">Stage & Service</p>
-                <p class="font-medium text-[#242424] mt-0.5">
+                <p class="font-medium text-brand-dark mt-0.5">
                   {{ selectedStageName }} &bull; {{ form.requested_service || 'General Inquiry' }}
                 </p>
               </div>
@@ -436,7 +436,7 @@ const selectedStageName = computed(() => {
               <div class="pt-3 border-t border-[#E5E0EC] flex items-center justify-between">
                 <div>
                   <p class="text-[#6B6578]">Estimated Value</p>
-                  <p class="text-base font-bold text-[#280047] font-mono-num mt-0.5">
+                  <p class="text-base font-bold text-brand-indigo font-mono-num mt-0.5">
                     {{ formatMoney(Number(form.estimated_value)) }}
                   </p>
                 </div>
@@ -444,8 +444,8 @@ const selectedStageName = computed(() => {
                   class="px-2.5 py-1 rounded text-[11px] font-semibold uppercase"
                   :class="
                     form.priority === 'urgent' || form.priority === 'high'
-                      ? 'bg-[#F74D01]/10 text-[#F74D01]'
-                      : 'bg-[#F3F1F6] text-[#280047]'
+                      ? 'bg-brand-orange/10 text-brand-orange'
+                      : 'bg-[#F3F1F6] text-brand-indigo'
                   "
                 >
                   {{ form.priority }}

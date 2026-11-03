@@ -98,19 +98,19 @@ const formatMoney = (amount: number) => {
       <!-- Top Breadcrumb & Actions -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-center gap-2 text-xs text-[#6B6578]">
-          <Link href="/leads" class="hover:text-[#280047] font-medium flex items-center gap-1.5">
+          <Link href="/leads" class="hover:text-brand-purple font-medium flex items-center gap-1.5">
             <i class="fa-solid fa-arrow-left text-[10px]"></i> All Leads
           </Link>
           <span>/</span>
-          <span class="text-[#242424] font-semibold">{{ lead.customer_name }}</span>
+          <span class="text-brand-dark font-semibold">{{ lead.customer_name }}</span>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
           <button type="button" @click="showNoteModal = true" class="btn-secondary text-xs">
-            <i class="fa-regular fa-note-sticky text-[#280047]"></i> Add Note
+            <i class="fa-regular fa-note-sticky text-brand-indigo"></i> Add Note
           </button>
           <button type="button" @click="showFollowUpModal = true" class="btn-secondary text-xs">
-            <i class="fa-regular fa-calendar-plus text-[#F74D01]"></i> Schedule Follow-up
+            <i class="fa-regular fa-calendar-plus text-brand-orange"></i> Schedule Follow-up
           </button>
           <Link :href="`/quotations/create?lead_id=${lead.id}`" class="btn-primary text-xs">
             <i class="fa-solid fa-file-invoice"></i> Create Quotation
@@ -119,27 +119,27 @@ const formatMoney = (amount: number) => {
       </div>
 
       <!-- Lead Summary Header Card -->
-      <div class="app-card p-5 border-t-2 border-t-[#280047]">
+      <div class="app-card p-5 border-t-2 border-t-brand-indigo">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-[#E5E0EC]">
           <div class="flex items-start gap-3.5">
-            <div class="w-11 h-11 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-base shrink-0">
+            <div class="w-11 h-11 rounded-md bg-brand-indigo text-brand-yellow flex items-center justify-center font-bold text-base shrink-0">
               {{ lead.customer_name.charAt(0).toUpperCase() }}
             </div>
             <div>
               <div class="flex flex-wrap items-center gap-2">
-                <h1 class="text-lg font-bold text-[#242424]">{{ lead.customer_name }}</h1>
+                <h1 class="text-lg font-bold text-brand-dark">{{ lead.customer_name }}</h1>
                 <span
                   class="px-2 py-0.5 rounded text-[11px] font-semibold uppercase"
                   :class="
                     lead.priority === 'urgent' || lead.priority === 'high'
-                      ? 'bg-[#F74D01]/10 text-[#F74D01]'
-                      : 'bg-[#F3F1F6] text-[#280047]'
+                      ? 'bg-brand-orange/10 text-brand-orange'
+                      : 'bg-[#F3F1F6] text-brand-indigo'
                   "
                 >
                   {{ lead.priority }} Priority
                 </span>
                 <span
-                  class="px-2 py-0.5 rounded text-[11px] font-semibold uppercase bg-[#FDFEBA] text-[#280047] border border-[#C3B6D3]"
+                  class="px-2 py-0.5 rounded text-[11px] font-semibold uppercase bg-brand-yellow text-brand-indigo border border-brand-purple"
                 >
                   {{ lead.status }}
                 </span>
@@ -154,13 +154,13 @@ const formatMoney = (amount: number) => {
           <div class="flex flex-wrap items-center gap-4 sm:gap-6">
             <div>
               <p class="text-[11px] uppercase tracking-wider text-[#6B6578] font-medium">Estimated Value</p>
-              <p class="text-lg sm:text-xl font-bold text-[#280047] font-mono-num break-all sm:break-normal">
+              <p class="text-lg sm:text-xl font-bold text-brand-indigo font-mono-num break-all sm:break-normal">
                 {{ formatMoney(Number(lead.estimated_value)) }}
               </p>
             </div>
             <div class="sm:pl-6 sm:border-l border-[#E5E0EC]">
               <p class="text-[11px] uppercase tracking-wider text-[#6B6578] font-medium">Assigned Owner</p>
-              <p class="text-sm font-semibold text-[#242424] mt-0.5">
+              <p class="text-sm font-semibold text-brand-dark mt-0.5">
                 {{ lead.assigned_to?.name || 'Unassigned' }}
               </p>
             </div>
@@ -181,13 +181,13 @@ const formatMoney = (amount: number) => {
               class="px-3 py-2 rounded-md text-xs font-medium border text-center transition-colors cursor-pointer"
               :class="
                 lead.pipeline_stage_id === s.id
-                  ? 'bg-[#280047] text-white border-[#280047]'
-                  : 'bg-[#FAFAFB] text-[#242424] border-[#E5E0EC] hover:border-[#C3B6D3] hover:bg-[#F3F1F6]'
+                  ? 'bg-brand-indigo text-white border-brand-indigo'
+                  : 'bg-[#FAFAFB] text-brand-dark border-[#E5E0EC] hover:border-brand-purple hover:bg-[#F3F1F6]'
               "
             >
               <i
                 v-if="lead.pipeline_stage_id === s.id"
-                class="fa-solid fa-circle-check text-[#F74D01] mr-1 text-[10px]"
+                class="fa-solid fa-circle-check text-brand-orange mr-1 text-[10px]"
               ></i>
               {{ s.name }}
             </button>
@@ -201,31 +201,31 @@ const formatMoney = (amount: number) => {
         <div class="space-y-5">
           <!-- Contact Card -->
           <div class="app-card p-4 sm:p-5">
-            <h2 class="text-xs font-bold uppercase tracking-wider text-[#280047] pb-3 mb-3 border-b border-[#E5E0EC]">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-brand-indigo pb-3 mb-3 border-b border-[#E5E0EC]">
               Contact Details
             </h2>
             <dl class="space-y-3 text-xs">
               <div class="flex flex-col min-[360px]:flex-row min-[360px]:items-center justify-between gap-0.5">
                 <dt class="text-[#6B6578] flex items-center gap-2">
-                  <i class="fa-solid fa-phone w-4 text-center text-[#280047]"></i> Phone
+                  <i class="fa-solid fa-phone w-4 text-center text-brand-indigo"></i> Phone
                 </dt>
-                <dd class="font-mono-num font-semibold text-[#242424] break-all">{{ lead.phone || 'Not provided' }}</dd>
+                <dd class="font-mono-num font-semibold text-brand-dark break-all">{{ lead.phone || 'Not provided' }}</dd>
               </div>
               <div class="flex flex-col min-[360px]:flex-row min-[360px]:items-center justify-between gap-0.5">
                 <dt class="text-[#6B6578] flex items-center gap-2">
-                  <i class="fa-regular fa-envelope w-4 text-center text-[#280047]"></i> Email
+                  <i class="fa-regular fa-envelope w-4 text-center text-brand-indigo"></i> Email
                 </dt>
-                <dd class="font-medium text-[#242424] break-all">{{ lead.email || 'Not provided' }}</dd>
+                <dd class="font-medium text-brand-dark break-all">{{ lead.email || 'Not provided' }}</dd>
               </div>
               <div class="flex flex-col min-[360px]:flex-row min-[360px]:items-center justify-between gap-0.5">
                 <dt class="text-[#6B6578] flex items-center gap-2">
-                  <i class="fa-solid fa-bullhorn w-4 text-center text-[#280047]"></i> Lead Source
+                  <i class="fa-solid fa-bullhorn w-4 text-center text-brand-indigo"></i> Lead Source
                 </dt>
-                <dd class="font-medium text-[#242424]">{{ lead.source?.name || 'Direct' }}</dd>
+                <dd class="font-medium text-brand-dark">{{ lead.source?.name || 'Direct' }}</dd>
               </div>
               <div class="pt-3 border-t border-[#E5E0EC]">
                 <dt class="text-[#6B6578] mb-1">Description / Requirements</dt>
-                <dd class="text-[#242424] bg-[#FAFAFB] p-3 rounded-md border border-[#E5E0EC] leading-relaxed">
+                <dd class="text-brand-dark bg-[#FAFAFB] p-3 rounded-md border border-[#E5E0EC] leading-relaxed">
                   {{ lead.description || 'No initial notes recorded.' }}
                 </dd>
               </div>
@@ -235,11 +235,11 @@ const formatMoney = (amount: number) => {
           <!-- Scheduled Follow-ups Card -->
           <div class="app-card p-5">
             <div class="flex items-center justify-between pb-3 mb-3 border-b border-[#E5E0EC]">
-              <h2 class="text-xs font-bold uppercase tracking-wider text-[#280047]">Follow-ups</h2>
+              <h2 class="text-xs font-bold uppercase tracking-wider text-brand-indigo">Follow-ups</h2>
               <button
                 type="button"
                 @click="showFollowUpModal = true"
-                class="text-xs font-semibold text-[#F74D01] hover:underline cursor-pointer"
+                class="text-xs font-semibold text-brand-orange hover:underline cursor-pointer"
               >
                 + Add
               </button>
@@ -256,13 +256,13 @@ const formatMoney = (amount: number) => {
                 class="p-3 rounded-md border border-[#E5E0EC] bg-[#FAFAFB] text-xs"
               >
                 <div class="flex items-center justify-between mb-1">
-                  <span class="font-semibold text-[#280047]">{{ fu.title }}</span>
+                  <span class="font-semibold text-brand-indigo">{{ fu.title }}</span>
                   <span
                     class="px-2 py-0.5 rounded text-[10px] font-semibold uppercase"
                     :class="
                       fu.status === 'completed'
                         ? 'bg-emerald-50 text-emerald-700'
-                        : 'bg-[#FDFEBA] text-[#280047]'
+                        : 'bg-brand-yellow text-brand-indigo'
                     "
                   >
                     {{ fu.status }}
@@ -279,10 +279,10 @@ const formatMoney = (amount: number) => {
           <!-- Quotations Card -->
           <div class="app-card p-5">
             <div class="flex items-center justify-between pb-3 mb-3 border-b border-[#E5E0EC]">
-              <h2 class="text-xs font-bold uppercase tracking-wider text-[#280047]">Quotations</h2>
+              <h2 class="text-xs font-bold uppercase tracking-wider text-brand-indigo">Quotations</h2>
               <Link
                 :href="`/quotations/create?lead_id=${lead.id}`"
-                class="text-xs font-semibold text-[#F74D01] hover:underline"
+                class="text-xs font-semibold text-brand-orange hover:underline"
               >
                 + New Quote
               </Link>
@@ -297,15 +297,15 @@ const formatMoney = (amount: number) => {
                 v-for="q in lead.quotations"
                 :key="q.id"
                 :href="`/quotations/${q.id}`"
-                class="block p-3 rounded-md border border-[#E5E0EC] hover:border-[#280047] transition-colors text-xs"
+                class="block p-3 rounded-md border border-[#E5E0EC] hover:border-brand-indigo transition-colors text-xs"
               >
                 <div class="flex items-center justify-between">
-                  <span class="font-bold text-[#280047] font-mono-num">{{ q.quotation_number }}</span>
-                  <span class="px-2 py-0.5 rounded bg-[#F3F1F6] text-[#280047] text-[10px] font-semibold uppercase">
+                  <span class="font-bold text-brand-indigo font-mono-num">{{ q.quotation_number }}</span>
+                  <span class="px-2 py-0.5 rounded bg-[#F3F1F6] text-brand-indigo text-[10px] font-semibold uppercase">
                     {{ q.status }}
                   </span>
                 </div>
-                <p class="text-sm font-bold text-[#242424] font-mono-num mt-1">
+                <p class="text-sm font-bold text-brand-dark font-mono-num mt-1">
                   {{ formatMoney(Number(q.total_amount)) }}
                 </p>
               </Link>
@@ -318,7 +318,7 @@ const formatMoney = (amount: number) => {
           <div class="app-card p-5">
             <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#E5E0EC]">
               <div>
-                <h2 class="text-sm font-bold text-[#242424]">Activity History</h2>
+                <h2 class="text-sm font-bold text-brand-dark">Activity History</h2>
                 <p class="text-xs text-[#6B6578]">Chronological log of stage updates, notes, follow-ups, and quotations</p>
               </div>
               <span class="text-xs font-mono-num text-[#6B6578]">
@@ -336,19 +336,19 @@ const formatMoney = (amount: number) => {
                 :key="act.id"
                 class="flex gap-3.5 pb-4 border-b border-[#E5E0EC] last:border-b-0 last:pb-0"
               >
-                <div class="w-8 h-8 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center shrink-0 mt-0.5">
+                <div class="w-8 h-8 rounded-md bg-[#F3F1F6] text-brand-indigo flex items-center justify-center shrink-0 mt-0.5">
                   <i class="fa-solid fa-clock-rotate-left text-xs"></i>
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="flex flex-wrap items-center justify-between gap-2">
-                    <p class="text-xs font-semibold text-[#242424]">{{ act.subject }}</p>
+                    <p class="text-xs font-semibold text-brand-dark">{{ act.subject }}</p>
                     <span class="text-[11px] text-[#6B6578] font-mono-num">
                       {{ new Date(act.created_at).toLocaleString() }}
                     </span>
                   </div>
-                  <p v-if="act.description" class="text-xs text-[#242424] mt-0.5">{{ act.description }}</p>
+                  <p v-if="act.description" class="text-xs text-brand-dark mt-0.5">{{ act.description }}</p>
                   <p class="text-[11px] text-[#6B6578] mt-0.5">
-                    Logged by <span class="font-medium text-[#242424]">{{ act.user?.name || 'System' }}</span>
+                    Logged by <span class="font-medium text-brand-dark">{{ act.user?.name || 'System' }}</span>
                   </p>
                 </div>
               </div>
@@ -365,15 +365,15 @@ const formatMoney = (amount: number) => {
         <div class="app-card w-full max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#E5E0EC]">
             <div>
-              <span class="text-[11px] font-semibold uppercase tracking-wider text-[#F74D01]">
+              <span class="text-[11px] font-semibold uppercase tracking-wider text-brand-orange">
                 Step {{ followUpStep }} of 2
               </span>
-              <h3 class="text-base font-bold text-[#242424]">Schedule Follow-up</h3>
+              <h3 class="text-base font-bold text-brand-dark">Schedule Follow-up</h3>
             </div>
             <button
               type="button"
               @click="showFollowUpModal = false"
-              class="text-[#6B6578] hover:text-[#242424] cursor-pointer"
+              class="text-[#6B6578] hover:text-brand-dark cursor-pointer"
             >
               <i class="fa-solid fa-xmark"></i>
             </button>
@@ -382,7 +382,7 @@ const formatMoney = (amount: number) => {
           <form @submit.prevent="submitFollowUp" class="space-y-4">
             <div v-if="followUpStep === 1" class="space-y-4">
               <div>
-                <label class="block text-xs font-medium text-[#242424] mb-1.5">Follow-up Title</label>
+                <label class="block text-xs font-medium text-brand-dark mb-1.5">Follow-up Title</label>
                 <input
                   v-model="followUpForm.title"
                   type="text"
@@ -393,7 +393,7 @@ const formatMoney = (amount: number) => {
               </div>
 
               <div>
-                <label class="block text-xs font-medium text-[#242424] mb-1.5">Scheduled Date & Time</label>
+                <label class="block text-xs font-medium text-brand-dark mb-1.5">Scheduled Date & Time</label>
                 <CustomDatePicker
                   v-model="followUpForm.scheduled_at"
                   mode="datetime"
@@ -411,7 +411,7 @@ const formatMoney = (amount: number) => {
 
             <div v-if="followUpStep === 2" class="space-y-4">
               <div>
-                <label class="block text-xs font-medium text-[#242424] mb-1.5">Assign To</label>
+                <label class="block text-xs font-medium text-brand-dark mb-1.5">Assign To</label>
                 <CustomSelect
                   v-model="followUpForm.assigned_to_user_id"
                   :options="teamOptions"
@@ -420,7 +420,7 @@ const formatMoney = (amount: number) => {
               </div>
 
               <div>
-                <label class="block text-xs font-medium text-[#242424] mb-1.5">Follow-up Notes</label>
+                <label class="block text-xs font-medium text-brand-dark mb-1.5">Follow-up Notes</label>
                 <textarea
                   v-model="followUpForm.notes"
                   rows="3"
@@ -446,7 +446,7 @@ const formatMoney = (amount: number) => {
         class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4"
       >
         <div class="app-card w-full max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-          <h3 class="text-base font-bold text-[#242424] mb-1">Add Activity Note</h3>
+          <h3 class="text-base font-bold text-brand-dark mb-1">Add Activity Note</h3>
           <p class="text-xs text-[#6B6578] mb-4">Record a call summary, meeting update, or internal note.</p>
           <form @submit.prevent="submitNote" class="space-y-4">
             <div>
@@ -472,11 +472,11 @@ const formatMoney = (amount: number) => {
         class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4"
       >
         <div class="app-card w-full max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-          <h3 class="text-base font-bold text-[#242424] mb-1">Mark Deal as Lost</h3>
+          <h3 class="text-base font-bold text-brand-dark mb-1">Mark Deal as Lost</h3>
           <p class="text-xs text-[#6B6578] mb-4">Please record why this opportunity did not close.</p>
           <form @submit.prevent="submitLostStage" class="space-y-4">
             <div>
-              <label class="block text-xs font-medium text-[#242424] mb-1.5">Reason for Loss</label>
+              <label class="block text-xs font-medium text-brand-dark mb-1.5">Reason for Loss</label>
               <textarea
                 v-model="stageForm.lost_reason"
                 rows="3"

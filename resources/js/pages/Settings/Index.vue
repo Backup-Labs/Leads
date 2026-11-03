@@ -49,7 +49,7 @@ const submit = () => {
       <!-- Page Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E5E0EC]">
         <div>
-          <h1 class="text-xl font-bold text-[#242424]">Workspace Settings</h1>
+          <h1 class="text-xl font-bold text-brand-dark">Workspace Settings</h1>
           <p class="text-xs text-[#6B6578] mt-0.5">Configure your company profile, follow-up rules, and quotation defaults.</p>
         </div>
 
@@ -67,8 +67,8 @@ const submit = () => {
             class="px-3 py-1.5 rounded text-xs font-medium transition-colors cursor-pointer"
             :class="
               activeTab === tab.id
-                ? 'bg-[#280047] text-white'
-                : 'text-[#6B6578] hover:text-[#242424]'
+                ? 'bg-brand-indigo text-white'
+                : 'text-[#6B6578] hover:text-brand-dark'
             "
           >
             {{ tab.label }}
@@ -80,26 +80,26 @@ const submit = () => {
         <!-- TAB 1: COMPANY PROFILE -->
         <div v-if="activeTab === 1" class="space-y-4">
           <div class="pb-3 border-b border-[#E5E0EC]">
-            <h2 class="text-base font-bold text-[#242424]">Company Profile</h2>
+            <h2 class="text-base font-bold text-brand-dark">Company Profile</h2>
             <p class="text-xs text-[#6B6578]">This information appears on client quotations and reports.</p>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-medium text-[#242424] mb-1.5">Company Name</label>
+              <label class="block text-xs font-medium text-brand-dark mb-1.5">Company Name</label>
               <input v-model="form.name" type="text" required class="app-input" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-[#242424] mb-1.5">Official Billing Email</label>
+              <label class="block text-xs font-medium text-brand-dark mb-1.5">Official Billing Email</label>
               <input v-model="form.billing_email" type="email" class="app-input" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-[#242424] mb-1.5">Business Phone</label>
+              <label class="block text-xs font-medium text-brand-dark mb-1.5">Business Phone</label>
               <input v-model="form.phone" type="text" class="app-input font-mono-num" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-[#242424] mb-1.5">
-                Workspace Currency <span class="text-[#F74D01] text-[10px]">(Auto-converts all deals)</span>
+              <label class="block text-xs font-medium text-brand-dark mb-1.5">
+                Workspace Currency <span class="text-brand-orange text-[10px]">(Auto-converts all deals)</span>
               </label>
               <CustomSelect
                 :model-value="form.currency"
@@ -113,13 +113,13 @@ const submit = () => {
         <!-- TAB 2: FOLLOW-UP RULES -->
         <div v-if="activeTab === 2" class="space-y-4">
           <div class="pb-3 border-b border-[#E5E0EC]">
-            <h2 class="text-base font-bold text-[#242424]">Automated Follow-up & Recovery Rules</h2>
+            <h2 class="text-base font-bold text-brand-dark">Automated Follow-up & Recovery Rules</h2>
             <p class="text-xs text-[#6B6578]">Define when leads and quotations are flagged as needing attention.</p>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="p-4 rounded-md bg-[#FAFAFB] border border-[#E5E0EC]">
-              <label class="block text-xs font-bold text-[#242424] mb-1">
+              <label class="block text-xs font-bold text-brand-dark mb-1">
                 Stale Lead Threshold (Days)
               </label>
               <p class="text-[11px] text-[#6B6578] mb-2.5">
@@ -129,7 +129,7 @@ const submit = () => {
             </div>
 
             <div class="p-4 rounded-md bg-[#FAFAFB] border border-[#E5E0EC]">
-              <label class="block text-xs font-bold text-[#242424] mb-1">
+              <label class="block text-xs font-bold text-brand-dark mb-1">
                 Quotation Reminder (Days)
               </label>
               <p class="text-[11px] text-[#6B6578] mb-2.5">
@@ -139,7 +139,7 @@ const submit = () => {
             </div>
 
             <div class="p-4 rounded-md bg-[#FAFAFB] border border-[#E5E0EC]">
-              <label class="block text-xs font-bold text-[#242424] mb-1">
+              <label class="block text-xs font-bold text-brand-dark mb-1">
                 High-Value Deal ({{ form.currency }})
               </label>
               <p class="text-[11px] text-[#6B6578] mb-2.5">
@@ -153,17 +153,17 @@ const submit = () => {
         <!-- TAB 3: QUOTATION DEFAULTS -->
         <div v-if="activeTab === 3" class="space-y-4">
           <div class="pb-3 border-b border-[#E5E0EC]">
-            <h2 class="text-base font-bold text-[#242424]">Quotation Defaults</h2>
+            <h2 class="text-base font-bold text-brand-dark">Quotation Defaults</h2>
             <p class="text-xs text-[#6B6578]">Set default tax rates and standard payment terms.</p>
           </div>
 
           <div class="grid grid-cols-1 gap-4">
             <div class="max-w-xs">
-              <label class="block text-xs font-medium text-[#242424] mb-1.5">Default VAT Rate (%)</label>
+              <label class="block text-xs font-medium text-brand-dark mb-1.5">Default VAT Rate (%)</label>
               <input v-model="form.default_tax_rate" type="number" min="0" max="100" step="any" class="app-input font-mono-num" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-[#242424] mb-1.5">Default Payment Terms & Notes</label>
+              <label class="block text-xs font-medium text-brand-dark mb-1.5">Default Payment Terms & Notes</label>
               <textarea v-model="form.quotation_default_terms" rows="4" class="app-input"></textarea>
             </div>
           </div>

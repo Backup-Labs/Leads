@@ -41,8 +41,8 @@ const submit = () => {
     <AuthLayout>
         <div class="mb-5">
             <div class="flex flex-wrap items-center justify-between gap-1 mb-1">
-                <h2 class="text-xl font-bold text-[#280047]">Create Account</h2>
-                <span class="text-xs font-semibold text-[#F74D01]">Step {{ currentStep }} of 2</span>
+                <h2 class="text-xl font-bold text-brand-indigo">Create Account</h2>
+                <span class="text-xs font-semibold text-brand-orange">Step {{ currentStep }} of 2</span>
             </div>
             <p class="text-xs text-gray-500">
                 {{ currentStep === 1 ? 'Set up your company name and default currency.' : 'Enter your personal details and password.' }}
@@ -50,8 +50,8 @@ const submit = () => {
 
             <!-- Step Bar -->
             <div class="mt-3 grid grid-cols-2 gap-2">
-                <div class="h-1.5 rounded-sm" :class="currentStep >= 1 ? 'bg-[#280047]' : 'bg-gray-200'"></div>
-                <div class="h-1.5 rounded-sm" :class="currentStep >= 2 ? 'bg-[#F74D01]' : 'bg-gray-200'"></div>
+                <div class="h-1.5 rounded-sm" :class="currentStep >= 1 ? 'bg-brand-indigo' : 'bg-gray-200'"></div>
+                <div class="h-1.5 rounded-sm" :class="currentStep >= 2 ? 'bg-brand-orange' : 'bg-gray-200'"></div>
             </div>
         </div>
 
@@ -59,7 +59,7 @@ const submit = () => {
             <!-- Step 1: Company Details -->
             <div v-if="currentStep === 1" class="space-y-4">
                 <div>
-                    <label for="org_name" class="block text-xs font-semibold text-[#242424] mb-1">Company Name *</label>
+                    <label for="org_name" class="block text-xs font-semibold text-brand-dark mb-1">Company Name *</label>
                     <input
                         id="org_name"
                         v-model="form.organization_name"
@@ -68,11 +68,11 @@ const submit = () => {
                         placeholder="e.g. Kigali Solutions Ltd"
                         class="app-input w-full"
                     />
-                    <p v-if="form.errors.organization_name" class="mt-1 text-xs text-[#F74D01]">{{ form.errors.organization_name }}</p>
+                    <p v-if="form.errors.organization_name" class="mt-1 text-xs text-brand-orange">{{ form.errors.organization_name }}</p>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-[#242424] mb-1.5">Default Currency</label>
+                    <label class="block text-xs font-semibold text-brand-dark mb-1.5">Default Currency</label>
                     <div class="grid grid-cols-2 min-[380px]:grid-cols-3 gap-2">
                         <button
                             v-for="curr in currencies"
@@ -81,8 +81,8 @@ const submit = () => {
                             @click="form.currency = curr.code"
                             class="p-2.5 rounded-md border text-left transition-colors cursor-pointer"
                             :class="form.currency === curr.code
-                                ? 'border-[#280047] bg-[#280047] text-white'
-                                : 'border-[#D5CCE2] bg-white text-[#242424] hover:border-[#280047]'"
+                                ? 'border-brand-indigo bg-brand-indigo text-white'
+                                : 'border-brand-light bg-white text-brand-dark hover:border-brand-indigo'"
                         >
                             <p class="text-xs font-bold">{{ curr.code }}</p>
                             <p class="text-[10px] opacity-80 leading-tight mt-0.5">{{ curr.label }}</p>
@@ -104,7 +104,7 @@ const submit = () => {
             <!-- Step 2: Account Details -->
             <div v-else class="space-y-4">
                 <div>
-                    <label for="name" class="block text-xs font-semibold text-[#242424] mb-1">Full Name *</label>
+                    <label for="name" class="block text-xs font-semibold text-brand-dark mb-1">Full Name *</label>
                     <input
                         id="name"
                         v-model="form.name"
@@ -113,11 +113,11 @@ const submit = () => {
                         placeholder="e.g. Jean Claude"
                         class="app-input w-full"
                     />
-                    <p v-if="form.errors.name" class="mt-1 text-xs text-[#F74D01]">{{ form.errors.name }}</p>
+                    <p v-if="form.errors.name" class="mt-1 text-xs text-brand-orange">{{ form.errors.name }}</p>
                 </div>
 
                 <div>
-                    <label for="email" class="block text-xs font-semibold text-[#242424] mb-1">Work Email *</label>
+                    <label for="email" class="block text-xs font-semibold text-brand-dark mb-1">Work Email *</label>
                     <input
                         id="email"
                         v-model="form.email"
@@ -126,12 +126,12 @@ const submit = () => {
                         placeholder="you@company.com"
                         class="app-input w-full"
                     />
-                    <p v-if="form.errors.email" class="mt-1 text-xs text-[#F74D01]">{{ form.errors.email }}</p>
+                    <p v-if="form.errors.email" class="mt-1 text-xs text-brand-orange">{{ form.errors.email }}</p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label for="password" class="block text-xs font-semibold text-[#242424] mb-1">Password *</label>
+                        <label for="password" class="block text-xs font-semibold text-brand-dark mb-1">Password *</label>
                         <input
                             id="password"
                             v-model="form.password"
@@ -142,7 +142,7 @@ const submit = () => {
                         />
                     </div>
                     <div>
-                        <label for="password_confirmation" class="block text-xs font-semibold text-[#242424] mb-1">Confirm Password *</label>
+                        <label for="password_confirmation" class="block text-xs font-semibold text-brand-dark mb-1">Confirm Password *</label>
                         <input
                             id="password_confirmation"
                             v-model="form.password_confirmation"
@@ -153,7 +153,7 @@ const submit = () => {
                         />
                     </div>
                 </div>
-                <p v-if="form.errors.password" class="text-xs text-[#F74D01]">{{ form.errors.password }}</p>
+                <p v-if="form.errors.password" class="text-xs text-brand-orange">{{ form.errors.password }}</p>
 
                 <div class="flex items-center gap-2 pt-1">
                     <button
@@ -176,7 +176,7 @@ const submit = () => {
 
         <div class="mt-5 text-center text-xs text-gray-500">
             Already have an account?
-            <Link href="/login" class="font-bold text-[#280047] hover:text-[#F74D01] ml-1">Sign In</Link>
+            <Link href="/login" class="font-bold text-brand-indigo hover:text-brand-orange ml-1">Sign In</Link>
         </div>
     </AuthLayout>
 </template>

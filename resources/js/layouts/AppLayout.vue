@@ -163,7 +163,7 @@ const logout = () => {
         <span class="text-[10px] font-mono-num font-semibold px-1.5 py-0.5 rounded bg-brand-yellow text-indigo shrink-0">
           {{ currentCurrency }}
         </span>
-        <span class="hidden sm:inline-block text-xs text-[#C3B6D3] truncate max-w-[160px] ml-1">
+        <span class="hidden sm:inline-block text-xs text-brand-purple truncate max-w-40 ml-1">
           &bull; {{ auth.currentOrganization?.name }}
         </span>
       </div>
@@ -173,12 +173,12 @@ const logout = () => {
           href="/quotations/create"
           class="hidden min-[380px]:inline-flex items-center gap-1 px-2.5 py-1.5 rounded bg-white/10 hover:bg-white/15 text-white text-[11px] font-semibold"
         >
-          <i class="fa-solid fa-file-invoice text-[#FDFEBA] text-[10px]"></i>
+          <i class="fa-solid fa-file-invoice text-brand-yellow text-[10px]"></i>
           <span class="hidden sm:inline">New Quote</span>
         </Link>
         <Link
           href="/leads/create"
-          class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded bg-[#F74D01] hover:bg-[#e04500] text-white text-[11px] font-semibold"
+          class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded bg-brand-orange hover:bg-brand-red text-white text-[11px] font-semibold"
         >
           <i class="fa-solid fa-plus text-[10px]"></i>
           <span>New Lead</span>
@@ -209,11 +209,11 @@ const logout = () => {
       ></div>
 
       <!-- Drawer Panel -->
-      <div class="relative z-10 w-[min(19rem,calc(100vw-1.5rem))] max-w-full h-full bg-[#280047] text-white flex flex-col shadow-2xl overflow-y-auto">
+      <div class="relative z-10 w-[min(19rem,calc(100vw-1.5rem))] max-w-full h-full bg-brand-indigo text-white flex flex-col shadow-2xl overflow-y-auto">
         <!-- Drawer Header -->
         <div class="h-14 flex items-center justify-between px-4 border-b border-white/10 shrink-0">
           <Link href="/dashboard" @click="mobileMenuOpen = false" class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-md bg-[#F74D01] flex items-center justify-center text-white font-bold text-sm">
+            <div class="w-7 h-7 rounded-md bg-brand-red flex items-center justify-center text-white font-bold text-sm">
               L
             </div>
             <span class="font-bold text-base">Leads</span>
@@ -230,7 +230,7 @@ const logout = () => {
 
         <!-- Mobile Company Switcher -->
         <div class="p-3 border-b border-white/10 shrink-0">
-          <p class="text-[10px] font-semibold uppercase tracking-wider text-[#C3B6D3] mb-1.5 px-1">
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-brand-purple mb-1.5 px-1">
             Active Company ({{ auth.currentMember?.role_label || 'Member' }})
           </p>
           <div class="space-y-1">
@@ -243,21 +243,21 @@ const logout = () => {
               :class="
                 org.id === auth.currentOrganization?.id
                   ? 'bg-white/15 text-white font-bold'
-                  : 'text-[#C3B6D3] hover:bg-white/8 hover:text-white'
+                  : 'text-brand-purple hover:bg-white/8 hover:text-white'
               "
             >
               <span class="truncate">{{ org.name }}</span>
-              <i v-if="org.id === auth.currentOrganization?.id" class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+              <i v-if="org.id === auth.currentOrganization?.id" class="fa-solid fa-check text-brand-orange text-[10px]"></i>
             </button>
           </div>
         </div>
 
         <!-- Mobile Currency Switcher -->
         <div class="p-3 border-b border-white/10 shrink-0">
-          <p class="text-[10px] font-semibold uppercase tracking-wider text-[#C3B6D3] mb-1.5 px-1">
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-brand-purple mb-1.5 px-1">
             Workspace Currency
           </p>
-          <div class="text-[#242424]">
+          <div class="text-brand-dark">
             <CustomSelect
               :model-value="currentCurrency"
               :options="CURRENCY_OPTIONS"
@@ -282,7 +282,7 @@ const logout = () => {
             @click="mobileMenuOpen = false"
             class="btn-secondary text-xs py-2 px-2.5 w-full"
           >
-            <i class="fa-solid fa-file-invoice text-[#280047]"></i> New Quote
+            <i class="fa-solid fa-file-invoice text-brand-indigo"></i> New Quote
           </Link>
         </div>
 
@@ -296,10 +296,10 @@ const logout = () => {
             class="flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-medium transition-colors"
             :class="[
               isCurrent(item.href)
-                ? 'bg-[#F74D01] text-white font-semibold'
+                ? 'bg-brand-orange text-white font-semibold'
                 : item.highlight
-                  ? 'text-[#FDFEBA] hover:bg-white/10'
-                  : 'text-[#C3B6D3] hover:text-white hover:bg-white/8',
+                  ? 'text-brand-yellow hover:bg-white/10'
+                  : 'text-brand-purple hover:text-white hover:bg-white/8',
             ]"
           >
             <i :class="item.icon" class="w-4 text-center"></i>
@@ -310,18 +310,18 @@ const logout = () => {
         <!-- Drawer User Footer -->
         <div class="p-3 border-t border-white/10 flex items-center justify-between gap-2 shrink-0 bg-black/15">
           <div class="flex items-center gap-2.5 min-w-0">
-            <div class="w-8 h-8 rounded-md bg-[#C3B6D3] text-[#280047] flex items-center justify-center font-bold text-xs shrink-0">
+            <div class="w-8 h-8 rounded-md bg-brand-purple text-brand-dark flex items-center justify-center font-bold text-xs shrink-0">
               {{ auth.user?.name?.charAt(0) || 'U' }}
             </div>
             <div class="min-w-0">
               <p class="text-xs font-semibold text-white truncate">{{ auth.user?.name }}</p>
-              <p class="text-[10px] text-[#C3B6D3] truncate">{{ auth.user?.email }}</p>
+              <p class="text-[10px] text-brand-purple truncate">{{ auth.user?.email }}</p>
             </div>
           </div>
           <button
             type="button"
             @click="logout"
-            class="px-2.5 py-1.5 rounded bg-white/10 hover:bg-white/20 text-xs text-[#FDFEBA] font-semibold shrink-0 cursor-pointer"
+            class="px-2.5 py-1.5 rounded bg-white/10 hover:bg-white/20 text-xs text-brand-yellow font-semibold shrink-0 cursor-pointer"
           >
             Sign Out
           </button>
@@ -332,10 +332,10 @@ const logout = () => {
     <!-- Main Content Area (Static Header + Scrollable Page Body) -->
     <div class="flex-1 flex flex-col min-h-0 h-full overflow-hidden min-w-0">
       <!-- Static Desktop Header -->
-      <header class="hidden lg:flex items-center justify-between h-14 px-8 bg-white border-b border-[#E5E0EC] flex-shrink-0">
+      <header class="hidden lg:flex items-center justify-between h-14 px-8 bg-white border-b border-[#E5E0EC] shrink-0">
         <div class="flex items-center gap-2.5 text-xs min-w-0">
-          <span class="font-semibold text-[#280047] truncate">{{ auth.currentOrganization?.name }}</span>
-          <span class="text-[#C3B6D3]">/</span>
+          <span class="font-semibold text-brand-indigo truncate">{{ auth.currentOrganization?.name }}</span>
+          <span class="text-brand-purple">/</span>
           <span class="text-gray-500 truncate">{{ auth.currentMember?.role_label || 'Member' }}</span>
         </div>
 
@@ -353,7 +353,7 @@ const logout = () => {
           </div>
 
           <Link href="/quotations/create" class="btn-secondary inline-flex items-center gap-1.5">
-            <i class="fa-solid fa-file-invoice text-[#280047]"></i>
+            <i class="fa-solid fa-file-invoice text-brand-indigo"></i>
             <span>New Quotation</span>
           </Link>
 
@@ -371,23 +371,23 @@ const logout = () => {
           <div v-if="flash.success || flash.error || flash.warning" class="mb-5">
             <div
               v-if="flash.success"
-              class="flex items-center gap-2.5 p-3 text-xs font-medium text-[#280047] bg-[#FDFEBA] border border-[#280047]/20 rounded-md"
+              class="flex items-center gap-2.5 p-3 text-xs font-medium text-brand-indigo bg-brand-yellow border border-brand-indigo/20 rounded-md"
             >
-              <i class="fa-solid fa-circle-check text-[#280047] shrink-0"></i>
+              <i class="fa-solid fa-circle-check text-brand-indigo shrink-0"></i>
               <span>{{ flash.success }}</span>
             </div>
             <div
               v-if="flash.error"
-              class="flex items-center gap-2.5 p-3 text-xs font-medium text-white bg-[#F74D01] rounded-md"
+              class="flex items-center gap-2.5 p-3 text-xs font-medium text-white bg-brand-orange rounded-md"
             >
               <i class="fa-solid fa-circle-exclamation shrink-0"></i>
               <span>{{ flash.error }}</span>
             </div>
             <div
               v-if="flash.warning"
-              class="flex items-center gap-2.5 p-3 text-xs font-medium text-[#280047] bg-[#FDFEBA] border border-[#F74D01] rounded-md"
+              class="flex items-center gap-2.5 p-3 text-xs font-medium text-brand-indigo bg-brand-yellow border border-brand-indigo/20 rounded-md"
             >
-              <i class="fa-solid fa-triangle-exclamation text-[#F74D01] shrink-0"></i>
+              <i class="fa-solid fa-triangle-exclamation text-brand-orange shrink-0"></i>
               <span>{{ flash.warning }}</span>
             </div>
           </div>

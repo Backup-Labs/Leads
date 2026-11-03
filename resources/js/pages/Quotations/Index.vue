@@ -39,7 +39,7 @@ const statusStyle: Record<string, string> = {
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 class="text-xl font-bold text-[#242424]">Quotations</h1>
+          <h1 class="text-xl font-bold text-brand-dark">Quotations</h1>
           <p class="text-xs text-[#6B6578] mt-0.5">Create, share, and track client proposals and quotations.</p>
         </div>
         <div class="flex items-center">
@@ -53,10 +53,10 @@ const statusStyle: Record<string, string> = {
       <div class="app-card overflow-hidden">
         <!-- Empty State -->
         <div v-if="quotations.data.length === 0" class="px-4 sm:px-6 py-12 text-center">
-          <div class="w-10 h-10 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center mx-auto mb-2.5">
+          <div class="w-10 h-10 rounded-md bg-[#F3F1F6] text-brand-indigo flex items-center justify-center mx-auto mb-2.5">
             <i class="fa-solid fa-file-invoice-dollar text-sm"></i>
           </div>
-          <p class="text-sm font-semibold text-[#242424]">No quotations generated yet</p>
+          <p class="text-sm font-semibold text-brand-dark">No quotations generated yet</p>
           <p class="text-xs text-[#6B6578] mt-0.5 mb-4">Create your first client quotation in seconds.</p>
           <Link href="/quotations/create" class="btn-primary text-xs">
             <i class="fa-solid fa-plus"></i> Create Quotation
@@ -75,11 +75,11 @@ const statusStyle: Record<string, string> = {
                 <div class="min-w-0">
                   <Link
                     :href="`/quotations/${q.id}`"
-                    class="text-sm font-bold text-[#280047] font-mono-num hover:text-[#F74D01] block"
+                    class="text-sm font-bold text-brand-indigo font-mono-num hover:text-brand-orange block"
                   >
                     {{ q.quotation_number }}
                   </Link>
-                  <p class="text-xs font-semibold text-[#242424] mt-0.5">
+                  <p class="text-xs font-semibold text-brand-dark mt-0.5">
                     {{ q.customer_name || q.lead?.customer_name || 'Client' }}
                   </p>
                   <p class="text-[11px] text-[#6B6578]">{{ q.company_name || 'Direct' }}</p>
@@ -103,17 +103,17 @@ const statusStyle: Record<string, string> = {
                 </div>
                 <div class="col-span-2 min-[360px]:col-span-1">
                   <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Total Amount</p>
-                  <p class="font-mono-num font-bold text-[#242424] mt-0.5">{{ formatMoney(Number(q.total_amount), q.currency) }}</p>
+                  <p class="font-mono-num font-bold text-brand-dark mt-0.5">{{ formatMoney(Number(q.total_amount), q.currency) }}</p>
                 </div>
               </div>
 
               <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#F0EDF5]">
                 <span class="text-[11px] text-[#6B6578] font-mono-num">
-                  Valid Until: <strong class="text-[#242424]">{{ q.validity_date ? new Date(q.validity_date).toLocaleDateString() : '—' }}</strong>
+                  Valid Until: <strong class="text-brand-dark">{{ q.validity_date ? new Date(q.validity_date).toLocaleDateString() : '—' }}</strong>
                 </span>
                 <Link
                   :href="`/quotations/${q.id}`"
-                  class="px-2.5 py-1 rounded bg-[#280047] text-white hover:bg-[#3a0066] text-[11px] font-medium"
+                  class="px-2.5 py-1 rounded bg-brand-indigo text-white hover:bg-[#3a0066] text-[11px] font-medium"
                 >
                   View
                 </Link>
@@ -142,13 +142,13 @@ const statusStyle: Record<string, string> = {
                   :key="q.id"
                   class="hover:bg-[#FAFAFB] transition-colors"
                 >
-                  <td class="px-4 py-3.5 font-mono-num font-bold text-[#280047]">
-                    <Link :href="`/quotations/${q.id}`" class="hover:text-[#F74D01]">
+                  <td class="px-4 py-3.5 font-mono-num font-bold text-brand-indigo">
+                    <Link :href="`/quotations/${q.id}`" class="hover:text-brand-orange">
                       {{ q.quotation_number }}
                     </Link>
                   </td>
                   <td class="px-4 py-3.5">
-                    <p class="font-semibold text-[#242424]">{{ q.customer_name || q.lead?.customer_name || 'Client' }}</p>
+                    <p class="font-semibold text-brand-dark">{{ q.customer_name || q.lead?.customer_name || 'Client' }}</p>
                     <p class="text-[11px] text-[#6B6578]">{{ q.company_name || 'Direct' }}</p>
                   </td>
                   <td class="px-4 py-3.5 font-mono-num text-[#6B6578]">
@@ -157,7 +157,7 @@ const statusStyle: Record<string, string> = {
                   <td class="px-4 py-3.5 font-mono-num text-[#6B6578]">
                     {{ formatMoney(Number(q.tax_amount), q.currency) }}
                   </td>
-                  <td class="px-4 py-3.5 font-mono-num font-bold text-[#242424]">
+                  <td class="px-4 py-3.5 font-mono-num font-bold text-brand-dark">
                     {{ formatMoney(Number(q.total_amount), q.currency) }}
                   </td>
                   <td class="px-4 py-3.5">
@@ -174,7 +174,7 @@ const statusStyle: Record<string, string> = {
                   <td class="px-4 py-3.5 text-right">
                     <Link
                       :href="`/quotations/${q.id}`"
-                      class="px-2.5 py-1 rounded bg-[#280047] text-white hover:bg-[#3a0066] text-[11px] font-medium"
+                      class="px-2.5 py-1 rounded bg-brand-indigo text-white hover:bg-[#3a0066] text-[11px] font-medium"
                     >
                       View
                     </Link>
@@ -190,9 +190,9 @@ const statusStyle: Record<string, string> = {
             class="px-4 py-3 border-t border-[#E5E0EC] bg-[#FAFAFB] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
           >
             <span class="text-[#6B6578]">
-              Showing <strong class="text-[#242424]">{{ quotations.from }}</strong> to
-              <strong class="text-[#242424]">{{ quotations.to }}</strong> of
-              <strong class="text-[#242424]">{{ quotations.total }}</strong> quotations
+              Showing <strong class="text-brand-dark">{{ quotations.from }}</strong> to
+              <strong class="text-brand-dark">{{ quotations.to }}</strong> of
+              <strong class="text-brand-dark">{{ quotations.total }}</strong> quotations
             </span>
             <div class="flex flex-wrap items-center gap-1">
               <template v-for="(link, idx) in quotations.links" :key="idx">
@@ -203,8 +203,8 @@ const statusStyle: Record<string, string> = {
                   class="px-2.5 py-1 rounded border text-xs transition-colors"
                   :class="
                     link.active
-                      ? 'bg-[#280047] text-white border-[#280047] font-semibold'
-                      : 'bg-white text-[#242424] border-[#E5E0EC] hover:bg-[#F3F1F6]'
+                      ? 'bg-brand-indigo text-white border-brand-indigo font-semibold'
+                      : 'bg-white text-brand-dark border-[#E5E0EC] hover:bg-[#F3F1F6]'
                   "
                 />
               </template>

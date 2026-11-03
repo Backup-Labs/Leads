@@ -101,17 +101,17 @@ const priorityBadge: Record<string, string> = {
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 class="text-xl font-bold text-[#242424]">All Leads</h1>
+          <h1 class="text-xl font-bold text-brand-dark">All Leads</h1>
           <p class="text-xs text-[#6B6578] mt-0.5">
-            Showing <span class="font-semibold text-[#242424] font-mono-num">{{ leads.total }}</span> leads in your workspace
+            Showing <span class="font-semibold text-brand-dark font-mono-num">{{ leads.total }}</span> leads in your workspace
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <a href="/leads/export" class="btn-secondary text-xs">
-            <i class="fa-solid fa-download text-[#280047]"></i> Export CSV
+            <i class="fa-solid fa-download text-brand-indigo"></i> Export CSV
           </a>
           <Link href="/pipeline" class="btn-secondary text-xs">
-            <i class="fa-solid fa-table-columns text-[#280047]"></i> Pipeline Board
+            <i class="fa-solid fa-table-columns text-brand-indigo"></i> Pipeline Board
           </Link>
           <Link href="/leads/create" class="btn-primary text-xs">
             <i class="fa-solid fa-plus"></i> Add New Lead
@@ -148,7 +148,7 @@ const priorityBadge: Record<string, string> = {
               @click="clearFilters"
               title="Reset filters"
               aria-label="Reset filters"
-              class="h-[38px] px-2.5 rounded-md border border-[#D5CCE2] text-[#6B6578] hover:text-[#242424] hover:bg-[#F3F1F6] text-xs cursor-pointer shrink-0"
+              class="h-9.5 px-2.5 rounded-md border border-[#D5CCE2] text-[#6B6578] hover:text-brand-dark hover:bg-[#F3F1F6] text-xs cursor-pointer shrink-0"
             >
               <i class="fa-solid fa-xmark"></i>
             </button>
@@ -160,10 +160,10 @@ const priorityBadge: Record<string, string> = {
       <div class="app-card overflow-hidden">
         <!-- Empty State -->
         <div v-if="leads.data.length === 0" class="px-4 sm:px-6 py-12 text-center">
-          <div class="w-10 h-10 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center mx-auto mb-2.5">
+          <div class="w-10 h-10 rounded-md bg-[#F3F1F6] text-brand-indigo flex items-center justify-center mx-auto mb-2.5">
             <i class="fa-solid fa-address-book text-sm"></i>
           </div>
-          <p class="font-semibold text-[#242424] text-sm">No matching leads found</p>
+          <p class="font-semibold text-brand-dark text-sm">No matching leads found</p>
           <p class="text-xs text-[#6B6578] mt-0.5 mb-4">Try clearing your filters or add a new lead to get started.</p>
           <Link href="/leads/create" class="btn-primary text-xs">
             <i class="fa-solid fa-plus"></i> Add New Lead
@@ -180,21 +180,21 @@ const priorityBadge: Record<string, string> = {
             >
               <div class="flex items-start justify-between gap-2.5">
                 <div class="flex items-start gap-2.5 min-w-0">
-                  <div class="w-8 h-8 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                  <div class="w-8 h-8 rounded-md bg-brand-indigo text-yellow flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
                     {{ lead.customer_name.charAt(0).toUpperCase() }}
                   </div>
                   <div class="min-w-0">
                     <Link
                       :href="`/leads/${lead.id}`"
-                      class="font-bold text-[#242424] hover:text-[#F74D01] transition-colors block break-words text-sm"
+                      class="font-bold text-brand-dark hover:text-brand-orange transition-colors block wrap-break-word text-sm"
                     >
                       {{ lead.customer_name }}
                     </Link>
-                    <p class="text-[#6B6578] break-words">{{ lead.company_name || 'Individual Client' }}</p>
+                    <p class="text-[#6B6578] wrap-break-word">{{ lead.company_name || 'Individual Client' }}</p>
                     <p class="text-[11px] text-[#6B6578] font-mono-num mt-0.5 break-all">{{ lead.phone || lead.email || '—' }}</p>
                   </div>
                 </div>
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border bg-[#F3F1F6] text-[#280047] border-[#C3B6D3] shrink-0">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border bg-[#F3F1F6] text-brand-indigo border-brand-purple shrink-0">
                   {{ lead.stage?.name || 'Active' }}
                 </span>
               </div>
@@ -202,14 +202,14 @@ const priorityBadge: Record<string, string> = {
               <div class="grid grid-cols-2 gap-2.5 pt-2.5 border-t border-[#F3F1F6]">
                 <div>
                   <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Service & Source</p>
-                  <p class="font-medium text-[#242424] mt-0.5">{{ lead.requested_service || 'General Inquiry' }}</p>
+                  <p class="font-medium text-brand-dark mt-0.5">{{ lead.requested_service || 'General Inquiry' }}</p>
                   <p class="text-[11px] text-[#6B6578]">
-                    <i class="fa-solid fa-tag text-[9px] text-[#C3B6D3] mr-1"></i>{{ lead.source?.name || 'Direct' }}
+                    <i class="fa-solid fa-tag text-[9px] text-brand-purple mr-1"></i>{{ lead.source?.name || 'Direct' }}
                   </p>
                 </div>
                 <div>
                   <p class="text-[10px] uppercase tracking-wider text-[#6B6578]">Deal Value</p>
-                  <p class="font-mono-num font-bold text-[#280047] text-sm mt-0.5">
+                  <p class="font-mono-num font-bold text-brand-indigo text-sm mt-0.5">
                     {{ formatMoney(Number(lead.estimated_value), lead.currency) }}
                   </p>
                   <p class="text-[11px] capitalize flex items-center gap-1 mt-0.5" :class="priorityBadge[lead.priority]">
@@ -220,18 +220,18 @@ const priorityBadge: Record<string, string> = {
 
               <div class="pt-2.5 border-t border-[#F3F1F6] flex flex-wrap items-center justify-between gap-2">
                 <span class="text-[11px] text-[#6B6578]">
-                  Owner: <strong class="text-[#242424]">{{ lead.assigned_to?.name || 'Unassigned' }}</strong>
+                  Owner: <strong class="text-brand-dark">{{ lead.assigned_to?.name || 'Unassigned' }}</strong>
                 </span>
                 <div class="flex flex-wrap items-center gap-1.5">
                   <Link
                     :href="`/quotations/create?lead_id=${lead.id}`"
-                    class="px-2.5 py-1.5 rounded border border-[#E5E0EC] text-[#280047] hover:bg-[#F3F1F6] text-[11px] font-semibold"
+                    class="px-2.5 py-1.5 rounded border border-[#E5E0EC] text-brand- hover:bg-[#F3F1F6] text-[11px] font-semibold"
                   >
                     <i class="fa-solid fa-file-invoice mr-1"></i> Quote
                   </Link>
                   <Link
                     :href="`/leads/${lead.id}`"
-                    class="px-3 py-1.5 rounded bg-[#280047] text-white hover:bg-[#3a0066] text-[11px] font-semibold"
+                    class="px-3 py-1.5 rounded bg-brand-indigo text-white hover:bg-[#3a0066] text-[11px] font-semibold"
                   >
                     View Lead
                   </Link>
@@ -262,13 +262,13 @@ const priorityBadge: Record<string, string> = {
                 >
                   <td class="px-4 py-3.5">
                     <div class="flex items-start gap-2.5">
-                      <div class="w-8 h-8 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                      <div class="w-8 h-8 rounded-md bg-brand-indigo text-brand-yellow flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
                         {{ lead.customer_name.charAt(0).toUpperCase() }}
                       </div>
                       <div class="min-w-0">
                         <Link
                           :href="`/leads/${lead.id}`"
-                          class="font-semibold text-[#242424] hover:text-[#F74D01] transition-colors block"
+                          class="font-semibold text-brand-dark hover:text-brand-orange transition-colors block"
                         >
                           {{ lead.customer_name }}
                         </Link>
@@ -279,22 +279,22 @@ const priorityBadge: Record<string, string> = {
                   </td>
 
                   <td class="px-4 py-3.5">
-                    <p class="font-medium text-[#242424]">{{ lead.requested_service || 'General Inquiry' }}</p>
+                    <p class="font-medium text-brand-dark">{{ lead.requested_service || 'General Inquiry' }}</p>
                     <span class="inline-flex items-center gap-1 text-[11px] text-[#6B6578] mt-0.5">
-                      <i class="fa-solid fa-tag text-[9px] text-[#C3B6D3]"></i>
+                      <i class="fa-solid fa-tag text-[9px] text-brand-purple"></i>
                       {{ lead.source?.name || 'Direct' }}
                     </span>
                   </td>
 
                   <td class="px-4 py-3.5">
                     <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border bg-[#F3F1F6] text-[#280047] border-[#C3B6D3]"
+                      class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border bg-[#F3F1F6] text-brand-indigo border-brand-purple"
                     >
                       {{ lead.stage?.name || 'Active' }}
                     </span>
                   </td>
 
-                  <td class="px-4 py-3.5 font-mono-num font-semibold text-[#242424]">
+                  <td class="px-4 py-3.5 font-mono-num font-semibold text-brand-dark">
                     {{ formatMoney(Number(lead.estimated_value), lead.currency) }}
                   </td>
 
@@ -305,7 +305,7 @@ const priorityBadge: Record<string, string> = {
                     </span>
                   </td>
 
-                  <td class="px-4 py-3.5 text-[#242424]">
+                  <td class="px-4 py-3.5 text-brand-dark">
                     <span class="font-medium">{{ lead.assigned_to?.name || 'Unassigned' }}</span>
                   </td>
 
@@ -313,14 +313,14 @@ const priorityBadge: Record<string, string> = {
                     <div class="inline-flex items-center gap-1.5">
                       <Link
                         :href="`/quotations/create?lead_id=${lead.id}`"
-                        class="px-2 py-1 rounded border border-[#E5E0EC] text-[#280047] hover:bg-[#F3F1F6] text-[11px] font-medium"
+                        class="px-2 py-1 rounded border border-[#E5E0EC] text-brand-indigo hover:bg-[#F3F1F6] text-[11px] font-medium"
                         title="Create Quotation"
                       >
                         <i class="fa-solid fa-file-invoice"></i> Quote
                       </Link>
                       <Link
                         :href="`/leads/${lead.id}`"
-                        class="px-2.5 py-1 rounded bg-[#280047] text-white hover:bg-[#3a0066] text-[11px] font-medium"
+                        class="px-2.5 py-1 rounded bg-brand-indigo text-white hover:bg-[#3a0066] text-[11px] font-medium"
                       >
                         View
                       </Link>
@@ -346,8 +346,8 @@ const priorityBadge: Record<string, string> = {
               class="px-2.5 py-1 rounded border text-xs font-medium transition-colors"
               :class="[
                 link.active
-                  ? 'bg-[#280047] text-white border-[#280047]'
-                  : 'bg-white text-[#242424] border-[#E5E0EC] hover:bg-[#F3F1F6]',
+                  ? 'bg-brand-indigo text-white border-brand-indigo'
+                  : 'bg-white text-brand-dark border-[#E5E0EC] hover:bg-[#F3F1F6]',
                 !link.url && 'opacity-40 pointer-events-none',
               ]"
               v-html="link.label"

@@ -47,8 +47,8 @@ const submitComplete = () => {
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 class="text-xl font-bold text-[#242424]">Follow-ups Schedule</h1>
-          <p class="text-xs text-[#6B6578] mt-0.5">Manage scheduled calls, WhatsApp check-ins, and client meetings.</p>
+          <h1 class="text-xl font-bold text-brand-dark">Follow-ups Schedule</h1>
+          <p class="text-xs text-brand-purple mt-0.5">Manage scheduled calls, WhatsApp check-ins, and client meetings.</p>
         </div>
       </div>
 
@@ -60,8 +60,8 @@ const submitComplete = () => {
           class="px-3.5 py-2 rounded-md text-xs font-semibold transition-colors flex items-center gap-2"
           :class="
             currentStatus === 'upcoming'
-              ? 'bg-[#280047] text-white'
-              : 'bg-white text-[#242424] border border-[#E5E0EC] hover:bg-[#F3F1F6]'
+              ? 'bg-brand-indigo text-white'
+              : 'bg-white text-brand-dark border border-[#E5E0EC] hover:bg-[#F3F1F6]'
           "
         >
           <i class="fa-regular fa-clock"></i> Upcoming
@@ -74,8 +74,8 @@ const submitComplete = () => {
           class="px-3.5 py-2 rounded-md text-xs font-semibold transition-colors flex items-center gap-2"
           :class="
             currentStatus === 'overdue'
-              ? 'bg-[#F74D01] text-white'
-              : 'bg-white text-[#242424] border border-[#E5E0EC] hover:bg-[#F3F1F6]'
+              ? 'bg-brand-orange text-white'
+              : 'bg-white text-brand-dark border border-[#E5E0EC] hover:bg-[#F3F1F6]'
           "
         >
           <i class="fa-solid fa-triangle-exclamation"></i> Overdue
@@ -88,8 +88,8 @@ const submitComplete = () => {
           class="px-3.5 py-2 rounded-md text-xs font-semibold transition-colors flex items-center gap-2"
           :class="
             currentStatus === 'completed'
-              ? 'bg-[#280047] text-white'
-              : 'bg-white text-[#242424] border border-[#E5E0EC] hover:bg-[#F3F1F6]'
+              ? 'bg-brand-indigo text-white'
+              : 'bg-white text-brand-dark border border-[#E5E0EC] hover:bg-[#F3F1F6]'
           "
         >
           <i class="fa-solid fa-check-double"></i> Completed
@@ -100,11 +100,11 @@ const submitComplete = () => {
       <!-- Follow-ups List -->
       <div class="app-card overflow-hidden">
         <div v-if="followUps.data.length === 0" class="p-8 sm:p-12 text-center">
-          <div class="w-10 h-10 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center mx-auto mb-2.5">
+          <div class="w-10 h-10 rounded-md bg-brand-purple text-brand-indigo flex items-center justify-center mx-auto mb-2.5">
             <i class="fa-regular fa-calendar-check text-sm"></i>
           </div>
-          <p class="text-sm font-semibold text-[#242424]">No {{ currentStatus }} follow-ups found</p>
-          <p class="text-xs text-[#6B6578] mt-0.5">Schedule follow-ups directly from any lead profile.</p>
+          <p class="text-sm font-semibold text-brand-dark">No {{ currentStatus }} follow-ups found</p>
+          <p class="text-xs text-brand-purple mt-0.5">Schedule follow-ups directly from any lead profile.</p>
         </div>
 
         <div v-else class="divide-y divide-[#E5E0EC]">
@@ -118,8 +118,8 @@ const submitComplete = () => {
                 class="w-9 h-9 rounded-md flex items-center justify-center shrink-0 mt-0.5"
                 :class="
                   currentStatus === 'overdue'
-                    ? 'bg-[#F74D01]/10 text-[#F74D01]'
-                    : 'bg-[#F3F1F6] text-[#280047]'
+                    ? 'bg-brand-orange/10 text-brand-orange'
+                    : 'bg-brand-purple text-brand-indigo'
                 "
               >
                 <i class="fa-regular fa-calendar-check text-sm"></i>
@@ -130,16 +130,16 @@ const submitComplete = () => {
                   <Link
                     v-if="fu.lead"
                     :href="`/leads/${fu.lead.id}`"
-                    class="text-sm font-bold text-[#242424] hover:text-[#F74D01] transition-colors"
+                    class="text-sm font-bold text-brand-dark hover:text-brand-orange transition-colors"
                   >
                     {{ fu.lead.customer_name }}
                   </Link>
-                  <span class="px-2 py-0.5 rounded bg-[#F3F1F6] text-[#280047] text-[10px] font-semibold">
+                  <span class="px-2 py-0.5 rounded bg-brand-purple text-brand-indigo text-[10px] font-semibold">
                     {{ fu.title }}
                   </span>
                 </div>
 
-                <p v-if="fu.notes" class="text-xs text-[#242424] mt-1">{{ fu.notes }}</p>
+                <p v-if="fu.notes" class="text-xs text-brand-dark mt-1">{{ fu.notes }}</p>
 
                 <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-[#6B6578] mt-1.5">
                   <span class="font-mono-num">
@@ -148,15 +148,15 @@ const submitComplete = () => {
                   </span>
                   <span>
                     <i class="fa-regular fa-user mr-1"></i>
-                    Assigned to: <strong class="text-[#242424]">{{ fu.assigned_to?.name || 'Team Member' }}</strong>
+                    Assigned to: <strong class="text-brand-dark">{{ fu.assigned_to?.name || 'Team Member' }}</strong>
                   </span>
                 </div>
 
                 <p
                   v-if="fu.completion_notes"
-                  class="mt-2 text-xs bg-[#F8F6FA] p-2.5 rounded border border-[#E5E0EC] text-[#242424]"
+                  class="mt-2 text-xs bg-[#F8F6FA] p-2.5 rounded border border-[#E5E0EC] text-brand-dark"
                 >
-                  <strong class="text-[#280047]">Outcome:</strong> {{ fu.completion_notes }}
+                  <strong class="text-brand-indigo">Outcome:</strong> {{ fu.completion_notes }}
                 </p>
               </div>
             </div>
@@ -187,9 +187,9 @@ const submitComplete = () => {
           class="px-4 py-3 border-t border-[#E5E0EC] bg-[#FAFAFB] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
         >
           <span class="text-[#6B6578]">
-            Showing <strong class="text-[#242424]">{{ followUps.from }}</strong> to
-            <strong class="text-[#242424]">{{ followUps.to }}</strong> of
-            <strong class="text-[#242424]">{{ followUps.total }}</strong> follow-ups
+            Showing <strong class="text-brand-dark">{{ followUps.from }}</strong> to
+            <strong class="text-brand-dark">{{ followUps.to }}</strong> of
+            <strong class="text-brand-dark">{{ followUps.total }}</strong> follow-ups
           </span>
           <div class="flex flex-wrap items-center gap-1">
             <template v-for="(link, idx) in followUps.links" :key="idx">
@@ -200,8 +200,8 @@ const submitComplete = () => {
                 class="px-2.5 py-1 rounded border text-xs transition-colors"
                 :class="
                   link.active
-                    ? 'bg-[#280047] text-white border-[#280047] font-semibold'
-                    : 'bg-white text-[#242424] border-[#E5E0EC] hover:bg-[#F3F1F6]'
+                    ? 'bg-brand-indigo text-white border-brand-indigo font-semibold'
+                    : 'bg-white text-brand-dark border-[#E5E0EC] hover:bg-[#F3F1F6]'
                 "
               />
             </template>
@@ -215,15 +215,15 @@ const submitComplete = () => {
         class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4"
       >
         <div class="app-card w-full max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-          <h3 class="text-base font-bold text-[#242424]">Complete Follow-up</h3>
-          <p class="text-xs text-[#6B6578] mt-0.5 mb-4">
+          <h3 class="text-base font-bold text-brand-dark">Complete Follow-up</h3>
+          <p class="text-xs text-brand-purple mt-0.5 mb-4">
             Record the outcome of your conversation with
-            <strong class="text-[#242424]">{{ completingFollowUp.lead?.customer_name }}</strong>.
+            <strong class="text-brand-dark">{{ completingFollowUp.lead?.customer_name }}</strong>.
           </p>
 
           <form @submit.prevent="submitComplete" class="space-y-4">
             <div>
-              <label class="block text-xs font-medium text-[#242424] mb-1.5">Call / Meeting Outcome</label>
+              <label class="block text-xs font-medium text-brand-dark mb-1.5">Call / Meeting Outcome</label>
               <textarea
                 v-model="completeForm.completion_notes"
                 rows="3"
