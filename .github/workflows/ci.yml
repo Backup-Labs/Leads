@@ -33,8 +33,14 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, pdo_pgsql, bcmath, zip, gd
           coverage: none
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
       - name: Cache Composer Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -42,6 +48,11 @@ jobs:
 
       - name: Install Composer Dependencies
         run: composer install --prefer-dist --no-interaction --optimize-autoloader
+
+      - name: Build Frontend Assets for Views
+        run: |
+          npm ci
+          npm run build
 
       - name: Run Pest / PHPUnit Test Suite
         env:
@@ -76,4 +87,3 @@ jobs:
 
       - name: Build Vite Production Bundles
         run: npm run build
-

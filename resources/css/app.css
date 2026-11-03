@@ -19,83 +19,123 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Minimalist Professional Card */
-.app-card {
-  background: #FFFFFF;
-  border: 1px solid #E5E0EC;
-  border-radius: 0.5rem; /* 8px */
-  box-shadow: 0 1px 2px 0 rgba(40, 0, 71, 0.03);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+.font-mono-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
-.app-card:hover {
-  border-color: #C3B6D3;
+@layer components {
+  /* Minimalist Professional Card */
+  .app-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E0EC;
+    border-radius: 0.5rem; /* 8px */
+    box-shadow: 0 1px 2px 0 rgba(40, 0, 71, 0.03);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .app-card:hover {
+    border-color: #C3B6D3;
+  }
+
+  /* Minimalist Professional Form Input */
+  .app-input {
+    width: 100%;
+    background: #FFFFFF;
+    border: 1px solid #D5CCE2;
+    border-radius: 0.375rem; /* 6px */
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    font-size: 0.8125rem;
+    line-height: 1.25rem;
+    color: #242424;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .app-input:focus {
+    border-color: #280047;
+    box-shadow: 0 0 0 2px rgba(40, 0, 71, 0.1);
+    outline: none;
+  }
+
+  .app-input::placeholder {
+    color: #9CA3AF;
+  }
+
+  /* Primary & Secondary Buttons */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    background-color: #F74D01;
+    color: #FFFFFF;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.55rem 1rem;
+    transition: opacity 0.15s ease;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.92;
+  }
+
+  .btn-indigo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    background-color: #280047;
+    color: #FFFFFF;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.55rem 1rem;
+    transition: opacity 0.15s ease;
+    cursor: pointer;
+  }
+
+  .btn-indigo:hover {
+    opacity: 0.92;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    background-color: #FFFFFF;
+    color: #242424;
+    border: 1px solid #D5CCE2;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.55rem 1rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    cursor: pointer;
+  }
+
+  .btn-secondary:hover {
+    background-color: #F8F6FA;
+    border-color: #280047;
+  }
 }
 
-/* Minimalist Professional Form Input */
-.app-input {
-  background: #FFFFFF;
-  border: 1px solid #D5CCE2;
-  border-radius: 0.375rem; /* 6px */
-  padding: 0.55rem 0.75rem;
-  font-size: 0.8125rem;
-  color: #242424;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+/* Guarantee icon and text/placeholder never collide in any input wrapper */
+.relative > i {
+  pointer-events: none;
 }
 
-.app-input:focus {
-  border-color: #280047;
-  box-shadow: 0 0 0 2px rgba(40, 0, 71, 0.1);
-  outline: none;
-}
-
-.app-input::placeholder {
-  color: #9CA3AF;
-}
-
-/* Primary & Secondary Buttons */
-.btn-primary {
-  background-color: #F74D01;
-  color: #FFFFFF;
-  border-radius: 0.375rem;
-  font-weight: 600;
-  font-size: 0.75rem;
-  padding: 0.55rem 1rem;
-  transition: opacity 0.15s ease;
-}
-
-.btn-primary:hover {
-  opacity: 0.92;
-}
-
-.btn-indigo {
-  background-color: #280047;
-  color: #FFFFFF;
-  border-radius: 0.375rem;
-  font-weight: 600;
-  font-size: 0.75rem;
-  padding: 0.55rem 1rem;
-  transition: opacity 0.15s ease;
-}
-
-.btn-indigo:hover {
-  opacity: 0.92;
-}
-
-.btn-secondary {
-  background-color: #FFFFFF;
-  color: #242424;
-  border: 1px solid #D5CCE2;
-  border-radius: 0.375rem;
-  font-weight: 600;
-  font-size: 0.75rem;
-  padding: 0.55rem 1rem;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-}
-
-.btn-secondary:hover {
-  background-color: #F8F6FA;
-  border-color: #280047;
+.relative > i + .app-input,
+.relative > i + input.app-input,
+.app-input.pl-8,
+.app-input.pl-9,
+.app-input.pl-10 {
+  padding-left: 2.35rem !important;
 }
 
 /* Custom Minimal Scrollbar */
