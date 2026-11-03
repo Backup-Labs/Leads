@@ -220,8 +220,8 @@ const nextTestimonial = () => {
     <header class="sticky top-0 z-50 bg-[#FAFAFB]/90 backdrop-blur-md border-b border-[#E5E0EC]">
       <div class="max-w-6xl mx-auto border-x border-[#E5E0EC] bg-white/95">
         <div class="h-16 flex items-stretch justify-between">
-          <!-- Left Grid Cell: Brand Identity + Status Badge -->
-          <div class="flex items-center gap-3 px-5 sm:px-8 border-r border-[#E5E0EC]">
+          <!-- Left Grid Cell: Brand Identity -->
+          <div class="flex items-center px-5 sm:px-8 border-r border-[#E5E0EC]">
             <Link href="/" class="flex items-center gap-2.5 group">
               <div
                 class="w-8 h-8 rounded-md bg-[#280047] flex items-center justify-center text-white font-bold text-sm shadow-xs group-hover:bg-[#3a0066] transition-colors"
@@ -233,13 +233,6 @@ const nextTestimonial = () => {
                 <span class="text-[9px] font-mono-num text-[#6B6578] mt-0.5">LeadFlow CRM</span>
               </div>
             </Link>
-
-            <span
-              class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#FDFEBA] border border-[#C3B6D3] text-[10px] font-semibold text-[#280047]"
-            >
-              <span class="w-1.5 h-1.5 rounded-full bg-[#F74D01] animate-pulse"></span>
-              Online
-            </span>
           </div>
 
           <!-- Center Grid Cell: Segmented Pill Navigation -->
