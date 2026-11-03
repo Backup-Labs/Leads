@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { convertCurrencyAmount, formatCurrencyAmount } from '@/utils/currency';
 import type { PageProps } from '@/types';
@@ -7,6 +7,113 @@ import type { PageProps } from '@/types';
 const page = usePage<PageProps>();
 const isLoggedIn = computed(() => Boolean(page.props.auth?.user));
 
+const mobileNavOpen = ref(false);
+const activeSection = ref('how-it-works');
+
+// ============================================================================
+// 1. TYPEWRITER / SELF-WRITING TEXT ANIMATIONS
+// ============================================================================
+const heroPhrases = [
+  'without losing leads',
+  'without forgotten quotes',
+  'without messy spreadsheets',
+  'without micromanaging',
+];
+const typedHeroText = ref('');
+let phraseIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+let typeTimer: ReturnType<typeof setTimeout> | null = null;
+
+const runTypewriter = () => {
+  const currentPhrase = heroPhrases[phraseIndex];
+
+  if (!isDeleting) {
+    typedHeroText.value = currentPhrase.slice(0, charIndex + 1);
+    charIndex++;
+
+    if (charIndex === currentPhrase.length) {
+      isDeleting = true;
+      typeTimer = setTimeout(runTypewriter, 2200);
+      return;
+    }
+    typeTimer = setTimeout(runTypewriter, 65);
+  } else {
+    typedHeroText.value = currentPhrase.slice(0, charIndex - 1);
+    charIndex--;
+
+    if (charIndex === 0) {
+      isDeleting = false;
+      phraseIndex = (phraseIndex + 1) % heroPhrases.length;
+      typeTimer = setTimeout(runTypewriter, 320);
+      return;
+    }
+    typeTimer = setTimeout(runTypewriter, 32);
+  }
+};
+
+// Live self-writing status line inside Hero Diagram
+const liveFeedMessages = [
+  'Capturing WhatsApp inquiry from Grace Nakato...',
+  'Assigning lead to Sales Rep: Diane M...',
+  'Generating Quotation #QUO-2026-0042 ($3,200)...',
+  'Scheduling follow-up reminder for Tomorrow 10:00 AM...',
+];
+const typedFeedText = ref('');
+let feedIndex = 0;
+let feedCharIndex = 0;
+let feedTimer: ReturnType<typeof setTimeout> | null = null;
+
+const runFeedWriter = () => {
+  const currentMsg = liveFeedMessages[feedIndex];
+  if (feedCharIndex < currentMsg.length) {
+    typedFeedText.value = currentMsg.slice(0, feedCharIndex + 1);
+    feedCharIndex++;
+    feedTimer = setTimeout(runFeedWriter, 42);
+  } else {
+    feedTimer = setTimeout(() => {
+      feedCharIndex = 0;
+      typedFeedText.value = '';
+      feedIndex = (feedIndex + 1) % liveFeedMessages.length;
+      runFeedWriter();
+    }, 2000);
+  }
+};
+
+// ============================================================================
+// 2. SCROLL REVEAL OBSERVER
+// ============================================================================
+let observer: IntersectionObserver | null = null;
+
+onMounted(() => {
+  runTypewriter();
+  runFeedWriter();
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+
+  document
+    .querySelectorAll('.reveal-section, .reveal-slide-left, .reveal-slide-right')
+    .forEach((el) => observer?.observe(el));
+});
+
+onBeforeUnmount(() => {
+  if (typeTimer) clearTimeout(typeTimer);
+  if (feedTimer) clearTimeout(feedTimer);
+  observer?.disconnect();
+});
+
+// ============================================================================
+// 3. PRICING & MULTI-CURRENCY CONVERSION
+// ============================================================================
 const billingCycle = ref<'monthly' | 'annual'>('monthly');
 const selectedCurrency = ref<'USD' | 'UGX' | 'KES' | 'RWF'>('USD');
 
@@ -16,6 +123,23 @@ const formatPlanPrice = (usdMonthlyPrice: number) => {
   return formatCurrencyAmount(converted, selectedCurrency.value);
 };
 
+// ============================================================================
+// 4. SLIDING CHANNELS MARQUEE DATA
+// ============================================================================
+const marqueeChannels = [
+  { label: 'WhatsApp Click-to-Chat', icon: 'fa-brands fa-whatsapp', color: 'text-emerald-600 bg-emerald-500/10' },
+  { label: 'Inbound Phone Calls', icon: 'fa-solid fa-phone', color: 'text-[#280047] bg-[#280047]/10' },
+  { label: 'Website Lead Forms', icon: 'fa-solid fa-globe', color: 'text-[#F74D01] bg-[#F74D01]/10' },
+  { label: 'Client Referrals', icon: 'fa-solid fa-handshake', color: 'text-[#280047] bg-[#280047]/10' },
+  { label: 'Shareable Quotations', icon: 'fa-solid fa-file-invoice-dollar', color: 'text-[#F74D01] bg-[#F74D01]/10' },
+  { label: 'Follow-up Reminders', icon: 'fa-solid fa-calendar-check', color: 'text-[#280047] bg-[#280047]/10' },
+  { label: 'Lost Opportunity Recovery', icon: 'fa-solid fa-bolt', color: 'text-[#F74D01] bg-[#F74D01]/10' },
+  { label: 'Multi-Currency Conversion', icon: 'fa-solid fa-coins', color: 'text-[#280047] bg-[#280047]/10' },
+];
+
+// ============================================================================
+// 5. TESTIMONIALS
+// ============================================================================
 interface Testimonial {
   quote: string;
   author: string;
@@ -65,7 +189,7 @@ const testimonials: Testimonial[] = [
   {
     quote:
       "I no longer have to micromanage my sales reps or ask for end-of-week spreadsheets. I can see every lead stage, scheduled follow-up, and team win rate in real time.",
-    author: 'samuel O.',
+    author: 'Samuel O.',
     role: 'Founder & CEO',
     company: 'BuildRight Contractors',
     icon: 'fa-solid fa-helmet-safety',
@@ -90,44 +214,130 @@ const nextTestimonial = () => {
   <Head title="Leads — Close More Deals Without Losing Leads" />
 
   <div class="min-h-screen bg-[#FAFAFB] text-[#242424] font-sans selection:bg-[#280047] selection:text-[#FDFEBA]">
-    <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-[#E5E0EC]">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-8">
-          <Link href="/" class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-md bg-[#280047] flex items-center justify-center text-white font-bold text-sm shadow-xs">
-              <span class="text-[#F74D01] mr-0.5">/</span>L
-            </div>
-            <span class="text-base font-bold tracking-tight text-[#280047]">Leads</span>
-          </Link>
+    <!-- =========================================================
+         ARCHITECTURAL TOP NAVIGATION BAR (Matching Landing Grid Vibe)
+         ========================================================= -->
+    <header class="sticky top-0 z-50 bg-[#FAFAFB]/90 backdrop-blur-md border-b border-[#E5E0EC]">
+      <div class="max-w-6xl mx-auto border-x border-[#E5E0EC] bg-white/95">
+        <div class="h-16 flex items-stretch justify-between">
+          <!-- Left Grid Cell: Brand Identity + Status Badge -->
+          <div class="flex items-center gap-3 px-5 sm:px-8 border-r border-[#E5E0EC]">
+            <Link href="/" class="flex items-center gap-2.5 group">
+              <div
+                class="w-8 h-8 rounded-md bg-[#280047] flex items-center justify-center text-white font-bold text-sm shadow-xs group-hover:bg-[#3a0066] transition-colors"
+              >
+                <span class="text-[#F74D01] mr-0.5">/</span>L
+              </div>
+              <div class="flex flex-col">
+                <span class="text-sm font-bold tracking-tight text-[#280047] leading-none">Leads</span>
+                <span class="text-[9px] font-mono-num text-[#6B6578] mt-0.5">LeadFlow CRM</span>
+              </div>
+            </Link>
 
-          <nav class="hidden md:flex items-center gap-6 text-xs font-medium text-[#6B6578]">
-            <a href="#how-it-works" class="hover:text-[#280047] transition-colors">How It Works</a>
-            <a href="#foundations" class="hover:text-[#280047] transition-colors">Foundations</a>
-            <a href="#features" class="hover:text-[#280047] transition-colors">Features</a>
-            <a href="#capabilities" class="hover:text-[#280047] transition-colors">Capabilities</a>
-            <a href="#pricing" class="hover:text-[#280047] transition-colors">Pricing</a>
+            <span
+              class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#FDFEBA] border border-[#C3B6D3] text-[10px] font-semibold text-[#280047]"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-[#F74D01] animate-pulse"></span>
+              Online
+            </span>
+          </div>
+
+          <!-- Center Grid Cell: Segmented Pill Navigation -->
+          <nav class="hidden lg:flex items-center justify-center flex-1 px-4">
+            <div class="inline-flex items-center gap-1 p-1 rounded-md bg-[#FAFAFB] border border-[#E5E0EC]">
+              <a
+                v-for="item in [
+                  { id: 'how-it-works', label: 'How It Works', icon: 'fa-solid fa-diagram-project' },
+                  { id: 'foundations', label: 'Foundations', icon: 'fa-solid fa-layer-group' },
+                  { id: 'features', label: 'Features', icon: 'fa-solid fa-bolt' },
+                  { id: 'capabilities', label: 'Capabilities', icon: 'fa-solid fa-sliders' },
+                  { id: 'pricing', label: 'Pricing', icon: 'fa-solid fa-tag' },
+                ]"
+                :key="item.id"
+                :href="`#${item.id}`"
+                @click="activeSection = item.id"
+                class="px-3 py-1.5 rounded text-xs font-medium transition-all flex items-center gap-1.5"
+                :class="
+                  activeSection === item.id
+                    ? 'bg-[#280047] text-white font-semibold shadow-2xs'
+                    : 'text-[#6B6578] hover:text-[#280047] hover:bg-white'
+                "
+              >
+                <i
+                  :class="[
+                    item.icon,
+                    activeSection === item.id ? 'text-[#F74D01]' : 'text-[#C3B6D3]',
+                  ]"
+                  class="text-[10px]"
+                ></i>
+                <span>{{ item.label }}</span>
+              </a>
+            </div>
           </nav>
+
+          <!-- Right Grid Cell: Workspace Action Buttons -->
+          <div class="flex items-center gap-2.5 px-5 sm:px-8 border-l border-[#E5E0EC]">
+            <template v-if="isLoggedIn">
+              <Link
+                href="/dashboard"
+                class="inline-flex items-center gap-2.5 bg-[#280047] text-white text-xs font-semibold pl-3.5 pr-2 py-2 rounded-md hover:bg-[#3a0066] transition-all"
+              >
+                <span>Open Dashboard</span>
+                <span class="w-5 h-5 rounded bg-[#F74D01] text-white flex items-center justify-center">
+                  <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                </span>
+              </Link>
+            </template>
+            <template v-else>
+              <Link
+                href="/login"
+                class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold text-[#280047] hover:bg-[#F3F1F6] transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/register"
+                class="inline-flex items-center gap-2.5 bg-[#280047] text-white text-xs font-semibold pl-3.5 pr-2 py-2 rounded-md hover:bg-[#3a0066] transition-all shadow-2xs"
+              >
+                <span>Get Started</span>
+                <span class="w-5 h-5 rounded bg-[#F74D01] text-white flex items-center justify-center">
+                  <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                </span>
+              </Link>
+            </template>
+
+            <!-- Mobile Menu Button -->
+            <button
+              type="button"
+              @click="mobileNavOpen = !mobileNavOpen"
+              class="lg:hidden w-8 h-8 rounded-md border border-[#E5E0EC] flex items-center justify-center text-[#280047]"
+            >
+              <i :class="mobileNavOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars'" class="text-xs"></i>
+            </button>
+          </div>
         </div>
 
-        <div class="flex items-center gap-2.5">
-          <template v-if="isLoggedIn">
-            <Link href="/dashboard" class="btn-indigo text-xs py-2 px-4">
-              <span>Open Dashboard</span>
-              <i class="fa-solid fa-arrow-right text-[10px]"></i>
-            </Link>
-          </template>
-          <template v-else>
-            <Link href="/login" class="btn-secondary text-xs py-2 px-3.5">
-              Sign In
-            </Link>
-            <Link href="/register" class="btn-indigo text-xs py-2 px-4">
-              <span>Start Free</span>
-              <span class="w-4 h-4 rounded bg-[#F74D01] text-white inline-flex items-center justify-center ml-1">
-                <i class="fa-solid fa-arrow-right text-[9px]"></i>
-              </span>
-            </Link>
-          </template>
+        <!-- Mobile Dropdown Drawer -->
+        <div v-if="mobileNavOpen" class="lg:hidden border-t border-[#E5E0EC] bg-white px-5 py-4 space-y-2">
+          <a
+            v-for="item in [
+              { id: 'how-it-works', label: 'How It Works' },
+              { id: 'foundations', label: 'Foundations' },
+              { id: 'features', label: 'Features' },
+              { id: 'capabilities', label: 'Capabilities' },
+              { id: 'pricing', label: 'Pricing' },
+            ]"
+            :key="item.id"
+            :href="`#${item.id}`"
+            @click="mobileNavOpen = false"
+            class="block px-3 py-2 rounded-md text-xs font-semibold text-[#242424] hover:bg-[#F3F1F6]"
+          >
+            {{ item.label }}
+          </a>
+          <div v-if="!isLoggedIn" class="pt-2 border-t border-[#E5E0EC] flex gap-2">
+            <Link href="/login" class="btn-secondary flex-1 text-center">Sign In</Link>
+            <Link href="/register" class="btn-primary flex-1 text-center">Start Free</Link>
+          </div>
         </div>
       </div>
     </header>
@@ -135,7 +345,7 @@ const nextTestimonial = () => {
     <!-- Main Architectural Grid Container -->
     <div class="max-w-6xl mx-auto border-x border-[#E5E0EC] bg-white">
       <!-- =========================================================
-           1. HERO SECTION (Asymmetric Headline + Isometric Diagram)
+           1. HERO SECTION (Typewriter Headline + Animated Diagram)
            ========================================================= -->
       <section class="relative overflow-hidden border-b border-[#E5E0EC] px-6 sm:px-12 pt-12 pb-16 lg:py-20">
         <!-- Subtle Architectural Background Grid Lines -->
@@ -152,11 +362,11 @@ const nextTestimonial = () => {
               <span class="text-xs font-semibold text-[#280047]">Lead Management & Revenue Recovery</span>
             </div>
 
-            <div class="space-y-1">
-              <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-[#280047] leading-[1.12]">
+            <div class="space-y-1 min-h-[84px] sm:min-h-[112px]">
+              <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-[#280047] leading-[1.14]">
                 Close 3X more deals
                 <span class="block text-[#F74D01] font-normal mt-1">
-                  without losing leads
+                  {{ typedHeroText }}<span class="typewriter-cursor"></span>
                 </span>
               </h1>
             </div>
@@ -169,7 +379,7 @@ const nextTestimonial = () => {
             <div class="flex flex-wrap items-center gap-3 pt-1">
               <Link
                 :href="isLoggedIn ? '/dashboard' : '/register'"
-                class="inline-flex items-center gap-3 bg-[#280047] text-white text-xs font-semibold pl-4 pr-2.5 py-2.5 rounded-md hover:bg-[#3a0066] transition-colors shadow-sm"
+                class="inline-flex items-center gap-3 bg-[#280047] text-white text-xs font-semibold pl-4 pr-2.5 py-2.5 rounded-md hover:bg-[#3a0066] transition-all shadow-sm"
               >
                 <span>{{ isLoggedIn ? 'Go to Your Workspace' : 'Start Free Workspace' }}</span>
                 <span class="w-6 h-6 rounded bg-[#F74D01] text-white flex items-center justify-center">
@@ -178,10 +388,10 @@ const nextTestimonial = () => {
               </Link>
 
               <a
-                href="#how-it-works"
+                href="#pricing"
                 class="btn-secondary py-2.5 px-4 text-xs"
               >
-                See How It Works
+                View Plans & Pricing
               </a>
             </div>
 
@@ -208,17 +418,26 @@ const nextTestimonial = () => {
             </ul>
           </div>
 
-          <!-- Right Column: Layered Isometric Workflow Illustration (Inspired by Reference) -->
+          <!-- Right Column: Animated Isometric Workflow Diagram -->
           <div class="lg:col-span-6 relative">
             <div class="relative mx-auto max-w-lg bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-5 sm:p-6 shadow-xs">
+              <!-- Live Self-Writing Status Bar -->
+              <div class="mb-5 px-3 py-2 rounded-md bg-[#280047] text-white flex items-center justify-between gap-2 text-[11px]">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-2 h-2 rounded-full bg-[#F74D01] animate-ping shrink-0"></span>
+                  <span class="font-mono-num truncate text-[#FDFEBA]">{{ typedFeedText }}</span>
+                </div>
+                <span class="text-[9px] uppercase tracking-wider text-[#C3B6D3] shrink-0">Live</span>
+              </div>
+
               <!-- Top Floating Source Node -->
-              <div class="flex items-center justify-between mb-6">
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white border border-[#E5E0EC] shadow-2xs text-xs">
+              <div class="flex items-center justify-between mb-5">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white border border-[#E5E0EC] shadow-2xs text-xs animate-float">
                   <span class="w-5 h-5 rounded bg-emerald-500 text-white flex items-center justify-center">
                     <i class="fa-brands fa-whatsapp text-xs"></i>
                   </span>
-                  <span class="font-semibold text-[#242424]">New WhatsApp Inquiry</span>
-                  <span class="text-[10px] font-mono-num text-[#6B6578]">Just now</span>
+                  <span class="font-semibold text-[#242424]">WhatsApp Click-to-Chat</span>
+                  <span class="text-[10px] font-mono-num text-emerald-700 font-semibold">Connected</span>
                 </div>
 
                 <!-- Floating Status Node -->
@@ -228,7 +447,7 @@ const nextTestimonial = () => {
               </div>
 
               <!-- Central Hub Box (3D Layered Platform Node) -->
-              <div class="relative bg-white border-2 border-[#280047] rounded-lg p-4 shadow-md mb-6">
+              <div class="relative bg-white border-2 border-[#280047] rounded-lg p-4 shadow-md mb-5 transition-transform duration-300 hover:-translate-y-0.5">
                 <div class="flex items-center justify-between pb-3 mb-3 border-b border-[#E5E0EC]">
                   <div class="flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-xs">
@@ -248,14 +467,14 @@ const nextTestimonial = () => {
                 <div class="grid grid-cols-4 gap-1.5 mb-3">
                   <div class="h-1.5 rounded-full bg-[#280047]"></div>
                   <div class="h-1.5 rounded-full bg-[#280047]"></div>
-                  <div class="h-1.5 rounded-full bg-[#F74D01]"></div>
+                  <div class="h-1.5 rounded-full bg-[#F74D01] animate-pulse"></div>
                   <div class="h-1.5 rounded-full bg-[#E5E0EC]"></div>
                 </div>
 
                 <div class="flex items-center justify-between text-xs">
                   <span class="text-[#6B6578]">
                     <i class="fa-regular fa-clock text-[#F74D01] mr-1"></i>
-                    Follow-up scheduled: <strong class="text-[#242424]">Tomorrow, 10:00 AM</strong>
+                    Follow-up: <strong class="text-[#242424]">Tomorrow, 10:00 AM</strong>
                   </span>
                   <span class="font-mono-num font-bold text-[#280047]">$3,200</span>
                 </div>
@@ -263,7 +482,7 @@ const nextTestimonial = () => {
 
               <!-- Connected Quotation & Recovery Cards -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div class="bg-white border border-[#E5E0EC] rounded-md p-3.5">
+                <div class="bg-white border border-[#E5E0EC] rounded-md p-3.5 hover:border-[#280047] transition-colors">
                   <div class="flex items-center justify-between mb-1.5">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-[#6B6578]">Quotation Sent</span>
                     <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold">
@@ -274,7 +493,7 @@ const nextTestimonial = () => {
                   <p class="text-[11px] text-[#6B6578] mt-1">Client approved via shareable link</p>
                 </div>
 
-                <div class="bg-white border border-[#F74D01]/40 rounded-md p-3.5">
+                <div class="bg-white border border-[#F74D01]/40 rounded-md p-3.5 hover:border-[#F74D01] transition-colors">
                   <div class="flex items-center justify-between mb-1.5">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-[#F74D01]">Recovery Alert</span>
                     <i class="fa-solid fa-bell text-[#F74D01] text-xs"></i>
@@ -289,50 +508,26 @@ const nextTestimonial = () => {
       </section>
 
       <!-- =========================================================
-           2. CHANNEL STRIP & 3-COLUMN WORKFLOW ILLUSTRATIONS
+           2. SLIDING MARQUEE STRIP & 3-COLUMN WORKFLOW ILLUSTRATIONS
            ========================================================= -->
       <section id="how-it-works" class="border-b border-[#E5E0EC]">
-        <!-- Channels Strip -->
-        <div class="px-6 sm:px-12 py-6 border-b border-[#E5E0EC] bg-[#FAFAFB]">
-          <p class="text-[11px] font-semibold uppercase tracking-wider text-[#6B6578] mb-4">
+        <!-- Infinite Start-to-End Sliding Channel Ticker -->
+        <div class="py-5 border-b border-[#E5E0EC] bg-[#FAFAFB] overflow-hidden">
+          <p class="px-6 sm:px-12 text-[11px] font-semibold uppercase tracking-wider text-[#6B6578] mb-3">
             Built to capture and convert leads from every business channel
           </p>
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div class="flex items-center gap-2 text-xs font-bold text-[#242424]">
-              <span class="w-6 h-6 rounded bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
-                <i class="fa-brands fa-whatsapp"></i>
-              </span>
-              <span>WhatsApp</span>
-            </div>
-            <div class="flex items-center gap-2 text-xs font-bold text-[#242424]">
-              <span class="w-6 h-6 rounded bg-[#280047]/10 text-[#280047] flex items-center justify-center">
-                <i class="fa-solid fa-phone"></i>
-              </span>
-              <span>Phone Calls</span>
-            </div>
-            <div class="flex items-center gap-2 text-xs font-bold text-[#242424]">
-              <span class="w-6 h-6 rounded bg-[#F74D01]/10 text-[#F74D01] flex items-center justify-center">
-                <i class="fa-solid fa-globe"></i>
-              </span>
-              <span>Website Forms</span>
-            </div>
-            <div class="flex items-center gap-2 text-xs font-bold text-[#242424]">
-              <span class="w-6 h-6 rounded bg-[#280047]/10 text-[#280047] flex items-center justify-center">
-                <i class="fa-solid fa-handshake"></i>
-              </span>
-              <span>Client Referrals</span>
-            </div>
-            <div class="flex items-center gap-2 text-xs font-bold text-[#242424]">
-              <span class="w-6 h-6 rounded bg-[#F74D01]/10 text-[#F74D01] flex items-center justify-center">
-                <i class="fa-solid fa-file-invoice-dollar"></i>
-              </span>
-              <span>Smart Quotes</span>
-            </div>
-            <div class="flex items-center gap-2 text-xs font-bold text-[#242424]">
-              <span class="w-6 h-6 rounded bg-[#280047]/10 text-[#280047] flex items-center justify-center">
-                <i class="fa-solid fa-coins"></i>
-              </span>
-              <span>Multi-Currency</span>
+          <div class="relative overflow-hidden">
+            <div class="animate-marquee gap-4 px-4">
+              <div
+                v-for="(ch, index) in [...marqueeChannels, ...marqueeChannels]"
+                :key="index"
+                class="flex items-center gap-2.5 px-4 py-2 rounded-md bg-white border border-[#E5E0EC] text-xs font-bold text-[#242424] shrink-0 shadow-2xs"
+              >
+                <span class="w-6 h-6 rounded flex items-center justify-center" :class="ch.color">
+                  <i :class="ch.icon"></i>
+                </span>
+                <span>{{ ch.label }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -340,7 +535,7 @@ const nextTestimonial = () => {
         <!-- 3-Column Architectural Visual Cards -->
         <div class="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-[#E5E0EC]">
           <!-- Column 1: Instant Lead Capture -->
-          <div class="p-6 sm:p-8 flex flex-col justify-between space-y-6">
+          <div class="reveal-slide-left p-6 sm:p-8 flex flex-col justify-between space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Centralized Lead Capture</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
@@ -363,7 +558,7 @@ const nextTestimonial = () => {
               </div>
 
               <div class="flex items-center justify-center my-1">
-                <div class="w-9 h-9 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center shadow-sm">
+                <div class="w-9 h-9 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center shadow-sm animate-float">
                   <i class="fa-solid fa-layer-group text-xs"></i>
                 </div>
               </div>
@@ -376,7 +571,7 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Column 2: Structured Pipeline & Quotes -->
-          <div class="p-6 sm:p-8 flex flex-col justify-between space-y-6">
+          <div class="reveal-section p-6 sm:p-8 flex flex-col justify-between space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Structured Pipeline & Quotes</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
@@ -414,7 +609,7 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Column 3: Revenue Recovery Radar -->
-          <div class="p-6 sm:p-8 flex flex-col justify-between space-y-6">
+          <div class="reveal-slide-right p-6 sm:p-8 flex flex-col justify-between space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Automatic Revenue Recovery</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
@@ -437,7 +632,7 @@ const nextTestimonial = () => {
               </div>
 
               <div class="my-auto flex items-center justify-around">
-                <div class="w-7 h-7 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-xs shadow">
+                <div class="w-7 h-7 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-xs shadow animate-float">
                   <i class="fa-solid fa-bell"></i>
                 </div>
                 <div class="w-7 h-7 rounded-md bg-[#F74D01] text-white flex items-center justify-center text-xs shadow">
@@ -457,7 +652,7 @@ const nextTestimonial = () => {
       <!-- =========================================================
            3. "BUILT ON STRONG FOUNDATIONS" (2x3 Bento Grid)
            ========================================================= -->
-      <section id="foundations" class="px-6 sm:px-12 py-16 border-b border-[#E5E0EC]">
+      <section id="foundations" class="reveal-section px-6 sm:px-12 py-16 border-b border-[#E5E0EC]">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
           <!-- Cell 1: Section Title Block -->
           <div class="p-2 flex flex-col justify-between">
@@ -481,7 +676,7 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Cell 2 -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#C3B6D3] transition-colors">
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
             <div class="w-9 h-9 rounded-md bg-white border border-[#E5E0EC] text-[#280047] flex items-center justify-center">
               <i class="fa-solid fa-list-check text-sm"></i>
             </div>
@@ -494,7 +689,7 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Cell 3 -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#C3B6D3] transition-colors">
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
             <div class="w-9 h-9 rounded-md bg-white border border-[#E5E0EC] text-[#F74D01] flex items-center justify-center">
               <i class="fa-solid fa-coins text-sm"></i>
             </div>
@@ -507,7 +702,7 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Cell 4 -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#C3B6D3] transition-colors">
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
             <div class="w-9 h-9 rounded-md bg-white border border-[#E5E0EC] text-[#280047] flex items-center justify-center">
               <i class="fa-solid fa-calendar-check text-sm"></i>
             </div>
@@ -520,7 +715,7 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Cell 5 -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#C3B6D3] transition-colors">
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
             <div class="w-9 h-9 rounded-md bg-white border border-[#E5E0EC] text-[#F74D01] flex items-center justify-center">
               <i class="fa-solid fa-bolt text-sm"></i>
             </div>
@@ -533,7 +728,7 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Cell 6 -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#C3B6D3] transition-colors">
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between min-h-[190px] hover:border-[#280047] transition-all hover:-translate-y-0.5">
             <div class="w-9 h-9 rounded-md bg-white border border-[#E5E0EC] text-[#280047] flex items-center justify-center">
               <i class="fa-solid fa-users-gear text-sm"></i>
             </div>
@@ -550,7 +745,7 @@ const nextTestimonial = () => {
       <!-- =========================================================
            4. "POWERFUL FEATURES FOR EVERYDAY SALES WORK" (3 UI Cards)
            ========================================================= -->
-      <section id="features" class="px-6 sm:px-12 py-16 border-b border-[#E5E0EC]">
+      <section id="features" class="reveal-section px-6 sm:px-12 py-16 border-b border-[#E5E0EC]">
         <div class="max-w-xl mb-10">
           <h2 class="text-2xl sm:text-3xl font-bold text-[#280047] tracking-tight">
             Powerful features
@@ -562,8 +757,7 @@ const nextTestimonial = () => {
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <!-- Feature Card 1: Visual Pipeline & Stage Control -->
-          <div class="border border-[#E5E0EC] rounded-lg bg-[#FAFAFB] p-5 flex flex-col justify-between space-y-5">
-            <!-- Mini UI Preview -->
+          <div class="border border-[#E5E0EC] rounded-lg bg-[#FAFAFB] p-5 flex flex-col justify-between space-y-5 hover:border-[#280047] transition-all">
             <div class="bg-white border border-[#E5E0EC] rounded-md p-3.5 space-y-2.5 shadow-2xs">
               <div class="flex items-center justify-between text-xs">
                 <span class="font-semibold text-[#242424]">
@@ -594,7 +788,7 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Feature Card 2: Revenue Recovery Action Card -->
-          <div class="border border-[#E5E0EC] rounded-lg bg-[#FAFAFB] p-5 flex flex-col justify-between space-y-5">
+          <div class="border border-[#E5E0EC] rounded-lg bg-[#FAFAFB] p-5 flex flex-col justify-between space-y-5 hover:border-[#F74D01] transition-all">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Proactive Revenue Recovery</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
@@ -602,7 +796,6 @@ const nextTestimonial = () => {
               </p>
             </div>
 
-            <!-- Mini UI Preview (Inspired by middle orange alert card in reference) -->
             <div class="bg-white border border-[#E5E0EC] rounded-md p-4 space-y-3 shadow-2xs">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -628,7 +821,7 @@ const nextTestimonial = () => {
           </div>
 
           <!-- Feature Card 3: Instant Client Quotations -->
-          <div class="border border-[#E5E0EC] rounded-lg bg-[#FAFAFB] p-5 flex flex-col justify-between space-y-5">
+          <div class="border border-[#E5E0EC] rounded-lg bg-[#FAFAFB] p-5 flex flex-col justify-between space-y-5 hover:border-[#280047] transition-all">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Shareable Client Quotations</h3>
               <p class="text-xs text-[#6B6578] mt-1 leading-relaxed">
@@ -636,7 +829,6 @@ const nextTestimonial = () => {
               </p>
             </div>
 
-            <!-- Mini UI Preview -->
             <div class="bg-white border border-[#E5E0EC] rounded-md p-4 space-y-2.5 shadow-2xs">
               <div class="flex items-center justify-between pb-2 border-b border-[#E5E0EC]">
                 <span class="text-xs font-bold text-[#280047] font-mono-num">#QUO-2026-0089</span>
@@ -664,9 +856,9 @@ const nextTestimonial = () => {
       <!-- =========================================================
            5. EDITORIAL TESTIMONIAL + INTERACTIVE COMPANY TABS
            ========================================================= -->
-      <section class="px-6 sm:px-12 py-16 border-b border-[#E5E0EC]">
-        <div class="max-w-3xl">
-          <p class="text-xl sm:text-2xl font-medium text-[#242424] leading-relaxed">
+      <section class="reveal-section px-6 sm:px-12 py-16 border-b border-[#E5E0EC]">
+        <div class="max-w-3xl min-h-[96px]">
+          <p class="text-xl sm:text-2xl font-medium text-[#242424] leading-relaxed transition-all duration-300">
             "{{ activeTestimonial.quote }}"
           </p>
         </div>
@@ -689,28 +881,28 @@ const nextTestimonial = () => {
             <button
               type="button"
               @click="prevTestimonial"
-              class="w-8 h-8 rounded-md bg-[#280047] text-white hover:bg-[#3a0066] flex items-center justify-center cursor-pointer"
+              class="w-8 h-8 rounded-md bg-[#280047] text-white hover:bg-[#3a0066] flex items-center justify-center cursor-pointer transition-colors"
             >
               <i class="fa-solid fa-arrow-left text-xs"></i>
             </button>
             <button
               type="button"
               @click="nextTestimonial"
-              class="w-8 h-8 rounded-md bg-[#280047] text-white hover:bg-[#3a0066] flex items-center justify-center cursor-pointer"
+              class="w-8 h-8 rounded-md bg-[#280047] text-white hover:bg-[#3a0066] flex items-center justify-center cursor-pointer transition-colors"
             >
               <i class="fa-solid fa-arrow-right text-xs"></i>
             </button>
           </div>
         </div>
 
-        <!-- Interactive Company Selector Bar (Matching Reference Image) -->
+        <!-- Interactive Company Selector Bar -->
         <div class="mt-8 grid grid-cols-2 sm:grid-cols-5 border border-[#E5E0EC] rounded-lg overflow-hidden">
           <button
             v-for="(item, idx) in testimonials"
             :key="item.company"
             type="button"
             @click="activeTestimonialIndex = idx"
-            class="px-4 py-3.5 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer border-r last:border-r-0 border-[#E5E0EC]"
+            class="px-4 py-3.5 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer border-r last:border-r-0 border-[#E5E0EC]"
             :class="
               activeTestimonialIndex === idx
                 ? 'bg-[#280047] text-white'
@@ -726,7 +918,7 @@ const nextTestimonial = () => {
       <!-- =========================================================
            6. "ADVANCED CAPABILITIES. SIMPLE EXPERIENCE." (3 + 2 Bento)
            ========================================================= -->
-      <section id="capabilities" class="px-6 sm:px-12 py-16 border-b border-[#E5E0EC] bg-[#FAFAFB]">
+      <section id="capabilities" class="reveal-section px-6 sm:px-12 py-16 border-b border-[#E5E0EC] bg-[#FAFAFB]">
         <div class="mb-10">
           <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F74D01] mb-1">
             <i class="fa-solid fa-wand-magic-sparkles"></i> Built for Growth
@@ -739,7 +931,6 @@ const nextTestimonial = () => {
 
         <!-- Top 3 Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-          <!-- Card 1 -->
           <div class="app-card p-6 flex flex-col justify-between space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Custom Threshold Rules</h3>
@@ -758,7 +949,6 @@ const nextTestimonial = () => {
             </div>
           </div>
 
-          <!-- Card 2 -->
           <div class="app-card p-6 flex flex-col justify-between space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">One-Click CSV Export</h3>
@@ -773,7 +963,6 @@ const nextTestimonial = () => {
             </div>
           </div>
 
-          <!-- Card 3 -->
           <div class="app-card p-6 flex flex-col justify-between space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Channel ROI Analytics</h3>
@@ -792,7 +981,6 @@ const nextTestimonial = () => {
 
         <!-- Bottom 2 Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <!-- Card 4 -->
           <div class="app-card p-6 flex flex-col justify-between space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Complete Team & Activity Audit Trail</h3>
@@ -813,7 +1001,6 @@ const nextTestimonial = () => {
             </div>
           </div>
 
-          <!-- Card 5 -->
           <div class="app-card p-6 flex flex-col justify-between space-y-6">
             <div>
               <h3 class="text-sm font-bold text-[#242424]">Multi-Company Workspace Switching</h3>
@@ -840,15 +1027,16 @@ const nextTestimonial = () => {
       </section>
 
       <!-- =========================================================
-           7. "SMARTER PLANS FOR GROWING BUSINESSES" (2 Pricing Cards)
+           7. PRICING & SUBSCRIPTION PLANS (3 Public Plans + Custom Enterprise)
            ========================================================= -->
-      <section id="pricing" class="px-6 sm:px-12 py-16 border-b border-[#E5E0EC]">
+      <section id="pricing" class="reveal-section px-6 sm:px-12 py-16 border-b border-[#E5E0EC]">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
-            <h2 class="text-2xl sm:text-3xl font-bold text-[#280047] tracking-tight">
-              Simple plans for
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#F74D01]">Subscription Packages</span>
+            <h2 class="text-2xl sm:text-3xl font-bold text-[#280047] tracking-tight mt-0.5">
+              Smarter plans for
               <span class="block text-[#6B6578] font-normal text-xl sm:text-2xl mt-0.5">
-                every growing business
+                every stage of your sales growth
               </span>
             </h2>
           </div>
@@ -895,146 +1083,215 @@ const nextTestimonial = () => {
           </div>
         </div>
 
-        <!-- 2 Side-by-Side Pricing Cards (Matching Reference Layout) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Starter Plan -->
-          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 sm:p-8 flex flex-col justify-between">
+        <!-- 3 Public Launch Plans (Starter $19, Professional $49, Agency $99) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- A. Starter Plan ($19/mo) -->
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between hover:border-[#C3B6D3] transition-all">
             <div>
-              <div class="flex items-center gap-2.5 mb-2">
-                <div class="w-7 h-7 rounded bg-white border border-[#E5E0EC] text-[#280047] flex items-center justify-center text-xs">
-                  <i class="fa-solid fa-seedling"></i>
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded bg-white border border-[#E5E0EC] text-[#280047] flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-seedling"></i>
+                  </div>
+                  <h3 class="text-base font-bold text-[#242424]">Starter</h3>
                 </div>
-                <h3 class="text-base font-bold text-[#242424]">Starter</h3>
+                <span class="text-[11px] font-mono-num font-semibold text-[#6B6578]">1 User &bull; 100 Leads</span>
               </div>
-              <p class="text-xs text-[#6B6578]">
-                Ideal for small sales teams organizing inquiries, follow-ups, and client quotations.
+              <p class="text-xs text-[#6B6578] min-h-[34px]">
+                For individuals, freelancers, and startups organizing customer inquiries and follow-ups.
               </p>
 
-              <div class="my-6 p-4 rounded-md bg-white border border-[#E5E0EC] flex items-baseline gap-1.5">
-                <span class="text-2xl sm:text-3xl font-bold text-[#F74D01] font-mono-num">
+              <div class="my-5 p-3.5 rounded-md bg-white border border-[#E5E0EC] flex items-baseline gap-1.5">
+                <span class="text-2xl font-bold text-[#280047] font-mono-num">
                   {{ formatPlanPrice(19) }}
                 </span>
                 <span class="text-xs text-[#6B6578]">/ month</span>
               </div>
 
-              <ul class="space-y-3 text-xs text-[#242424]">
-                <li class="flex items-center gap-2.5">
-                  <span class="w-4 h-4 rounded bg-[#280047] text-white flex items-center justify-center text-[9px]">
-                    <i class="fa-solid fa-check"></i>
-                  </span>
-                  <span>Up to 5 team members included</span>
+              <ul class="space-y-2.5 text-xs text-[#242424]">
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                  <span><strong>1 user account</strong> & up to <strong>100 active leads</strong></span>
                 </li>
-                <li class="flex items-center gap-2.5">
-                  <span class="w-4 h-4 rounded bg-[#280047] text-white flex items-center justify-center text-[9px]">
-                    <i class="fa-solid fa-check"></i>
-                  </span>
-                  <span>Unlimited leads & visual pipeline board</span>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                  <span>Centralized lead profiles & contact info</span>
                 </li>
-                <li class="flex items-center gap-2.5">
-                  <span class="w-4 h-4 rounded bg-[#280047] text-white flex items-center justify-center text-[9px]">
-                    <i class="fa-solid fa-check"></i>
-                  </span>
-                  <span>Professional quotations with shareable links</span>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                  <span>Standard sales pipeline & status tracking</span>
                 </li>
-                <li class="flex items-center gap-2.5">
-                  <span class="w-4 h-4 rounded bg-[#280047] text-white flex items-center justify-center text-[9px]">
-                    <i class="fa-solid fa-check"></i>
-                  </span>
-                  <span>Follow-up reminders & daily task schedule</span>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                  <span>Follow-up scheduling and reminders</span>
                 </li>
-                <li class="flex items-center gap-2.5">
-                  <span class="w-4 h-4 rounded bg-[#280047] text-white flex items-center justify-center text-[9px]">
-                    <i class="fa-solid fa-check"></i>
-                  </span>
-                  <span>Automatic multi-currency conversion</span>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                  <span>Basic quotation tracking & WhatsApp click-to-chat</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                  <span>Basic sales dashboard & activity history</span>
                 </li>
               </ul>
             </div>
 
-            <div class="pt-8">
-              <Link
-                :href="isLoggedIn ? '/dashboard' : '/register'"
-                class="btn-secondary w-full py-2.5 text-xs"
-              >
-                Start with Starter
+            <div class="pt-6 mt-6 border-t border-[#E5E0EC]">
+              <Link :href="isLoggedIn ? '/dashboard' : '/register'" class="btn-secondary w-full py-2.5 text-xs">
+                Get Started with Starter
               </Link>
             </div>
           </div>
 
-          <!-- Business Plan -->
-          <div class="bg-[#FAFAFB] border-2 border-[#280047] rounded-lg p-6 sm:p-8 flex flex-col justify-between relative">
-            <span class="absolute top-4 right-4 px-2.5 py-0.5 rounded bg-[#FDFEBA] text-[#280047] border border-[#C3B6D3] text-[10px] font-bold uppercase">
+          <!-- B. Professional Plan ($49/mo) -->
+          <div class="bg-[#FAFAFB] border-2 border-[#280047] rounded-lg p-6 flex flex-col justify-between relative shadow-sm">
+            <span class="absolute -top-3 right-5 px-2.5 py-0.5 rounded bg-[#280047] text-[#FDFEBA] text-[10px] font-bold uppercase tracking-wider">
               Most Popular
             </span>
 
             <div>
-              <div class="flex items-center gap-2.5 mb-2">
-                <div class="w-7 h-7 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-xs">
-                  <i class="fa-solid fa-rocket"></i>
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded bg-[#280047] text-[#FDFEBA] flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-briefcase"></i>
+                  </div>
+                  <h3 class="text-base font-bold text-[#242424]">Professional</h3>
                 </div>
-                <h3 class="text-base font-bold text-[#242424]">Business</h3>
+                <span class="text-[11px] font-mono-num font-semibold text-[#280047]">5 Users &bull; 1,000 Leads</span>
               </div>
-              <p class="text-xs text-[#6B6578]">
-                For growing companies that want full revenue recovery automation and team analytics.
+              <p class="text-xs text-[#6B6578] min-h-[34px]">
+                For growing SMEs coordinating sales teams, opportunities, and conversion performance.
               </p>
 
-              <div class="my-6 p-4 rounded-md bg-white border border-[#E5E0EC] flex items-baseline gap-1.5">
-                <span class="text-2xl sm:text-3xl font-bold text-[#280047] font-mono-num">
-                  {{ formatPlanPrice(39) }}
+              <div class="my-5 p-3.5 rounded-md bg-white border border-[#E5E0EC] flex items-baseline gap-1.5">
+                <span class="text-2xl font-bold text-[#F74D01] font-mono-num">
+                  {{ formatPlanPrice(49) }}
                 </span>
                 <span class="text-xs text-[#6B6578]">/ month</span>
               </div>
 
-              <ul class="space-y-3 text-xs text-[#242424]">
-                <li class="flex items-center gap-2.5">
-                  <span class="w-4 h-4 rounded bg-[#F74D01] text-white flex items-center justify-center text-[9px]">
-                    <i class="fa-solid fa-check"></i>
-                  </span>
-                  <span>Unlimited team members & role permissions</span>
+              <ul class="space-y-2.5 text-xs text-[#242424]">
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+                  <span>Everything in Starter, plus:</span>
                 </li>
-                <li class="flex items-center gap-2.5">
-                  <span class="w-4 h-4 rounded bg-[#F74D01] text-white flex items-center justify-center text-[9px]">
-                    <i class="fa-solid fa-check"></i>
-                  </span>
-                  <span>Automated Revenue Recovery engine & critical alerts</span>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+                  <span><strong>Up to 5 users</strong> & <strong>1,000 active leads</strong></span>
                 </li>
-                <li class="flex items-center gap-2.5">
-                  <span class="w-4 h-4 rounded bg-[#F74D01] text-white flex items-center justify-center text-[9px]">
-                    <i class="fa-solid fa-check"></i>
-                  </span>
-                  <span>Lead source ROI & sales rep conversion analytics</span>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+                  <span>Lead assignment to team members</span>
                 </li>
-                <li class="flex items-center gap-2.5">
-                  <span class="w-4 h-4 rounded bg-[#F74D01] text-white flex items-center justify-center text-[9px]">
-                    <i class="fa-solid fa-check"></i>
-                  </span>
-                  <span>Multi-workspace switching & CSV data exports</span>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+                  <span>Customizable sales pipeline & advanced follow-ups</span>
                 </li>
-                <li class="flex items-center gap-2.5">
-                  <span class="w-4 h-4 rounded bg-[#F74D01] text-white flex items-center justify-center text-[9px]">
-                    <i class="fa-solid fa-check"></i>
-                  </span>
-                  <span>Priority onboarding & custom VAT / quote terms</span>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+                  <span>Quotation status tracking & source analytics</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#F74D01] text-[10px]"></i>
+                  <span>Sales conversion reports & team activity overview</span>
                 </li>
               </ul>
             </div>
 
-            <div class="pt-8">
-              <Link
-                :href="isLoggedIn ? '/dashboard' : '/register'"
-                class="btn-primary w-full py-2.5 text-xs"
-              >
-                Start Free Business Trial
+            <div class="pt-6 mt-6 border-t border-[#E5E0EC]">
+              <Link :href="isLoggedIn ? '/dashboard' : '/register'" class="btn-primary w-full py-2.5 text-xs">
+                Start Professional Plan
               </Link>
             </div>
+          </div>
+
+          <!-- C. Agency Plan ($99/mo) -->
+          <div class="bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-6 flex flex-col justify-between hover:border-[#C3B6D3] transition-all">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded bg-white border border-[#E5E0EC] text-[#F74D01] flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-building"></i>
+                  </div>
+                  <h3 class="text-base font-bold text-[#242424]">Agency</h3>
+                </div>
+                <span class="text-[11px] font-mono-num font-semibold text-[#6B6578]">15 Users &bull; 5,000 Leads</span>
+              </div>
+              <p class="text-xs text-[#6B6578] min-h-[34px]">
+                For agencies & high-volume service companies handling many quotations and sales reps.
+              </p>
+
+              <div class="my-5 p-3.5 rounded-md bg-white border border-[#E5E0EC] flex items-baseline gap-1.5">
+                <span class="text-2xl font-bold text-[#280047] font-mono-num">
+                  {{ formatPlanPrice(99) }}
+                </span>
+                <span class="text-xs text-[#6B6578]">/ month</span>
+              </div>
+
+              <ul class="space-y-2.5 text-xs text-[#242424]">
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                  <span>Everything in Professional, plus:</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                  <span><strong>Up to 15 users</strong> & <strong>5,000 active leads</strong></span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                  <span>Advanced team performance & pipeline reports</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                  <span>Lead ownership, reassignment & custom fields</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                  <span>Custom quotation templates & lost deal analysis</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-check text-[#280047] text-[10px]"></i>
+                  <span>Advanced activity tracking & priority support</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-[#E5E0EC]">
+              <Link :href="isLoggedIn ? '/dashboard' : '/register'" class="btn-indigo w-full py-2.5 text-xs">
+                Start Agency Plan
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <!-- D. Business — $199/month (Custom / Enterprise Consultation Callout) -->
+        <div class="mt-6 p-6 rounded-lg bg-[#F8F6FA] border border-[#D5CCE2] flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="space-y-1.5 max-w-2xl">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-[#280047] text-[#FDFEBA] text-[10px] font-bold uppercase tracking-wider">
+                Custom / Enterprise
+              </span>
+              <h3 class="text-sm font-bold text-[#242424]">
+                Business Plan — Starting at {{ formatPlanPrice(199) }} / month (Upon Consultation)
+              </h3>
+            </div>
+            <p class="text-xs text-[#6B6578] leading-relaxed">
+              Designed for established organizations with larger sales teams (up to 40 users & 20,000 active leads), multiple departments, advanced role-based permissions, audit logs, configurable workflows, and dedicated onboarding.
+            </p>
+          </div>
+
+          <div class="shrink-0">
+            <Link :href="isLoggedIn ? '/settings' : '/register'" class="btn-secondary text-xs py-2.5 px-4">
+              <i class="fa-regular fa-comments text-[#280047]"></i> Request Enterprise Consultation
+            </Link>
           </div>
         </div>
       </section>
 
       <!-- =========================================================
-           8. DARK INDIGO FRAMED CTA CARD + GIANT BRAND BANNER
+           8. DARK INDIGO FRAMED CTA CARD + SLIDING GIANT WORDMARK
            ========================================================= -->
-      <section class="bg-[#280047] p-6 sm:p-10 lg:p-12">
+      <section class="bg-[#280047] p-6 sm:p-10 lg:p-12 overflow-hidden">
         <!-- Inner White CTA Card with Connected Nodes -->
         <div class="bg-white rounded-lg p-8 sm:p-12 text-center relative overflow-hidden">
           <div
@@ -1072,7 +1329,7 @@ const nextTestimonial = () => {
 
             <!-- Decorative Isometric Mini Diagram at Bottom of Card -->
             <div class="pt-8 flex items-center justify-center gap-4 sm:gap-8">
-              <div class="w-9 h-9 rounded-full bg-[#FAFAFB] border border-[#E5E0EC] text-[#F74D01] flex items-center justify-center shadow-2xs">
+              <div class="w-9 h-9 rounded-full bg-[#FAFAFB] border border-[#E5E0EC] text-[#F74D01] flex items-center justify-center shadow-2xs animate-float">
                 <i class="fa-brands fa-whatsapp text-sm"></i>
               </div>
               <div class="h-px w-12 sm:w-20 bg-[#C3B6D3]"></div>
@@ -1080,18 +1337,24 @@ const nextTestimonial = () => {
                 <i class="fa-solid fa-layer-group"></i>
               </div>
               <div class="h-px w-12 sm:w-20 bg-[#C3B6D3]"></div>
-              <div class="w-9 h-9 rounded-full bg-[#FAFAFB] border border-[#E5E0EC] text-emerald-600 flex items-center justify-center shadow-2xs">
+              <div class="w-9 h-9 rounded-full bg-[#FAFAFB] border border-[#E5E0EC] text-emerald-600 flex items-center justify-center shadow-2xs animate-float">
                 <i class="fa-solid fa-check text-sm"></i>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Giant Brand Wordmark Banner (Matching Bottom of Reference Image) -->
-        <div class="pt-8 pb-2 overflow-hidden select-none text-center">
-          <p class="text-3xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white/90 whitespace-nowrap">
-            Leads . Platform <span class="text-[#F74D01]">&bull;</span> Leads . Platform
-          </p>
+        <!-- Giant Sliding Brand Wordmark Banner -->
+        <div class="pt-8 pb-2 overflow-hidden select-none">
+          <div class="animate-marquee-fast gap-8 items-center">
+            <span
+              v-for="n in 6"
+              :key="n"
+              class="text-3xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white/90 whitespace-nowrap"
+            >
+              Leads . Platform <span class="text-[#F74D01] mx-4">&bull;</span>
+            </span>
+          </div>
         </div>
       </section>
 
@@ -1171,4 +1434,3 @@ const nextTestimonial = () => {
     </div>
   </div>
 </template>
-
