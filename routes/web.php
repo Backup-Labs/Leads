@@ -89,4 +89,5 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::post('/organizations/{organization}/switch', [OrganizationController::class, 'switchOrg'])->name('organizations.switch');
     Route::get('/settings', [OrganizationController::class, 'settings'])->name('settings.index');
     Route::patch('/settings', [OrganizationController::class, 'updateSettings'])->name('settings.update');
+    Route::patch('/settings/currency', [OrganizationController::class, 'updateCurrency'])->name('settings.currency');
 });

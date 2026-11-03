@@ -1,20 +1,6 @@
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
-import {
-    Users,
-    TrendingUp,
-    DollarSign,
-    Clock,
-    FileText,
-    Zap,
-    AlertTriangle,
-    ArrowRight,
-    CheckCircle2,
-    Calendar,
-    PhoneCall,
-    Plus
-} from 'lucide-vue-next';
 
 const props = defineProps<{
     metrics: {
@@ -62,178 +48,182 @@ const completeFollowUp = (id: number) => {
 
 <template>
     <AppLayout>
-        <!-- Welcome & Quick Action Bar -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <!-- Page Title & Actions -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-                <h1 class="text-2xl font-extrabold text-[#280047]">Sales Command Center</h1>
-                <p class="text-xs text-gray-500 mt-1">Real-time pipeline visibility and revenue recovery opportunities</p>
+                <h1 class="text-xl font-bold text-[#280047]">Dashboard</h1>
+                <p class="text-xs text-gray-500 mt-0.5">
+                    Overview of your active leads, quotations, follow-ups, and revenue performance.
+                </p>
             </div>
             <div class="flex items-center gap-2">
                 <button
                     @click="refreshRecovery"
-                    class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-[#280047] shadow-sm transition-all"
+                    class="btn-secondary inline-flex items-center gap-1.5 cursor-pointer"
                 >
-                    <Zap class="w-4 h-4 text-[#F74D01]" />
-                    <span>Run Recovery Scan</span>
+                    <i class="fa-solid fa-rotate text-[#280047]"></i>
+                    <span>Check Neglected Deals</span>
                 </button>
-                <Link
-                    href="/leads/create"
-                    class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl text-white bg-[#F74D01] hover:bg-[#d94200] shadow-sm transition-all"
-                >
-                    <Plus class="w-4 h-4" />
-                    <span>Capture Lead</span>
+                <Link href="/leads/create" class="btn-primary inline-flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>New Lead</span>
                 </Link>
             </div>
         </div>
 
-        <!-- Metric Cards Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <!-- Pipeline Value -->
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pipeline Value</span>
-                    <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-[#280047]">
-                        <DollarSign class="w-4 h-4" />
-                    </div>
+        <!-- Detailed KPI Cards (4 Columns) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- Card 1: Pipeline Value -->
+            <div class="app-card p-4 border-t-2 border-t-[#280047]">
+                <div class="flex items-center justify-between text-xs text-gray-500 font-medium">
+                    <span>Open Pipeline Value</span>
+                    <i class="fa-solid fa-sack-dollar text-[#280047]"></i>
                 </div>
-                <div class="mt-3 flex items-baseline gap-1">
-                    <span class="text-xs font-bold text-gray-400">{{ metrics.currency }}</span>
-                    <span class="text-2xl font-extrabold text-[#280047]">{{ formatMoney(metrics.pipeline_value) }}</span>
+                <div class="mt-2 flex items-baseline gap-1">
+                    <span class="text-xs font-semibold text-gray-500">{{ metrics.currency }}</span>
+                    <span class="text-2xl font-bold font-mono text-[#280047]">{{ formatMoney(metrics.pipeline_value) }}</span>
                 </div>
-                <p class="text-[11px] text-gray-500 mt-1">{{ metrics.active_leads }} active open inquiries</p>
+                <div class="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between text-[11px]">
+                    <span class="text-gray-500"><strong class="text-[#242424]">{{ metrics.active_leads }}</strong> active leads</span>
+                    <span class="text-gray-400">Total: {{ metrics.total_leads }}</span>
+                </div>
             </div>
 
-            <!-- Won Revenue -->
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Won Revenue</span>
-                    <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
-                        <TrendingUp class="w-4 h-4" />
-                    </div>
+            <!-- Card 2: Revenue Won -->
+            <div class="app-card p-4 border-t-2 border-t-[#280047]">
+                <div class="flex items-center justify-between text-xs text-gray-500 font-medium">
+                    <span>Revenue Won</span>
+                    <i class="fa-solid fa-circle-check text-[#280047]"></i>
                 </div>
-                <div class="mt-3 flex items-baseline gap-1">
-                    <span class="text-xs font-bold text-gray-400">{{ metrics.currency }}</span>
-                    <span class="text-2xl font-extrabold text-emerald-700">{{ formatMoney(metrics.won_revenue) }}</span>
+                <div class="mt-2 flex items-baseline gap-1">
+                    <span class="text-xs font-semibold text-gray-500">{{ metrics.currency }}</span>
+                    <span class="text-2xl font-bold font-mono text-[#280047]">{{ formatMoney(metrics.won_revenue) }}</span>
                 </div>
-                <p class="text-[11px] text-gray-500 mt-1">{{ metrics.won_leads }} deals successfully closed</p>
+                <div class="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between text-[11px]">
+                    <span class="text-gray-500"><strong class="text-[#242424]">{{ metrics.won_leads }}</strong> deals won</span>
+                    <span class="text-gray-400">{{ metrics.lost_leads }} lost</span>
+                </div>
             </div>
 
-            <!-- Conversion Win Rate -->
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Win Rate</span>
-                    <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-[#280047]">
-                        <Users class="w-4 h-4" />
-                    </div>
+            <!-- Card 3: Pending Quotations -->
+            <div class="app-card p-4 border-t-2 border-t-[#C3B6D3]">
+                <div class="flex items-center justify-between text-xs text-gray-500 font-medium">
+                    <span>Pending Quotations</span>
+                    <i class="fa-solid fa-file-invoice-dollar text-[#280047]"></i>
                 </div>
-                <div class="mt-3 flex items-baseline gap-1">
-                    <span class="text-2xl font-extrabold text-[#280047]">{{ metrics.conversion_rate }}%</span>
+                <div class="mt-2 flex items-baseline gap-1">
+                    <span class="text-xs font-semibold text-gray-500">{{ metrics.currency }}</span>
+                    <span class="text-2xl font-bold font-mono text-[#280047]">{{ formatMoney(metrics.pending_quotes_value) }}</span>
                 </div>
-                <p class="text-[11px] text-gray-500 mt-1">{{ metrics.won_leads }} won / {{ metrics.won_leads + metrics.lost_leads }} closed</p>
+                <div class="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between text-[11px]">
+                    <span class="text-gray-500"><strong class="text-[#242424]">{{ metrics.pending_quotes_count }}</strong> awaiting reply</span>
+                    <span class="font-semibold text-[#280047]">Win rate: {{ metrics.conversion_rate }}%</span>
+                </div>
             </div>
 
-            <!-- Overdue Attention Needed -->
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm" :class="{'border-l-4 border-l-[#F74D01]': metrics.overdue_followups > 0}">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Attention Needed</span>
-                    <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-[#F74D01]">
-                        <AlertTriangle class="w-4 h-4" />
-                    </div>
+            <!-- Card 4: Overdue Follow-ups -->
+            <div class="app-card p-4 border-t-2 border-t-[#F74D01]">
+                <div class="flex items-center justify-between text-xs text-gray-500 font-medium">
+                    <span>Overdue Follow-ups</span>
+                    <i class="fa-solid fa-clock text-[#F74D01]"></i>
                 </div>
-                <div class="mt-3 flex items-baseline gap-1">
-                    <span class="text-2xl font-extrabold" :class="metrics.overdue_followups > 0 ? 'text-[#F74D01]' : 'text-gray-700'">
+                <div class="mt-2 flex items-baseline gap-1.5">
+                    <span class="text-2xl font-bold font-mono" :class="metrics.overdue_followups > 0 ? 'text-[#F74D01]' : 'text-[#280047]'">
                         {{ metrics.overdue_followups }}
                     </span>
-                    <span class="text-xs font-semibold text-gray-500">overdue follow-ups</span>
+                    <span class="text-xs text-gray-500">tasks overdue</span>
                 </div>
-                <p class="text-[11px] text-gray-500 mt-1">{{ metrics.pending_quotes_count }} quotes awaiting response</p>
+                <div class="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between text-[11px]">
+                    <span class="text-gray-500">{{ recoveryAlerts.length }} deals at risk</span>
+                    <Link href="/follow-ups?status=overdue" class="font-semibold text-[#F74D01] hover:underline">View tasks &rarr;</Link>
+                </div>
             </div>
         </div>
 
-        <!-- Revenue Recovery Priority Cockpit -->
-        <div v-if="recoveryAlerts.length > 0" class="mb-8 bg-gradient-to-r from-orange-50/70 via-white to-purple-50/50 p-6 rounded-2xl border border-orange-200 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
+        <!-- Deals Needing Attention (Revenue Recovery) -->
+        <div v-if="recoveryAlerts.length > 0" class="app-card mb-6 overflow-hidden">
+            <div class="px-5 py-3.5 bg-[#280047] text-white flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-7 h-7 rounded-lg bg-[#F74D01] flex items-center justify-center text-white">
-                        <Zap class="w-4 h-4" />
-                    </div>
+                    <span class="w-6 h-6 rounded bg-[#F74D01] flex items-center justify-center text-white text-xs">
+                        <i class="fa-solid fa-bolt"></i>
+                    </span>
                     <div>
-                        <h2 class="text-base font-bold text-[#280047]">Revenue Recovery Radar</h2>
-                        <p class="text-xs text-gray-600">Immediate high-value risks and stalled customer opportunities</p>
+                        <h2 class="text-xs font-bold uppercase tracking-wider">Deals Needing Immediate Attention ({{ recoveryAlerts.length }})</h2>
                     </div>
                 </div>
-                <Link href="/recovery" class="text-xs font-bold text-[#F74D01] hover:underline flex items-center gap-1">
-                    <span>View All ({{ recoveryAlerts.length }})</span>
-                    <ArrowRight class="w-3.5 h-3.5" />
+                <Link href="/recovery" class="text-xs font-semibold text-[#FDFEBA] hover:underline">
+                    View All &rarr;
                 </Link>
             </div>
 
-            <div class="space-y-2.5">
+            <div class="divide-y divide-gray-100">
                 <div
                     v-for="alert in recoveryAlerts"
                     :key="alert.id"
-                    class="bg-white p-3.5 rounded-xl border border-orange-100 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs"
+                    class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 hover:bg-gray-50/60"
                 >
-                    <div class="min-w-0">
+                    <div class="min-w-0 space-y-1">
                         <div class="flex items-center gap-2">
                             <span
-                                class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md"
-                                :class="alert.severity === 'critical' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-800'"
+                                class="text-[10px] font-bold uppercase px-2 py-0.5 rounded"
+                                :class="alert.severity === 'critical' ? 'bg-[#F74D01] text-white' : 'bg-[#FDFEBA] text-[#280047] border border-[#280047]/20'"
                             >
                                 {{ alert.severity }}
                             </span>
-                            <span class="text-xs font-bold text-[#280047] truncate">{{ alert.lead?.customer_name || 'Opportunity' }}</span>
-                            <span v-if="alert.potential_revenue_at_risk > 0" class="text-xs font-semibold text-gray-500">
-                                ({{ metrics.currency }} {{ formatMoney(alert.potential_revenue_at_risk) }} at risk)
+                            <span class="text-xs font-bold text-[#280047]">{{ alert.lead?.customer_name || 'Lead' }}</span>
+                            <span v-if="alert.potential_revenue_at_risk > 0" class="text-xs font-mono font-semibold text-[#242424]">
+                                • {{ metrics.currency }} {{ formatMoney(alert.potential_revenue_at_risk) }}
                             </span>
                         </div>
-                        <p class="text-xs text-gray-600 mt-1">{{ alert.reason }}</p>
-                        <p class="text-[11px] text-[#F74D01] font-medium mt-0.5">👉 Suggested Action: {{ alert.suggested_action }}</p>
+                        <p class="text-xs text-gray-600">{{ alert.reason }}</p>
+                        <p class="text-[11px] font-medium text-[#280047]">
+                            <i class="fa-solid fa-arrow-right text-[#F74D01] mr-1"></i>Next step: {{ alert.suggested_action }}
+                        </p>
                     </div>
                     <Link
                         v-if="alert.lead"
                         :href="`/leads/${alert.lead.id}`"
-                        class="self-start md:self-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#280047] text-white hover:bg-[#3a0066] transition-colors"
+                        class="btn-indigo self-start md:self-center flex-shrink-0"
                     >
-                        Resolve Lead
+                        Open Lead
                     </Link>
                 </div>
             </div>
         </div>
 
-        <!-- Two Column Layout: Pipeline Distribution & Upcoming Tasks -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <!-- Pipeline Stages Visual Funnel -->
-            <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between mb-5">
+        <!-- Main Grid: Pipeline Breakdown + Upcoming Follow-ups -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Pipeline Stage Breakdown Table (2 Columns) -->
+            <div class="lg:col-span-2 app-card overflow-hidden">
+                <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                     <div>
-                        <h2 class="text-base font-bold text-[#280047]">Pipeline Funnel Distribution</h2>
-                        <p class="text-xs text-gray-500">Live lead distribution and stage value</p>
+                        <h2 class="text-sm font-bold text-[#280047]">Sales Pipeline Breakdown</h2>
+                        <p class="text-xs text-gray-500">Number of leads and total value at each stage</p>
                     </div>
-                    <Link href="/pipeline" class="text-xs font-bold text-[#280047] hover:underline flex items-center gap-1">
-                        <span>Open Kanban</span>
-                        <ArrowRight class="w-3.5 h-3.5" />
+                    <Link href="/pipeline" class="btn-secondary text-xs">
+                        Open Board
                     </Link>
                 </div>
 
-                <div class="space-y-4">
+                <div class="p-5 space-y-4">
                     <div v-for="stage in stages" :key="stage.id" class="space-y-1.5">
                         <div class="flex justify-between items-center text-xs">
-                            <span class="font-bold flex items-center gap-1.5" :style="{ color: stage.color }">
-                                <span class="w-2.5 h-2.5 rounded-full" :style="{ backgroundColor: stage.color }"></span>
-                                {{ stage.name }}
-                            </span>
-                            <div class="flex items-center gap-3 text-gray-600">
-                                <span>{{ stage.leads_count }} leads</span>
-                                <span class="font-bold text-[#280047]">{{ metrics.currency }} {{ formatMoney(stage.total_value) }}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-xs bg-[#280047]" :style="{ backgroundColor: stage.color }"></span>
+                                <span class="font-semibold text-[#242424]">{{ stage.name }}</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="text-gray-500 text-[11px]">{{ stage.leads_count }} leads</span>
+                                <span class="font-mono font-bold text-[#280047] w-28 text-right">
+                                    {{ metrics.currency }} {{ formatMoney(stage.total_value) }}
+                                </span>
                             </div>
                         </div>
-                        <!-- Progress bar -->
-                        <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                        <div class="w-full bg-gray-100 h-2 rounded-xs overflow-hidden">
                             <div
-                                class="h-full rounded-full transition-all duration-500"
+                                class="h-full bg-[#280047]"
                                 :style="{
-                                    width: `${metrics.total_leads > 0 ? (stage.leads_count / metrics.total_leads) * 100 : 0}%`,
+                                    width: `${metrics.total_leads > 0 ? Math.max(2, (stage.leads_count / metrics.total_leads) * 100) : 0}%`,
                                     backgroundColor: stage.color
                                 }"
                             ></div>
@@ -242,66 +232,43 @@ const completeFollowUp = (id: number) => {
                 </div>
             </div>
 
-            <!-- Upcoming Follow-ups -->
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
-                <div class="flex items-center justify-between mb-5">
+            <!-- Upcoming Follow-ups (1 Column) -->
+            <div class="app-card flex flex-col overflow-hidden">
+                <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                     <div>
-                        <h2 class="text-base font-bold text-[#280047]">Upcoming Tasks</h2>
-                        <p class="text-xs text-gray-500">Scheduled for today and tomorrow</p>
+                        <h2 class="text-sm font-bold text-[#280047]">Upcoming Follow-ups</h2>
+                        <p class="text-xs text-gray-500">Scheduled calls and tasks</p>
                     </div>
-                    <Link href="/follow-ups" class="text-xs font-bold text-[#F74D01] hover:underline">View All</Link>
+                    <Link href="/follow-ups" class="text-xs font-semibold text-[#F74D01] hover:underline">View all</Link>
                 </div>
 
-                <div v-if="upcomingFollowUps.length === 0" class="flex-1 flex flex-col items-center justify-center py-8 text-center">
-                    <Calendar class="w-10 h-10 text-gray-300 mb-2" />
-                    <p class="text-xs text-gray-500 font-medium">No follow-ups due right now</p>
-                    <Link href="/leads" class="mt-2 text-xs text-[#F74D01] font-semibold hover:underline">Schedule on a lead</Link>
+                <div v-if="upcomingFollowUps.length === 0" class="flex-1 p-8 text-center text-xs text-gray-400">
+                    <i class="fa-solid fa-calendar-check text-xl text-[#C3B6D3] mb-2 block"></i>
+                    No pending follow-ups scheduled.
                 </div>
 
-                <div v-else class="space-y-3">
+                <div v-else class="divide-y divide-gray-100 flex-1">
                     <div
                         v-for="fu in upcomingFollowUps"
                         :key="fu.id"
-                        class="p-3 rounded-xl border border-gray-100 bg-gray-50/50 flex items-center justify-between gap-2"
+                        class="p-4 flex items-start justify-between gap-3 hover:bg-gray-50/60"
                     >
                         <div class="min-w-0">
-                            <p class="text-xs font-bold text-[#280047] truncate">{{ fu.title }}</p>
-                            <p class="text-[11px] text-gray-500 truncate">{{ fu.lead?.customer_name }} • {{ fu.assigned_to?.name }}</p>
-                            <span class="text-[10px] text-gray-400">{{ new Date(fu.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}</span>
+                            <p class="text-xs font-semibold text-[#242424] truncate">{{ fu.title }}</p>
+                            <Link v-if="fu.lead" :href="`/leads/${fu.lead.id}`" class="text-[11px] text-[#F74D01] font-medium hover:underline block truncate mt-0.5">
+                                {{ fu.lead.customer_name }}
+                            </Link>
+                            <p class="text-[11px] font-mono text-gray-400 mt-1">
+                                {{ new Date(fu.scheduled_at).toLocaleString() }}
+                            </p>
                         </div>
                         <button
                             @click="completeFollowUp(fu.id)"
-                            title="Mark Completed"
-                            class="p-1.5 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+                            title="Mark Done"
+                            class="px-2.5 py-1 rounded border border-[#D5CCE2] hover:bg-[#280047] hover:text-white text-[11px] font-semibold text-[#280047] transition-colors cursor-pointer flex-shrink-0"
                         >
-                            <CheckCircle2 class="w-5 h-5" />
+                            Done
                         </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Activities Timeline -->
-        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-            <h2 class="text-base font-bold text-[#280047] mb-4">Recent Sales Team Activities</h2>
-            <div v-if="recentActivities.length === 0" class="text-xs text-gray-400 py-4 text-center">
-                No recent activity recorded yet.
-            </div>
-            <div v-else class="divide-y divide-gray-50">
-                <div v-for="act in recentActivities" :key="act.id" class="py-3 flex items-start gap-3">
-                    <div class="w-7 h-7 rounded-full bg-purple-50 text-[#280047] flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
-                        {{ act.user?.name?.charAt(0) || 'A' }}
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center justify-between">
-                            <p class="text-xs font-bold text-[#280047]">
-                                {{ act.user?.name || 'System' }} •
-                                <span class="font-normal text-gray-600">{{ act.subject }}</span>
-                                <span v-if="act.lead" class="font-semibold text-[#F74D01]"> ({{ act.lead.customer_name }})</span>
-                            </p>
-                            <span class="text-[10px] text-gray-400">{{ new Date(act.created_at).toLocaleDateString() }}</span>
-                        </div>
-                        <p v-if="act.description" class="text-xs text-gray-500 mt-0.5">{{ act.description }}</p>
                     </div>
                 </div>
             </div>

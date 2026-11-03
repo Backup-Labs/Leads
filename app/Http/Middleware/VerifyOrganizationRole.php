@@ -30,3 +30,4 @@ class VerifyOrganizationRole
         return $next($request);
     }
 }
+

@@ -88,3 +88,4 @@ class FollowUpController extends Controller
         return back()->with('success', 'Follow-up marked completed.');
     }
 }
+

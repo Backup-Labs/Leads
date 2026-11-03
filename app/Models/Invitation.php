@@ -48,3 +48,4 @@ class Invitation extends Model
         return $this->accepted_at !== null;
     }
 }
+

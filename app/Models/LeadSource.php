@@ -33,3 +33,4 @@ class LeadSource extends Model
         return $this->hasMany(Lead::class);
     }
 }
+

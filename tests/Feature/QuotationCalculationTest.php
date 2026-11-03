@@ -46,3 +46,4 @@ class QuotationCalculationTest extends TestCase
         $this->assertEquals(0.00, $calc['total_amount']);
     }
 }
+

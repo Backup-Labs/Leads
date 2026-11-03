@@ -29,3 +29,4 @@ trait BelongsToOrganization
         return $this->belongsTo(Organization::class);
     }
 }
+

@@ -82,3 +82,4 @@ class Organization extends Model
         return $this->hasMany(AuditLog::class);
     }
 }
+

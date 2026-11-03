@@ -87,3 +87,4 @@ class TeamController extends Controller
         return back()->with('success', 'Team member removed from workspace.');
     }
 }
+

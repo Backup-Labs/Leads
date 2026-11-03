@@ -84,3 +84,4 @@ class PipelineController extends Controller
         return back()->with('success', 'Pipeline stage created.');
     }
 }
+

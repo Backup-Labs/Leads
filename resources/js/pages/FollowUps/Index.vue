@@ -1,200 +1,220 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
-import {
-    CalendarCheck,
-    Clock,
-    AlertTriangle,
-    CheckCircle2,
-    Calendar,
-    Phone,
-    Building2,
-    Check
-} from 'lucide-vue-next';
+import type { FollowUp, PaginatedData, OrganizationMember } from '@/types';
 
-const props = defineProps<{
-    followUps: {
-        data: Array<any>;
-        links: Array<any>;
-        total: number;
-    };
-    currentStatus: string;
-    counts: {
-        upcoming: number;
-        overdue: number;
-        completed: number;
-    };
-    team: Array<any>;
+defineProps<{
+  followUps: PaginatedData<FollowUp>;
+  currentStatus: string;
+  counts: {
+    upcoming: number;
+    overdue: number;
+    completed: number;
+  };
+  team: OrganizationMember[];
 }>();
 
-const completeModalOpen = ref(false);
-const activeFollowUp = ref<any>(null);
-const completionNotes = ref('');
+const completingFollowUp = ref<FollowUp | null>(null);
+const completeForm = useForm({
+  completion_notes: '',
+});
 
-const openCompleteModal = (fu: any) => {
-    activeFollowUp.value = fu;
-    completionNotes.value = '';
-    completeModalOpen.value = true;
+const setFilter = (status: string) => {
+  router.get('/follow-ups', { status }, { preserveState: true, replace: true });
 };
 
-const confirmComplete = () => {
-    if (!activeFollowUp.value) return;
+const openCompleteModal = (fu: FollowUp) => {
+  completingFollowUp.value = fu;
+  completeForm.completion_notes = '';
+};
 
-    router.patch(`/follow-ups/${activeFollowUp.value.id}/complete`, {
-        completion_notes: completionNotes.value,
-    }, {
-        onSuccess: () => {
-            completeModalOpen.value = false;
-            activeFollowUp.value = null;
-        }
-    });
+const submitComplete = () => {
+  if (!completingFollowUp.value) return;
+  completeForm.patch(`/follow-ups/${completingFollowUp.value.id}/complete`, {
+    preserveScroll: true,
+    onSuccess: () => {
+      completingFollowUp.value = null;
+    },
+  });
 };
 </script>
 
 <template>
-    <AppLayout>
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-                <h1 class="text-2xl font-extrabold text-[#280047]">Follow-up Activity Engine</h1>
-                <p class="text-xs text-gray-500 mt-1">Never let an inquiry slip away with structured reminder schedules</p>
-            </div>
+  <Head title="Follow-ups" />
+  <AppLayout>
+    <div class="space-y-5">
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-xl font-bold text-[#242424]">Follow-ups Schedule</h1>
+          <p class="text-xs text-[#6B6578] mt-0.5">Manage scheduled calls, WhatsApp check-ins, and client meetings.</p>
+        </div>
+      </div>
+
+      <!-- Status Tabs -->
+      <div class="flex items-center gap-2 border-b border-[#E5E0EC] pb-3">
+        <button
+          type="button"
+          @click="setFilter('upcoming')"
+          class="px-3.5 py-2 rounded-md text-xs font-semibold transition-colors flex items-center gap-2"
+          :class="
+            currentStatus === 'upcoming'
+              ? 'bg-[#280047] text-white'
+              : 'bg-white text-[#242424] border border-[#E5E0EC] hover:bg-[#F3F1F6]'
+          "
+        >
+          <i class="fa-regular fa-clock"></i> Upcoming
+          <span class="px-1.5 py-0.5 rounded bg-black/10 text-[10px] font-mono-num">{{ counts.upcoming }}</span>
+        </button>
+
+        <button
+          type="button"
+          @click="setFilter('overdue')"
+          class="px-3.5 py-2 rounded-md text-xs font-semibold transition-colors flex items-center gap-2"
+          :class="
+            currentStatus === 'overdue'
+              ? 'bg-[#F74D01] text-white'
+              : 'bg-white text-[#242424] border border-[#E5E0EC] hover:bg-[#F3F1F6]'
+          "
+        >
+          <i class="fa-solid fa-triangle-exclamation"></i> Overdue
+          <span class="px-1.5 py-0.5 rounded bg-black/10 text-[10px] font-mono-num">{{ counts.overdue }}</span>
+        </button>
+
+        <button
+          type="button"
+          @click="setFilter('completed')"
+          class="px-3.5 py-2 rounded-md text-xs font-semibold transition-colors flex items-center gap-2"
+          :class="
+            currentStatus === 'completed'
+              ? 'bg-[#280047] text-white'
+              : 'bg-white text-[#242424] border border-[#E5E0EC] hover:bg-[#F3F1F6]'
+          "
+        >
+          <i class="fa-solid fa-check-double"></i> Completed
+          <span class="px-1.5 py-0.5 rounded bg-black/10 text-[10px] font-mono-num">{{ counts.completed }}</span>
+        </button>
+      </div>
+
+      <!-- Follow-ups List -->
+      <div class="app-card overflow-hidden">
+        <div v-if="followUps.data.length === 0" class="p-12 text-center">
+          <div class="w-10 h-10 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center mx-auto mb-2.5">
+            <i class="fa-regular fa-calendar-check text-sm"></i>
+          </div>
+          <p class="text-sm font-semibold text-[#242424]">No {{ currentStatus }} follow-ups found</p>
+          <p class="text-xs text-[#6B6578] mt-0.5">Schedule follow-ups directly from any lead profile.</p>
         </div>
 
-        <!-- Status Filter Tabs -->
-        <div class="flex gap-2 border-b border-gray-200 mb-6 pb-2">
-            <Link
-                href="/follow-ups?status=upcoming"
-                class="px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition-all"
-                :class="currentStatus === 'upcoming' ? 'bg-[#280047] text-white' : 'text-gray-600 hover:bg-gray-100'"
-            >
-                <Clock class="w-4 h-4" />
-                <span>Upcoming</span>
-                <span class="text-[10px] px-1.5 py-0.2 rounded-full" :class="currentStatus === 'upcoming' ? 'bg-[#F74D01] text-white' : 'bg-gray-200 text-gray-700'">
-                    {{ counts.upcoming }}
-                </span>
-            </Link>
+        <div v-else class="divide-y divide-[#E5E0EC]">
+          <div
+            v-for="fu in followUps.data"
+            :key="fu.id"
+            class="p-4 hover:bg-[#FAFAFB] transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+          >
+            <div class="flex items-start gap-3.5">
+              <div
+                class="w-9 h-9 rounded-md flex items-center justify-center shrink-0 mt-0.5"
+                :class="
+                  currentStatus === 'overdue'
+                    ? 'bg-[#F74D01]/10 text-[#F74D01]'
+                    : 'bg-[#F3F1F6] text-[#280047]'
+                "
+              >
+                <i class="fa-regular fa-calendar-check text-sm"></i>
+              </div>
 
-            <Link
-                href="/follow-ups?status=overdue"
-                class="px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition-all"
-                :class="currentStatus === 'overdue' ? 'bg-[#F74D01] text-white' : 'text-gray-600 hover:bg-gray-100'"
-            >
-                <AlertTriangle class="w-4 h-4" />
-                <span>Overdue</span>
-                <span class="text-[10px] px-1.5 py-0.2 rounded-full" :class="currentStatus === 'overdue' ? 'bg-white text-[#F74D01]' : 'bg-red-100 text-red-700'">
-                    {{ counts.overdue }}
-                </span>
-            </Link>
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <Link
+                    v-if="fu.lead"
+                    :href="`/leads/${fu.lead.id}`"
+                    class="text-sm font-bold text-[#242424] hover:text-[#F74D01] transition-colors"
+                  >
+                    {{ fu.lead.customer_name }}
+                  </Link>
+                  <span class="px-2 py-0.5 rounded bg-[#F3F1F6] text-[#280047] text-[10px] font-semibold">
+                    {{ fu.title }}
+                  </span>
+                </div>
 
-            <Link
-                href="/follow-ups?status=completed"
-                class="px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition-all"
-                :class="currentStatus === 'completed' ? 'bg-[#280047] text-white' : 'text-gray-600 hover:bg-gray-100'"
-            >
-                <CheckCircle2 class="w-4 h-4" />
-                <span>Completed</span>
-                <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-gray-200 text-gray-700">
-                    {{ counts.completed }}
-                </span>
-            </Link>
-        </div>
+                <p v-if="fu.notes" class="text-xs text-[#242424] mt-1">{{ fu.notes }}</p>
 
-        <!-- Follow-ups List -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div v-if="followUps.data.length === 0" class="py-16 text-center text-xs text-gray-400 font-medium">
-                No {{ currentStatus }} follow-ups found.
-            </div>
+                <div class="flex flex-wrap items-center gap-4 text-[11px] text-[#6B6578] mt-1.5">
+                  <span class="font-mono-num">
+                    <i class="fa-regular fa-calendar mr-1"></i>
+                    Due: {{ new Date(fu.scheduled_at).toLocaleString() }}
+                  </span>
+                  <span>
+                    <i class="fa-regular fa-user mr-1"></i>
+                    Assigned to: <strong class="text-[#242424]">{{ fu.assigned_to?.name || 'Team Member' }}</strong>
+                  </span>
+                </div>
 
-            <div v-else class="divide-y divide-gray-100">
-                <div
-                    v-for="fu in followUps.data"
-                    :key="fu.id"
-                    class="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-gray-50/50 transition-colors"
+                <p
+                  v-if="fu.completion_notes"
+                  class="mt-2 text-xs bg-[#F8F6FA] p-2.5 rounded border border-[#E5E0EC] text-[#242424]"
                 >
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="font-bold text-sm text-[#280047]">{{ fu.title }}</span>
-                            <span
-                                v-if="fu.status === 'pending' && new Date(fu.scheduled_at) < new Date()"
-                                class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-red-100 text-red-700"
-                            >
-                                Overdue
-                            </span>
-                            <span
-                                v-else-if="fu.status === 'completed'"
-                                class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-700"
-                            >
-                                Completed
-                            </span>
-                        </div>
-
-                        <!-- Lead Context -->
-                        <div class="flex flex-wrap items-center gap-3 text-xs text-gray-600">
-                            <Link v-if="fu.lead" :href="`/leads/${fu.lead.id}`" class="font-semibold text-[#F74D01] hover:underline">
-                                {{ fu.lead.customer_name }}
-                            </Link>
-                            <span v-if="fu.lead?.phone" class="text-gray-400">• {{ fu.lead.phone }}</span>
-                            <span v-if="fu.assigned_to" class="text-gray-400">• Assigned to {{ fu.assigned_to.name }}</span>
-                        </div>
-
-                        <p v-if="fu.notes" class="text-xs text-gray-500 mt-1 italic">{{ fu.notes }}</p>
-                        <p v-if="fu.completion_notes" class="text-xs text-emerald-700 mt-1 font-medium">
-                            Resolution: {{ fu.completion_notes }}
-                        </p>
-                    </div>
-
-                    <div class="flex items-center gap-4 flex-shrink-0">
-                        <div class="text-left md:text-right text-xs">
-                            <span class="text-gray-400 block text-[10px] uppercase font-bold">Scheduled Time</span>
-                            <span class="font-bold text-[#280047]">{{ new Date(fu.scheduled_at).toLocaleString() }}</span>
-                        </div>
-
-                        <button
-                            v-if="fu.status === 'pending'"
-                            @click="openCompleteModal(fu)"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs transition-colors"
-                        >
-                            <Check class="w-3.5 h-3.5" />
-                            <span>Mark Done</span>
-                        </button>
-                    </div>
-                </div>
+                  <strong class="text-[#280047]">Outcome:</strong> {{ fu.completion_notes }}
+                </p>
+              </div>
             </div>
-        </div>
 
-        <!-- Mark Done Modal -->
-        <div v-if="completeModalOpen" class="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
-                <h3 class="text-sm font-bold text-[#280047]">Complete Follow-up</h3>
-                <p class="text-xs text-gray-500">Record any notes or outcome from your conversation with the customer.</p>
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700">Outcome Notes (Optional)</label>
-                    <textarea
-                        v-model="completionNotes"
-                        rows="3"
-                        placeholder="Customer requested a revised quotation with 10% discount..."
-                        class="mt-1 block w-full px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F74D01] outline-none"
-                    ></textarea>
-                </div>
-
-                <div class="flex items-center justify-end gap-2 pt-2">
-                    <button
-                        @click="completeModalOpen = false"
-                        class="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        @click="confirmComplete"
-                        class="px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-all"
-                    >
-                        Mark Done
-                    </button>
-                </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <Link
+                v-if="fu.lead"
+                :href="`/leads/${fu.lead.id}`"
+                class="btn-secondary text-xs py-1.5 px-3"
+              >
+                View Lead
+              </Link>
+              <button
+                v-if="fu.status !== 'completed'"
+                type="button"
+                @click="openCompleteModal(fu)"
+                class="btn-primary text-xs py-1.5 px-3"
+              >
+                <i class="fa-solid fa-check"></i> Mark Done
+              </button>
             </div>
+          </div>
         </div>
-    </AppLayout>
+      </div>
+
+      <!-- Complete Follow-up Modal -->
+      <div
+        v-if="completingFollowUp"
+        class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+      >
+        <div class="app-card w-full max-w-md p-6">
+          <h3 class="text-base font-bold text-[#242424]">Complete Follow-up</h3>
+          <p class="text-xs text-[#6B6578] mt-0.5 mb-4">
+            Record the outcome of your conversation with
+            <strong class="text-[#242424]">{{ completingFollowUp.lead?.customer_name }}</strong>.
+          </p>
+
+          <form @submit.prevent="submitComplete" class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-[#242424] mb-1.5">Call / Meeting Outcome</label>
+              <textarea
+                v-model="completeForm.completion_notes"
+                rows="3"
+                required
+                placeholder="e.g. Client requested a revised quotation with 10% volume discount."
+                class="app-input"
+              ></textarea>
+            </div>
+
+            <div class="flex justify-end gap-2">
+              <button type="button" @click="completingFollowUp = null" class="btn-secondary">Cancel</button>
+              <button type="submit" :disabled="completeForm.processing" class="btn-primary">
+                Save Outcome
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </AppLayout>
 </template>

@@ -76,8 +76,28 @@ class QuotationController extends Controller
 
     public function store(StoreQuotationRequest $request): RedirectResponse
     {
-        $lead = Lead::findOrFail($request->lead_id);
-        Gate::authorize('update', $lead);
+        if ($request->filled('lead_id')) {
+            $lead = Lead::findOrFail($request->lead_id);
+            Gate::authorize('update', $lead);
+        } else {
+            $org = $this->tenantContext->getOrganization();
+            $defaultStage = \App\Models\PipelineStage::where('organization_id', $org->id)
+                ->orderBy('sort_order')
+                ->first();
+
+            $lead = Lead::create([
+                'organization_id' => $org->id,
+                'customer_name' => $request->customer_name,
+                'email' => $request->customer_email,
+                'phone' => $request->customer_phone,
+                'company_name' => $request->company_name,
+                'pipeline_stage_id' => $defaultStage?->id,
+                'assigned_to_user_id' => auth()->id(),
+                'currency' => $org->currency,
+                'status' => \App\Enums\LeadStatus::ACTIVE,
+                'priority' => \App\Enums\LeadPriority::MEDIUM,
+            ]);
+        }
 
         $quotation = $this->createQuotationAction->execute($lead, $request->validated());
 
@@ -118,3 +138,4 @@ class QuotationController extends Controller
         ]);
     }
 }
+

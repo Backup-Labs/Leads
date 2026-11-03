@@ -43,3 +43,4 @@ class Subscription extends Model
         return in_array($this->status, ['active', 'trialing'], true);
     }
 }
+

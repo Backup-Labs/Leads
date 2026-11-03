@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Organization;
 use App\Models\OrganizationMember;
 use App\Services\AuditLogger;
+use App\Services\CurrencyConverter;
 use App\Services\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,7 +18,8 @@ class OrganizationController extends Controller
 {
     public function __construct(
         protected TenantContext $tenantContext,
-        protected AuditLogger $auditLogger
+        protected AuditLogger $auditLogger,
+        protected CurrencyConverter $currencyConverter
     ) {}
 
     public function switchOrg(Request $request, Organization $organization): RedirectResponse
@@ -67,27 +69,60 @@ class OrganizationController extends Controller
             'quotation_default_terms' => ['nullable', 'string'],
         ]);
 
+        $oldCurrency = strtoupper($org->currency ?: 'UGX');
+        $newCurrency = strtoupper($validated['currency']);
+
+        if ($oldCurrency !== $newCurrency) {
+            $org->load('settings');
+            $this->currencyConverter->convertOrganizationRecords($org, $oldCurrency, $newCurrency);
+        }
+
         $org->update([
             'name' => $validated['name'],
             'billing_email' => $validated['billing_email'],
             'phone' => $validated['phone'],
-            'currency' => $validated['currency'],
+            'currency' => $newCurrency,
         ]);
 
         $org->settings()->updateOrCreate(
             ['organization_id' => $org->id],
             [
-                'default_currency' => $validated['currency'],
+                'default_currency' => $newCurrency,
                 'default_tax_rate' => $validated['default_tax_rate'],
-                'stale_lead_threshold_days' => $validated['stale_lead_threshold_days'],
-                'quote_followup_threshold_days' => $validated['quote_followup_threshold_days'],
-                'high_value_threshold' => $validated['high_value_threshold'],
+                'stale_lead_threshold_days' => (int) $validated['stale_lead_threshold_days'],
+                'quote_followup_threshold_days' => (int) $validated['quote_followup_threshold_days'],
+                'high_value_threshold' => (int) round((float) $validated['high_value_threshold']),
                 'quotation_default_terms' => $validated['quotation_default_terms'],
             ]
         );
 
         $this->auditLogger->log('organization.settings_updated', $org);
 
-        return back()->with('success', 'Organization preferences updated.');
+        $msg = $oldCurrency !== $newCurrency
+            ? "Settings updated and all amounts converted from {$oldCurrency} to {$newCurrency}."
+            : 'Workspace settings updated.';
+
+        return back()->with('success', $msg);
+    }
+
+    public function updateCurrency(Request $request): RedirectResponse
+    {
+        $org = $this->tenantContext->getOrganization();
+
+        $validated = $request->validate([
+            'currency' => ['required', 'string', 'size:3'],
+        ]);
+
+        $oldCurrency = strtoupper($org->currency ?: 'UGX');
+        $newCurrency = strtoupper($validated['currency']);
+
+        if ($oldCurrency !== $newCurrency) {
+            $org->load('settings');
+            $this->currencyConverter->convertOrganizationRecords($org, $oldCurrency, $newCurrency);
+            $org->update(['currency' => $newCurrency]);
+            $this->auditLogger->log('organization.currency_converted', $org, ['from' => $oldCurrency, 'to' => $newCurrency]);
+        }
+
+        return back()->with('success', "Currency changed to {$newCurrency}. All deal values and quotations have been automatically converted.");
     }
 }

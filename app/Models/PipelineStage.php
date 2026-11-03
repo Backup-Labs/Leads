@@ -37,3 +37,4 @@ class PipelineStage extends Model
         return $this->hasMany(Lead::class);
     }
 }
+

@@ -1,389 +1,497 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useForm, Link, router } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
-import {
-    ArrowLeft,
-    Phone,
-    Mail,
-    Building2,
-    Calendar,
-    Clock,
-    FileText,
-    CheckCircle2,
-    Plus,
-    UserCheck,
-    MessageSquare,
-    Zap,
-    AlertCircle
-} from 'lucide-vue-next';
+import CustomSelect from '@/components/CustomSelect.vue';
+import CustomDatePicker from '@/components/CustomDatePicker.vue';
+import { formatCurrencyAmount } from '@/utils/currency';
+import type { Lead, PageProps, PipelineStage, OrganizationMember } from '@/types';
 
 const props = defineProps<{
-    lead: any;
-    stages: Array<any>;
-    team: Array<any>;
+  lead: Lead;
+  stages: PipelineStage[];
+  team: OrganizationMember[];
 }>();
 
-const newNote = ref('');
-const isLoggingNote = ref(false);
+const page = usePage<PageProps>();
+const currency = computed(() => props.lead.currency || page.props.auth?.currentOrganization?.currency || 'UGX');
 
-const followUpModalOpen = ref(false);
+const showFollowUpModal = ref(false);
+const followUpStep = ref(1);
+const showLostModal = ref(false);
+const showNoteModal = ref(false);
+
+const teamOptions = computed(() =>
+  props.team.map((m) => ({
+    value: m.user_id,
+    label: m.user?.name || 'Team Member',
+    sublabel: m.user?.email,
+    icon: 'fa-solid fa-user-tie',
+  }))
+);
+
+const stageForm = useForm({
+  pipeline_stage_id: props.lead.pipeline_stage_id,
+  lost_reason: '',
+});
+
+const changeStage = (stage: PipelineStage) => {
+  if (stage.is_lost) {
+    stageForm.pipeline_stage_id = stage.id;
+    showLostModal.value = true;
+    return;
+  }
+  router.patch(`/leads/${props.lead.id}/stage`, { pipeline_stage_id: stage.id }, { preserveScroll: true });
+};
+
+const submitLostStage = () => {
+  stageForm.patch(`/leads/${props.lead.id}/stage`, {
+    preserveScroll: true,
+    onSuccess: () => {
+      showLostModal.value = false;
+    },
+  });
+};
+
 const followUpForm = useForm({
-    lead_id: props.lead.id,
-    title: '',
-    scheduled_at: '',
-    assigned_to_user_id: props.lead.assigned_to_user_id || '',
-    notes: '',
+  lead_id: props.lead.id,
+  title: 'Follow-up Call / Check-in',
+  assigned_to_user_id: props.lead.assigned_to_user_id || page.props.auth?.user?.id || '',
+  scheduled_at: new Date(Date.now() + 86400000).toISOString().slice(0, 16),
+  notes: '',
+});
+
+const submitFollowUp = () => {
+  followUpForm.post('/follow-ups', {
+    preserveScroll: true,
+    onSuccess: () => {
+      showFollowUpModal.value = false;
+      followUpStep.value = 1;
+      followUpForm.reset('notes');
+    },
+  });
+};
+
+const noteForm = useForm({
+  note: '',
 });
 
 const submitNote = () => {
-    if (!newNote.value.trim()) return;
-    router.post(`/leads/${props.lead.id}/notes`, { note: newNote.value }, {
-        onSuccess: () => {
-            newNote.value = '';
-            isLoggingNote.value = false;
-        }
-    });
+  noteForm.post(`/leads/${props.lead.id}/notes`, {
+    preserveScroll: true,
+    onSuccess: () => {
+      showNoteModal.value = false;
+      noteForm.reset();
+    },
+  });
 };
 
-const changeStage = (stageId: number) => {
-    router.patch(`/leads/${props.lead.id}/stage`, { pipeline_stage_id: stageId });
-};
-
-const changeAssignee = (userId: string) => {
-    router.patch(`/leads/${props.lead.id}/assign`, { assigned_to_user_id: userId || null });
-};
-
-const submitFollowUp = () => {
-    followUpForm.post('/follow-ups', {
-        onSuccess: () => {
-            followUpModalOpen.value = false;
-            followUpForm.reset('title', 'scheduled_at', 'notes');
-        }
-    });
-};
-
-const completeFollowUp = (id: number) => {
-    router.patch(`/follow-ups/${id}/complete`);
-};
-
-const formatMoney = (amount: number, currency: string) => {
-    return `${currency} ` + new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    }).format(amount);
+const formatMoney = (amount: number) => {
+  return formatCurrencyAmount(amount, currency.value);
 };
 </script>
 
 <template>
-    <AppLayout>
-        <!-- Top Back Navigation -->
-        <div class="mb-4">
-            <Link href="/leads" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-[#280047]">
-                <ArrowLeft class="w-4 h-4" />
-                <span>Back to Leads</span>
-            </Link>
+  <Head :title="lead.customer_name" />
+  <AppLayout>
+    <div class="space-y-5">
+      <!-- Top Breadcrumb & Actions -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-2 text-xs text-[#6B6578]">
+          <Link href="/leads" class="hover:text-[#280047] font-medium flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[10px]"></i> All Leads
+          </Link>
+          <span>/</span>
+          <span class="text-[#242424] font-semibold">{{ lead.customer_name }}</span>
         </div>
 
-        <!-- Lead Dossier Hero Card -->
-        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" @click="showNoteModal = true" class="btn-secondary text-xs">
+            <i class="fa-regular fa-note-sticky text-[#280047]"></i> Add Note
+          </button>
+          <button type="button" @click="showFollowUpModal = true" class="btn-secondary text-xs">
+            <i class="fa-regular fa-calendar-plus text-[#F74D01]"></i> Schedule Follow-up
+          </button>
+          <Link :href="`/quotations/create?lead_id=${lead.id}`" class="btn-primary text-xs">
+            <i class="fa-solid fa-file-invoice"></i> Create Quotation
+          </Link>
+        </div>
+      </div>
+
+      <!-- Lead Summary Header Card -->
+      <div class="app-card p-5 border-t-2 border-t-[#280047]">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-[#E5E0EC]">
+          <div class="flex items-start gap-3.5">
+            <div class="w-11 h-11 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-base shrink-0">
+              {{ lead.customer_name.charAt(0).toUpperCase() }}
+            </div>
             <div>
-                <div class="flex items-center gap-2.5">
-                    <h1 class="text-2xl font-extrabold text-[#280047]">{{ lead.customer_name }}</h1>
-                    <span
-                        class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md"
-                        :class="{
-                            'bg-red-50 text-red-700': lead.priority === 'urgent',
-                            'bg-amber-50 text-amber-700': lead.priority === 'high',
-                            'bg-blue-50 text-blue-700': lead.priority === 'medium',
-                            'bg-gray-50 text-gray-600': lead.priority === 'low'
-                        }"
-                    >
-                        {{ lead.priority }}
-                    </span>
-                    <span
-                        v-if="lead.status === 'won'"
-                        class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200"
-                    >
-                        Won
-                    </span>
-                    <span
-                        v-else-if="lead.status === 'lost'"
-                        class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200"
-                    >
-                        Lost
-                    </span>
-                </div>
-                <p v-if="lead.company_name" class="text-xs font-semibold text-gray-600 mt-0.5">{{ lead.company_name }}</p>
-                <p v-if="lead.requested_service" class="text-xs text-gray-500 mt-1">Interested in: <strong class="text-gray-700">{{ lead.requested_service }}</strong></p>
-            </div>
-
-            <!-- Value & Stage Controls -->
-            <div class="flex flex-wrap items-center gap-4">
-                <div class="text-left md:text-right">
-                    <span class="text-[10px] uppercase font-bold text-gray-400 block tracking-wider">Opportunity Value</span>
-                    <span class="text-xl font-extrabold text-[#280047]">{{ formatMoney(lead.estimated_value, lead.currency) }}</span>
-                </div>
-
-                <div class="flex flex-col gap-1">
-                    <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Stage</span>
-                    <select
-                        :value="lead.pipeline_stage_id"
-                        @change="changeStage(Number(($event.target as HTMLSelectElement).value))"
-                        class="px-3 py-1.5 text-xs font-bold rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-[#F74D01] outline-none"
-                    >
-                        <option v-for="s in stages" :key="s.id" :value="s.id">{{ s.name }}</option>
-                    </select>
-                </div>
-
-                <div class="flex flex-col gap-1">
-                    <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Assigned Rep</span>
-                    <select
-                        :value="lead.assigned_to_user_id || ''"
-                        @change="changeAssignee(($event.target as HTMLSelectElement).value)"
-                        class="px-3 py-1.5 text-xs font-semibold rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-[#F74D01] outline-none"
-                    >
-                        <option value="">Unassigned</option>
-                        <option v-for="m in team" :key="m.user_id" :value="m.user_id">{{ m.user.name }}</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Action Trigger Buttons -->
-        <div class="flex flex-wrap items-center gap-2 mb-6">
-            <button
-                @click="isLoggingNote = !isLoggingNote"
-                class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-[#280047] shadow-sm transition-all"
-            >
-                <MessageSquare class="w-4 h-4 text-[#F74D01]" />
-                <span>Log Note / Call</span>
-            </button>
-            <button
-                @click="followUpModalOpen = true"
-                class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-[#280047] shadow-sm transition-all"
-            >
-                <Calendar class="w-4 h-4 text-[#F74D01]" />
-                <span>Schedule Follow-up</span>
-            </button>
-            <Link
-                :href="`/quotations/create?lead_id=${lead.id}`"
-                class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl text-white bg-[#F74D01] hover:bg-[#d94200] shadow-sm transition-all"
-            >
-                <FileText class="w-4 h-4" />
-                <span>Draft Quotation</span>
-            </Link>
-        </div>
-
-        <!-- Expandable Note Logging Box -->
-        <div v-if="isLoggingNote" class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm mb-6">
-            <h3 class="text-xs font-bold text-[#280047] mb-2">Record Conversation or Note</h3>
-            <textarea
-                v-model="newNote"
-                rows="3"
-                placeholder="Spoke with client on phone, agreed to review quotation on Thursday..."
-                class="w-full p-3 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F74D01] focus:bg-white outline-none"
-            ></textarea>
-            <div class="mt-2 flex justify-end gap-2">
-                <button @click="isLoggingNote = false" class="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700">Cancel</button>
-                <button
-                    @click="submitNote"
-                    class="px-4 py-1.5 text-xs font-bold text-white bg-[#280047] hover:bg-[#3a0066] rounded-xl transition-colors"
+              <div class="flex flex-wrap items-center gap-2">
+                <h1 class="text-lg font-bold text-[#242424]">{{ lead.customer_name }}</h1>
+                <span
+                  class="px-2 py-0.5 rounded text-[11px] font-semibold uppercase"
+                  :class="
+                    lead.priority === 'urgent' || lead.priority === 'high'
+                      ? 'bg-[#F74D01]/10 text-[#F74D01]'
+                      : 'bg-[#F3F1F6] text-[#280047]'
+                  "
                 >
-                    Save Activity
+                  {{ lead.priority }} Priority
+                </span>
+                <span
+                  class="px-2 py-0.5 rounded text-[11px] font-semibold uppercase bg-[#FDFEBA] text-[#280047] border border-[#C3B6D3]"
+                >
+                  {{ lead.status }}
+                </span>
+              </div>
+              <p class="text-xs text-[#6B6578] mt-0.5">
+                {{ lead.company_name || 'Individual Prospect' }} &bull;
+                {{ lead.requested_service || 'General Inquiry' }}
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-6">
+            <div>
+              <p class="text-[11px] uppercase tracking-wider text-[#6B6578] font-medium">Estimated Value</p>
+              <p class="text-xl font-bold text-[#280047] font-mono-num">
+                {{ formatMoney(Number(lead.estimated_value)) }}
+              </p>
+            </div>
+            <div class="pl-6 border-l border-[#E5E0EC]">
+              <p class="text-[11px] uppercase tracking-wider text-[#6B6578] font-medium">Assigned Owner</p>
+              <p class="text-sm font-semibold text-[#242424] mt-0.5">
+                {{ lead.assigned_to?.name || 'Unassigned' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage Progress Bar -->
+        <div class="pt-4">
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-[#6B6578] mb-2">
+            Pipeline Stage (Click to update)
+          </p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-1.5">
+            <button
+              v-for="s in stages"
+              :key="s.id"
+              type="button"
+              @click="changeStage(s)"
+              class="px-3 py-2 rounded-md text-xs font-medium border text-center transition-colors cursor-pointer"
+              :class="
+                lead.pipeline_stage_id === s.id
+                  ? 'bg-[#280047] text-white border-[#280047]'
+                  : 'bg-[#FAFAFB] text-[#242424] border-[#E5E0EC] hover:border-[#C3B6D3] hover:bg-[#F3F1F6]'
+              "
+            >
+              <i
+                v-if="lead.pipeline_stage_id === s.id"
+                class="fa-solid fa-circle-check text-[#F74D01] mr-1 text-[10px]"
+              ></i>
+              {{ s.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Details Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- Left Column: Contact Info, Follow-ups, Quotations -->
+        <div class="space-y-5">
+          <!-- Contact Card -->
+          <div class="app-card p-5">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-[#280047] pb-3 mb-3 border-b border-[#E5E0EC]">
+              Contact Details
+            </h2>
+            <dl class="space-y-3 text-xs">
+              <div class="flex items-center justify-between">
+                <dt class="text-[#6B6578] flex items-center gap-2">
+                  <i class="fa-solid fa-phone w-4 text-center text-[#280047]"></i> Phone
+                </dt>
+                <dd class="font-mono-num font-semibold text-[#242424]">{{ lead.phone || 'Not provided' }}</dd>
+              </div>
+              <div class="flex items-center justify-between">
+                <dt class="text-[#6B6578] flex items-center gap-2">
+                  <i class="fa-regular fa-envelope w-4 text-center text-[#280047]"></i> Email
+                </dt>
+                <dd class="font-medium text-[#242424]">{{ lead.email || 'Not provided' }}</dd>
+              </div>
+              <div class="flex items-center justify-between">
+                <dt class="text-[#6B6578] flex items-center gap-2">
+                  <i class="fa-solid fa-bullhorn w-4 text-center text-[#280047]"></i> Lead Source
+                </dt>
+                <dd class="font-medium text-[#242424]">{{ lead.source?.name || 'Direct' }}</dd>
+              </div>
+              <div class="pt-3 border-t border-[#E5E0EC]">
+                <dt class="text-[#6B6578] mb-1">Description / Requirements</dt>
+                <dd class="text-[#242424] bg-[#FAFAFB] p-3 rounded-md border border-[#E5E0EC] leading-relaxed">
+                  {{ lead.description || 'No initial notes recorded.' }}
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <!-- Scheduled Follow-ups Card -->
+          <div class="app-card p-5">
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-[#E5E0EC]">
+              <h2 class="text-xs font-bold uppercase tracking-wider text-[#280047]">Follow-ups</h2>
+              <button
+                type="button"
+                @click="showFollowUpModal = true"
+                class="text-xs font-semibold text-[#F74D01] hover:underline cursor-pointer"
+              >
+                + Add
+              </button>
+            </div>
+
+            <div v-if="!lead.follow_ups?.length" class="text-center py-6 text-xs text-[#6B6578]">
+              No follow-ups scheduled yet.
+            </div>
+
+            <div v-else class="space-y-2.5">
+              <div
+                v-for="fu in lead.follow_ups"
+                :key="fu.id"
+                class="p-3 rounded-md border border-[#E5E0EC] bg-[#FAFAFB] text-xs"
+              >
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-semibold text-[#280047]">{{ fu.title }}</span>
+                  <span
+                    class="px-2 py-0.5 rounded text-[10px] font-semibold uppercase"
+                    :class="
+                      fu.status === 'completed'
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : 'bg-[#FDFEBA] text-[#280047]'
+                    "
+                  >
+                    {{ fu.status }}
+                  </span>
+                </div>
+                <p v-if="fu.notes" class="text-[#6B6578]">{{ fu.notes }}</p>
+                <p class="text-[11px] text-[#6B6578] font-mono-num mt-1">
+                  Due: {{ new Date(fu.scheduled_at).toLocaleString() }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quotations Card -->
+          <div class="app-card p-5">
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-[#E5E0EC]">
+              <h2 class="text-xs font-bold uppercase tracking-wider text-[#280047]">Quotations</h2>
+              <Link
+                :href="`/quotations/create?lead_id=${lead.id}`"
+                class="text-xs font-semibold text-[#F74D01] hover:underline"
+              >
+                + New Quote
+              </Link>
+            </div>
+
+            <div v-if="!lead.quotations?.length" class="text-center py-6 text-xs text-[#6B6578]">
+              No quotations created for this lead.
+            </div>
+
+            <div v-else class="space-y-2.5">
+              <Link
+                v-for="q in lead.quotations"
+                :key="q.id"
+                :href="`/quotations/${q.id}`"
+                class="block p-3 rounded-md border border-[#E5E0EC] hover:border-[#280047] transition-colors text-xs"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-[#280047] font-mono-num">{{ q.quotation_number }}</span>
+                  <span class="px-2 py-0.5 rounded bg-[#F3F1F6] text-[#280047] text-[10px] font-semibold uppercase">
+                    {{ q.status }}
+                  </span>
+                </div>
+                <p class="text-sm font-bold text-[#242424] font-mono-num mt-1">
+                  {{ formatMoney(Number(q.total_amount)) }}
+                </p>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Activity Timeline -->
+        <div class="lg:col-span-2">
+          <div class="app-card p-5">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#E5E0EC]">
+              <div>
+                <h2 class="text-sm font-bold text-[#242424]">Activity History</h2>
+                <p class="text-xs text-[#6B6578]">Chronological log of stage updates, notes, follow-ups, and quotations</p>
+              </div>
+              <span class="text-xs font-mono-num text-[#6B6578]">
+                {{ lead.activities?.length || 0 }} entries
+              </span>
+            </div>
+
+            <div v-if="!lead.activities?.length" class="text-center py-12 text-xs text-[#6B6578]">
+              No activity recorded yet.
+            </div>
+
+            <div v-else class="space-y-4">
+              <div
+                v-for="act in lead.activities"
+                :key="act.id"
+                class="flex gap-3.5 pb-4 border-b border-[#E5E0EC] last:border-b-0 last:pb-0"
+              >
+                <div class="w-8 h-8 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center shrink-0 mt-0.5">
+                  <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <p class="text-xs font-semibold text-[#242424]">{{ act.subject }}</p>
+                    <span class="text-[11px] text-[#6B6578] font-mono-num">
+                      {{ new Date(act.created_at).toLocaleString() }}
+                    </span>
+                  </div>
+                  <p v-if="act.description" class="text-xs text-[#242424] mt-0.5">{{ act.description }}</p>
+                  <p class="text-[11px] text-[#6B6578] mt-0.5">
+                    Logged by <span class="font-medium text-[#242424]">{{ act.user?.name || 'System' }}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schedule Follow-up Modal (2 Steps with Custom DatePicker & CustomSelect) -->
+      <div
+        v-if="showFollowUpModal"
+        class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+      >
+        <div class="app-card w-full max-w-md p-6">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#E5E0EC]">
+            <div>
+              <span class="text-[11px] font-semibold uppercase tracking-wider text-[#F74D01]">
+                Step {{ followUpStep }} of 2
+              </span>
+              <h3 class="text-base font-bold text-[#242424]">Schedule Follow-up</h3>
+            </div>
+            <button
+              type="button"
+              @click="showFollowUpModal = false"
+              class="text-[#6B6578] hover:text-[#242424] cursor-pointer"
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <form @submit.prevent="submitFollowUp" class="space-y-4">
+            <div v-if="followUpStep === 1" class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-[#242424] mb-1.5">Follow-up Title</label>
+                <input
+                  v-model="followUpForm.title"
+                  type="text"
+                  required
+                  placeholder="e.g. WhatsApp check-in on proposal"
+                  class="app-input"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-[#242424] mb-1.5">Scheduled Date & Time</label>
+                <CustomDatePicker
+                  v-model="followUpForm.scheduled_at"
+                  mode="datetime"
+                  placeholder="Select date and time"
+                />
+              </div>
+
+              <div class="flex justify-end gap-2 pt-3 border-t border-[#E5E0EC]">
+                <button type="button" @click="showFollowUpModal = false" class="btn-secondary">Cancel</button>
+                <button type="button" @click="followUpStep = 2" class="btn-indigo">
+                  Next <i class="fa-solid fa-arrow-right text-xs"></i>
                 </button>
+              </div>
             </div>
+
+            <div v-if="followUpStep === 2" class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-[#242424] mb-1.5">Assign To</label>
+                <CustomSelect
+                  v-model="followUpForm.assigned_to_user_id"
+                  :options="teamOptions"
+                  placeholder="Select team member"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-[#242424] mb-1.5">Follow-up Notes</label>
+                <textarea
+                  v-model="followUpForm.notes"
+                  rows="3"
+                  placeholder="What needs to be discussed or sent?"
+                  class="app-input"
+                ></textarea>
+              </div>
+
+              <div class="flex justify-between gap-2 pt-3 border-t border-[#E5E0EC]">
+                <button type="button" @click="followUpStep = 1" class="btn-secondary">Back</button>
+                <button type="submit" :disabled="followUpForm.processing" class="btn-primary">
+                  Save Follow-up
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
+      </div>
 
-        <!-- Two Column Layout: Timeline & Right Details Sidebar -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Left: Interaction Timeline -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Activity History Card -->
-                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                    <h2 class="text-base font-bold text-[#280047] mb-4">Customer Journey & Activity History</h2>
-                    <div v-if="lead.activities.length === 0" class="text-xs text-gray-400 py-6 text-center">
-                        No interactions recorded yet. Click 'Log Note / Call' above to start tracking.
-                    </div>
-                    <div v-else class="relative border-l-2 border-gray-100 ml-4 pl-4 space-y-5">
-                        <div v-for="act in lead.activities" :key="act.id" class="relative">
-                            <!-- Bullet Icon -->
-                            <div class="absolute -left-[23px] top-0 w-3 h-3 rounded-full bg-[#F74D01] border-2 border-white shadow-xs"></div>
-                            <div>
-                                <div class="flex items-center justify-between">
-                                    <p class="text-xs font-bold text-[#280047]">
-                                        {{ act.subject }}
-                                        <span class="text-[11px] font-normal text-gray-400 ml-1">by {{ act.user?.name || 'System' }}</span>
-                                    </p>
-                                    <span class="text-[10px] text-gray-400">{{ new Date(act.created_at).toLocaleString() }}</span>
-                                </div>
-                                <p v-if="act.description" class="text-xs text-gray-600 mt-1 whitespace-pre-line">{{ act.description }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <!-- Add Note Modal -->
+      <div
+        v-if="showNoteModal"
+        class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+      >
+        <div class="app-card w-full max-w-md p-6">
+          <h3 class="text-base font-bold text-[#242424] mb-1">Add Activity Note</h3>
+          <p class="text-xs text-[#6B6578] mb-4">Record a call summary, meeting update, or internal note.</p>
+          <form @submit.prevent="submitNote" class="space-y-4">
+            <div>
+              <textarea
+                v-model="noteForm.note"
+                rows="3"
+                required
+                placeholder="Write your note here..."
+                class="app-input"
+              ></textarea>
             </div>
-
-            <!-- Right: Details Sidebar -->
-            <div class="space-y-6">
-                <!-- Contact Details -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                    <h3 class="text-xs font-bold text-[#280047] uppercase tracking-wider mb-3">Contact Dossier</h3>
-                    <div class="space-y-2.5 text-xs">
-                        <div class="flex items-center gap-2 text-gray-600">
-                            <Phone class="w-4 h-4 text-gray-400" />
-                            <span>{{ lead.phone || 'No phone recorded' }}</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-gray-600">
-                            <Mail class="w-4 h-4 text-gray-400" />
-                            <span>{{ lead.email || 'No email recorded' }}</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-gray-600">
-                            <Building2 class="w-4 h-4 text-gray-400" />
-                            <span>{{ lead.company_name || 'Individual Prospect' }}</span>
-                        </div>
-                        <div class="pt-2 border-t border-gray-100 text-[11px] text-gray-400">
-                            Source: <strong class="text-gray-600">{{ lead.source?.name || 'Direct' }}</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Scheduled Follow-ups -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-xs font-bold text-[#280047] uppercase tracking-wider">Follow-up Reminders</h3>
-                        <button @click="followUpModalOpen = true" class="text-xs text-[#F74D01] font-bold hover:underline">+ Add</button>
-                    </div>
-
-                    <div v-if="lead.follow_ups.length === 0" class="text-xs text-gray-400 py-3 text-center">
-                        No reminders scheduled.
-                    </div>
-                    <div v-else class="space-y-2.5">
-                        <div
-                            v-for="fu in lead.follow_ups"
-                            :key="fu.id"
-                            class="p-2.5 rounded-xl border border-gray-100 bg-gray-50/50 flex items-center justify-between gap-2"
-                        >
-                            <div class="min-w-0 text-xs">
-                                <p class="font-bold text-[#280047] truncate">{{ fu.title }}</p>
-                                <p class="text-[10px] text-gray-500">{{ new Date(fu.scheduled_at).toLocaleString() }}</p>
-                                <span
-                                    v-if="fu.status === 'completed'"
-                                    class="text-[9px] text-emerald-600 font-bold bg-emerald-50 px-1 py-0.5 rounded"
-                                >
-                                    Completed
-                                </span>
-                            </div>
-                            <button
-                                v-if="fu.status === 'pending'"
-                                @click="completeFollowUp(fu.id)"
-                                class="text-gray-400 hover:text-emerald-600 p-1"
-                                title="Mark Completed"
-                            >
-                                <CheckCircle2 class="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Associated Quotations -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-xs font-bold text-[#280047] uppercase tracking-wider">Quotations</h3>
-                        <Link :href="`/quotations/create?lead_id=${lead.id}`" class="text-xs text-[#F74D01] font-bold hover:underline">+ Draft</Link>
-                    </div>
-
-                    <div v-if="lead.quotations.length === 0" class="text-xs text-gray-400 py-3 text-center">
-                        No quotations created yet.
-                    </div>
-                    <div v-else class="space-y-2.5">
-                        <div
-                            v-for="quote in lead.quotations"
-                            :key="quote.id"
-                            class="p-2.5 rounded-xl border border-gray-100 bg-gray-50/50 flex items-center justify-between"
-                        >
-                            <div class="text-xs">
-                                <Link :href="`/quotations/${quote.id}`" class="font-bold text-[#280047] hover:underline">
-                                    #{{ quote.quotation_number }}
-                                </Link>
-                                <p class="text-[11px] font-semibold text-[#F74D01]">{{ formatMoney(quote.total_amount, quote.currency) }}</p>
-                            </div>
-                            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded" :class="{
-                                'bg-gray-100 text-gray-700': quote.status === 'draft',
-                                'bg-blue-50 text-blue-700': quote.status === 'sent',
-                                'bg-emerald-50 text-emerald-700': quote.status === 'accepted',
-                                'bg-rose-50 text-rose-700': quote.status === 'rejected',
-                            }">
-                                {{ quote.status }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
+            <div class="flex justify-end gap-2">
+              <button type="button" @click="showNoteModal = false" class="btn-secondary">Cancel</button>
+              <button type="submit" :disabled="noteForm.processing" class="btn-primary">Save Note</button>
             </div>
+          </form>
         </div>
+      </div>
 
-        <!-- Schedule Follow-Up Modal -->
-        <div v-if="followUpModalOpen" class="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
-                <h3 class="text-sm font-bold text-[#280047]">Schedule Follow-up Reminder</h3>
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700">Follow-up Objective / Title *</label>
-                    <input
-                        v-model="followUpForm.title"
-                        type="text"
-                        required
-                        placeholder="e.g. Call to discuss quotation discount"
-                        class="mt-1 block w-full px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F74D01] outline-none"
-                    />
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700">Scheduled Date & Time *</label>
-                    <input
-                        v-model="followUpForm.scheduled_at"
-                        type="datetime-local"
-                        required
-                        class="mt-1 block w-full px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F74D01] outline-none"
-                    />
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700">Assignee</label>
-                    <select
-                        v-model="followUpForm.assigned_to_user_id"
-                        class="mt-1 block w-full px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F74D01] outline-none"
-                    >
-                        <option v-for="m in team" :key="m.user_id" :value="m.user_id">{{ m.user.name }}</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700">Notes (Optional)</label>
-                    <textarea
-                        v-model="followUpForm.notes"
-                        rows="2"
-                        placeholder="Specific questions to ask or details to confirm..."
-                        class="mt-1 block w-full px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F74D01] outline-none"
-                    ></textarea>
-                </div>
-
-                <div class="flex items-center justify-end gap-2 pt-2">
-                    <button
-                        @click="followUpModalOpen = false"
-                        class="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        @click="submitFollowUp"
-                        :disabled="followUpForm.processing"
-                        class="px-4 py-2 text-xs font-bold text-white bg-[#F74D01] hover:bg-[#d94200] rounded-xl transition-all"
-                    >
-                        Save Reminder
-                    </button>
-                </div>
+      <!-- Mark as Lost Modal -->
+      <div
+        v-if="showLostModal"
+        class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+      >
+        <div class="app-card w-full max-w-md p-6">
+          <h3 class="text-base font-bold text-[#242424] mb-1">Mark Deal as Lost</h3>
+          <p class="text-xs text-[#6B6578] mb-4">Please record why this opportunity did not close.</p>
+          <form @submit.prevent="submitLostStage" class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-[#242424] mb-1.5">Reason for Loss</label>
+              <textarea
+                v-model="stageForm.lost_reason"
+                rows="3"
+                required
+                placeholder="e.g. Budget constraints, chose competitor, project delayed..."
+                class="app-input"
+              ></textarea>
             </div>
+            <div class="flex justify-end gap-2">
+              <button type="button" @click="showLostModal = false" class="btn-secondary">Cancel</button>
+              <button type="submit" class="btn-primary">Confirm Lost</button>
+            </div>
+          </form>
         </div>
-    </AppLayout>
+      </div>
+    </div>
+  </AppLayout>
 </template>

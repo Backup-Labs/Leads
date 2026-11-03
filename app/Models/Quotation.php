@@ -73,3 +73,4 @@ class Quotation extends Model
         return $this->hasMany(QuotationItem::class)->orderBy('sort_order');
     }
 }
+

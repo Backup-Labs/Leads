@@ -1,193 +1,138 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
-import {
-    Plus,
-    DollarSign,
-    User,
-    Clock,
-    AlertCircle,
-    Building2,
-    CheckCircle2
-} from 'lucide-vue-next';
+import CustomSelect from '@/components/CustomSelect.vue';
+import { formatCurrencyAmount } from '@/utils/currency';
+import type { PipelineStage, PageProps } from '@/types';
 
 const props = defineProps<{
-    stages: Array<{
-        id: number;
-        name: string;
-        color: string;
-        sort_order: number;
-        is_won: boolean;
-        is_lost: boolean;
-        leads: Array<any>;
-    }>;
+  stages: PipelineStage[];
 }>();
 
-const draggedLeadId = ref<number | null>(null);
-const draggedSourceStageId = ref<number | null>(null);
-const dragOverStageId = ref<number | null>(null);
+const page = usePage<PageProps>();
+const currency = computed(() => page.props.auth?.currentOrganization?.currency || 'UGX');
 
-const onDragStart = (leadId: number, stageId: number) => {
-    draggedLeadId.value = leadId;
-    draggedSourceStageId.value = stageId;
+const stageOptions = computed(() =>
+  props.stages.map((st) => ({
+    value: st.id,
+    label: st.name,
+  }))
+);
+
+const moveStage = (leadId: number, stageId: number) => {
+  router.patch(`/leads/${leadId}/stage`, { pipeline_stage_id: Number(stageId) }, { preserveScroll: true });
 };
 
-const onDragOver = (stageId: number, event: DragEvent) => {
-    event.preventDefault();
-    dragOverStageId.value = stageId;
+const formatMoney = (amount: number, leadCurrency?: string) => {
+  return formatCurrencyAmount(amount, leadCurrency || currency.value);
 };
 
-const onDragLeave = (stageId: number) => {
-    if (dragOverStageId.value === stageId) {
-        dragOverStageId.value = null;
-    }
-};
-
-const onDrop = (targetStageId: number) => {
-    if (!draggedLeadId.value || draggedSourceStageId.value === targetStageId) {
-        dragOverStageId.value = null;
-        return;
-    }
-
-    const leadId = draggedLeadId.value;
-    dragOverStageId.value = null;
-
-    const targetStage = props.stages.find(s => s.id === targetStageId);
-    let lostReason: string | null = null;
-
-    if (targetStage?.is_lost) {
-        lostReason = prompt('Please specify reason for lost deal (optional):');
-    }
-
-    router.post('/pipeline/stage-update', {
-        lead_id: leadId,
-        stage_id: targetStageId,
-        lost_reason: lostReason,
-    }, {
-        preserveScroll: true,
-    });
-};
-
-const formatMoney = (amount: number, currency: string = 'RWF') => {
-    return new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    }).format(amount);
-};
-
-const calculateStageTotal = (leads: Array<any>) => {
-    return leads.reduce((acc, lead) => acc + (Number(lead.estimated_value) || 0), 0);
+const stageSum = (stage: PipelineStage) => {
+  return (stage.leads || []).reduce((acc, l) => acc + Number(l.estimated_value || 0), 0);
 };
 </script>
 
 <template>
-    <AppLayout>
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-                <h1 class="text-2xl font-extrabold text-[#280047]">Interactive Sales Pipeline</h1>
-                <p class="text-xs text-gray-500 mt-1">Drag and drop leads to advance deals across pipeline stages</p>
-            </div>
-            <Link
-                href="/leads/create"
-                class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl text-white bg-[#F74D01] hover:bg-[#d94200] shadow-sm transition-all"
-            >
-                <Plus class="w-4 h-4" />
-                <span>New Lead</span>
-            </Link>
+  <Head title="Sales Pipeline" />
+  <AppLayout>
+    <div class="space-y-5">
+      <!-- Page Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-xl font-bold text-[#242424]">Sales Pipeline</h1>
+          <p class="text-xs text-[#6B6578] mt-0.5">Track leads across stages and move deals forward.</p>
         </div>
+        <div class="flex items-center gap-2.5">
+          <Link href="/leads" class="btn-secondary text-xs">
+            <i class="fa-solid fa-list text-[#280047]"></i> Table View
+          </Link>
+          <Link href="/leads/create" class="btn-primary text-xs">
+            <i class="fa-solid fa-plus"></i> Add New Lead
+          </Link>
+        </div>
+      </div>
 
-        <!-- Horizontal Scrollable Kanban Columns Container -->
-        <div class="flex gap-4 overflow-x-auto pb-6 items-start">
+      <!-- Horizontal Pipeline Board -->
+      <div class="flex gap-4 overflow-x-auto pb-4">
+        <div
+          v-for="stage in stages"
+          :key="stage.id"
+          class="w-72 shrink-0 flex flex-col bg-[#F4F2F7] rounded-lg border border-[#E5E0EC]"
+        >
+          <!-- Column Header -->
+          <div class="p-3.5 border-b border-[#E5E0EC] bg-white rounded-t-lg">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xs font-bold uppercase tracking-wider text-[#280047]">
+                {{ stage.name }}
+              </h2>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold font-mono-num bg-[#F3F1F6] text-[#280047]">
+                {{ stage.leads?.length || 0 }}
+              </span>
+            </div>
+            <p class="text-xs font-semibold text-[#6B6578] font-mono-num mt-1">
+              {{ formatMoney(stageSum(stage)) }}
+            </p>
+          </div>
+
+          <!-- Cards List -->
+          <div class="p-2.5 space-y-2.5 flex-1 min-h-[420px]">
             <div
-                v-for="stage in stages"
-                :key="stage.id"
-                @dragover="onDragOver(stage.id, $event)"
-                @dragleave="onDragLeave(stage.id)"
-                @drop="onDrop(stage.id)"
-                class="w-72 flex-shrink-0 bg-gray-100/70 rounded-2xl p-3 flex flex-col max-h-[calc(100vh-200px)] border transition-all"
-                :class="dragOverStageId === stage.id ? 'border-[#F74D01] ring-2 ring-orange-200 bg-orange-50/20' : 'border-gray-200/60'"
+              v-for="lead in stage.leads || []"
+              :key="lead.id"
+              class="app-card p-3.5 hover:border-[#280047] transition-colors flex flex-col justify-between gap-2.5"
             >
-                <!-- Stage Column Header -->
-                <div class="mb-3 px-1.5">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2.5 h-2.5 rounded-full" :style="{ backgroundColor: stage.color }"></span>
-                            <h2 class="text-xs font-bold text-[#280047] uppercase tracking-wider truncate">{{ stage.name }}</h2>
-                        </div>
-                        <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white text-gray-700 shadow-2xs">
-                            {{ stage.leads.length }}
-                        </span>
-                    </div>
-                    <div class="mt-1 flex items-center justify-between text-[11px] text-gray-500 font-semibold">
-                        <span>Total Value</span>
-                        <span class="text-[#280047] font-bold">
-                            {{ formatMoney(calculateStageTotal(stage.leads)) }}
-                        </span>
-                    </div>
+              <div>
+                <div class="flex items-start justify-between gap-2">
+                  <Link
+                    :href="`/leads/${lead.id}`"
+                    class="text-xs font-bold text-[#242424] hover:text-[#F74D01] transition-colors leading-snug"
+                  >
+                    {{ lead.customer_name }}
+                  </Link>
+                  <span
+                    class="px-1.5 py-0.5 rounded bg-[#F3F1F6] text-[#280047] text-[10px] font-semibold uppercase shrink-0"
+                  >
+                    {{ lead.priority }}
+                  </span>
                 </div>
 
-                <!-- Column Cards Scroll Area -->
-                <div class="flex-1 overflow-y-auto space-y-2.5 px-0.5">
-                    <div v-if="stage.leads.length === 0" class="py-8 text-center border-2 border-dashed border-gray-200 rounded-xl text-xs text-gray-400">
-                        Drop leads here
-                    </div>
+                <p class="text-[11px] text-[#6B6578] truncate mt-0.5">
+                  {{ lead.company_name || lead.requested_service || 'Direct Inquiry' }}
+                </p>
 
-                    <!-- Lead Card -->
-                    <div
-                        v-for="lead in stage.leads"
-                        :key="lead.id"
-                        draggable="true"
-                        @dragstart="onDragStart(lead.id, stage.id)"
-                        class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-2xs hover:shadow-md transition-all cursor-grab active:cursor-grabbing group select-none"
-                    >
-                        <div class="flex items-start justify-between gap-1 mb-1.5">
-                            <Link
-                                :href="`/leads/${lead.id}`"
-                                class="text-xs font-bold text-[#280047] group-hover:text-[#F74D01] transition-colors leading-tight line-clamp-1"
-                            >
-                                {{ lead.customer_name }}
-                            </Link>
-                            <span
-                                class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded flex-shrink-0"
-                                :class="{
-                                    'bg-red-50 text-red-700': lead.priority === 'urgent',
-                                    'bg-amber-50 text-amber-700': lead.priority === 'high',
-                                    'bg-blue-50 text-blue-700': lead.priority === 'medium',
-                                    'bg-gray-50 text-gray-600': lead.priority === 'low'
-                                }"
-                            >
-                                {{ lead.priority }}
-                            </span>
-                        </div>
+                <p class="text-sm font-bold text-[#280047] font-mono-num mt-2">
+                  {{ formatMoney(Number(lead.estimated_value), lead.currency) }}
+                </p>
+              </div>
 
-                        <p v-if="lead.company_name" class="text-[11px] text-gray-500 truncate mb-1">
-                            {{ lead.company_name }}
-                        </p>
+              <div class="pt-2.5 border-t border-[#E5E0EC] flex items-center justify-between gap-2">
+                <span class="text-[11px] text-[#6B6578] truncate">
+                  <i class="fa-regular fa-user text-[10px] mr-1"></i>
+                  {{ lead.assigned_to?.name?.split(' ')[0] || 'Unassigned' }}
+                </span>
 
-                        <!-- Deal Value & Currency -->
-                        <div class="mt-2 pt-2 border-t border-gray-100 flex items-center justify-between">
-                            <span class="text-xs font-extrabold text-[#280047]">
-                                {{ lead.currency }} {{ formatMoney(lead.estimated_value) }}
-                            </span>
-
-                            <div class="flex items-center gap-1.5">
-                                <span v-if="lead.source" class="text-[9px] font-semibold text-gray-400">
-                                    {{ lead.source.name }}
-                                </span>
-                                <div
-                                    v-if="lead.assigned_to"
-                                    :title="`Assigned to ${lead.assigned_to.name}`"
-                                    class="w-5 h-5 rounded-full bg-[#280047] text-white flex items-center justify-center font-bold text-[9px]"
-                                >
-                                    {{ lead.assigned_to.name.charAt(0) }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="w-36">
+                  <CustomSelect
+                    :model-value="stage.id"
+                    :options="stageOptions"
+                    size="sm"
+                    align="right"
+                    @change="(val: number) => moveStage(lead.id, val)"
+                  />
                 </div>
+              </div>
             </div>
+
+            <div
+              v-if="!stage.leads || stage.leads.length === 0"
+              class="h-32 rounded-md border border-dashed border-[#D5CCE2] flex items-center justify-center text-xs text-[#6B6578]"
+            >
+              No leads in this stage
+            </div>
+          </div>
         </div>
-    </AppLayout>
+      </div>
+    </div>
+  </AppLayout>
 </template>

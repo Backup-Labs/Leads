@@ -33,3 +33,4 @@ class OrganizationPolicy
         return $member !== null && $member->role->canManageTeam();
     }
 }
+

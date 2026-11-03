@@ -77,3 +77,4 @@ class RecoveryController extends Controller
         return back()->with('success', 'Recovery alert dismissed.');
     }
 }
+

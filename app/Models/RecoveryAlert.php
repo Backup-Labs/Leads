@@ -49,3 +49,4 @@ class RecoveryAlert extends Model
         return $this->belongsTo(Quotation::class);
     }
 }
+

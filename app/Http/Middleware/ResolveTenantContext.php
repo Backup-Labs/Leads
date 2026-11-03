@@ -56,3 +56,4 @@ class ResolveTenantContext
         return $next($request);
     }
 }
+

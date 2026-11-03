@@ -50,3 +50,4 @@ class FollowUp extends Model
         return $this->status === 'pending' && $this->scheduled_at->isPast();
     }
 }
+

@@ -44,3 +44,4 @@ class QuotationPolicy
         return $member->role->canManageTeam();
     }
 }
+

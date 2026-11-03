@@ -16,11 +16,12 @@ class StoreQuotationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'lead_id' => ['required', 'integer'],
-            'customer_name' => ['nullable', 'string', 'max:255'],
+            'lead_id' => ['nullable', 'integer'],
+            'customer_name' => ['required', 'string', 'max:255'],
             'customer_email' => ['nullable', 'email', 'max:255'],
             'customer_phone' => ['nullable', 'string', 'max:50'],
-            'company_name' => ['nullable', 'string', 'max:255'],
+            'company_name' => ['nullable', 'string', 'max:50'],
+            'currency' => ['nullable', 'string', 'size:3'],
             'discount_amount' => ['nullable', 'numeric', 'min:0'],
             'tax_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'validity_date' => ['nullable', 'date'],

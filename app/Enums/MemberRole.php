@@ -41,3 +41,4 @@ enum MemberRole: string
         return in_array($this, [self::OWNER, self::ADMIN, self::MANAGER], true);
     }
 }
+

@@ -54,3 +54,4 @@ class AuthTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 }
+

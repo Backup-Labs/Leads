@@ -44,3 +44,4 @@ class LeadPolicy
         return $member->role->canManageTeam();
     }
 }
+

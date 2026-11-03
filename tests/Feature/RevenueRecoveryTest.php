@@ -100,3 +100,4 @@ class RevenueRecoveryTest extends TestCase
         ]);
     }
 }
+

@@ -83,3 +83,4 @@ class Lead extends Model
         return $this->hasMany(RecoveryAlert::class);
     }
 }
+

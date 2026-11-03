@@ -72,3 +72,4 @@ class TenantIsolationTest extends TestCase
         $response->assertSessionHasErrors(['assigned_to_user_id']);
     }
 }
+

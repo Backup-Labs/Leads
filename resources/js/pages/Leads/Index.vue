@@ -1,290 +1,288 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
+import { ref, watch, computed } from 'vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
-import {
-    Search,
-    Filter,
-    Plus,
-    Download,
-    Eye,
-    Trash2,
-    Calendar,
-    Phone,
-    Mail,
-    Building2,
-    Clock
-} from 'lucide-vue-next';
+import CustomSelect from '@/components/CustomSelect.vue';
+import { formatCurrencyAmount } from '@/utils/currency';
+import type { Lead, PaginatedData, PageProps, PipelineStage, LeadSource, OrganizationMember } from '@/types';
 
 const props = defineProps<{
-    leads: {
-        data: Array<any>;
-        links: Array<any>;
-        current_page: number;
-        last_page: number;
-        total: number;
-    };
-    filters: {
-        search?: string;
-        stage_id?: string;
-        source_id?: string;
-        status?: string;
-        assigned_to?: string;
-    };
-    stages: Array<any>;
-    sources: Array<any>;
-    team: Array<any>;
+  leads: PaginatedData<Lead>;
+  filters: {
+    search?: string;
+    stage_id?: string | number;
+    source_id?: string | number;
+    status?: string;
+    assigned_to?: string | number;
+  };
+  stages: PipelineStage[];
+  sources: LeadSource[];
+  team: OrganizationMember[];
 }>();
 
-const search = ref(props.filters.search || '');
-const stageId = ref(props.filters.stage_id || '');
-const sourceId = ref(props.filters.source_id || '');
-const status = ref(props.filters.status || '');
-const assignedTo = ref(props.filters.assigned_to || '');
+const page = usePage<PageProps>();
+const currency = computed(() => page.props.auth?.currentOrganization?.currency || 'UGX');
 
-let searchTimeout: any = null;
+const search = ref(props.filters.search || '');
+const stage_id = ref(props.filters.stage_id || '');
+const source_id = ref(props.filters.source_id || '');
+const assigned_to = ref(props.filters.assigned_to || '');
+const status = ref(props.filters.status || '');
+
+const stageFilterOptions = computed(() => [
+  { value: '', label: 'All Stages', icon: 'fa-solid fa-layer-group' },
+  ...props.stages.map((s) => ({ value: s.id, label: s.name })),
+]);
+
+const sourceFilterOptions = computed(() => [
+  { value: '', label: 'All Sources', icon: 'fa-solid fa-bullhorn' },
+  ...props.sources.map((src) => ({ value: src.id, label: src.name })),
+]);
+
+const ownerFilterOptions = computed(() => [
+  { value: '', label: 'All Owners', icon: 'fa-regular fa-user' },
+  ...props.team.map((m) => ({ value: m.user_id, label: m.user?.name || 'Member' })),
+]);
+
+const statusFilterOptions = [
+  { value: '', label: 'All Statuses', icon: 'fa-solid fa-filter' },
+  { value: 'active', label: 'Active' },
+  { value: 'won', label: 'Won' },
+  { value: 'lost', label: 'Lost' },
+];
 
 const applyFilters = () => {
-    router.get('/leads', {
-        search: search.value || undefined,
-        stage_id: stageId.value || undefined,
-        source_id: sourceId.value || undefined,
-        status: status.value || undefined,
-        assigned_to: assignedTo.value || undefined,
-    }, {
-        preserveState: true,
-        replace: true,
-    });
+  router.get(
+    '/leads',
+    {
+      search: search.value || undefined,
+      stage_id: stage_id.value || undefined,
+      source_id: source_id.value || undefined,
+      assigned_to: assigned_to.value || undefined,
+      status: status.value || undefined,
+    },
+    { preserveState: true, replace: true }
+  );
 };
 
+const clearFilters = () => {
+  search.value = '';
+  stage_id.value = '';
+  source_id.value = '';
+  assigned_to.value = '';
+  status.value = '';
+  applyFilters();
+};
+
+let timeout: ReturnType<typeof setTimeout>;
 watch(search, () => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(applyFilters, 300);
+  clearTimeout(timeout);
+  timeout = setTimeout(applyFilters, 300);
 });
 
-const formatMoney = (amount: number, currency: string) => {
-    return `${currency} ` + new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    }).format(amount);
+watch([stage_id, source_id, assigned_to, status], applyFilters);
+
+const formatMoney = (amount: number, leadCurrency?: string) => {
+  return formatCurrencyAmount(amount, leadCurrency || currency.value);
 };
 
-const deleteLead = (lead: any) => {
-    if (confirm(`Are you sure you want to archive lead '${lead.customer_name}'?`)) {
-        router.delete(`/leads/${lead.id}`);
-    }
+const priorityBadge: Record<string, string> = {
+  low: 'text-[#6B6578]',
+  medium: 'text-[#280047]',
+  high: 'text-[#F74D01] font-semibold',
+  urgent: 'text-[#F74D01] font-bold',
 };
 </script>
 
 <template>
-    <AppLayout>
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-                <h1 class="text-2xl font-extrabold text-[#280047]">Leads Directory</h1>
-                <p class="text-xs text-gray-500 mt-1">Manage and track {{ leads.total }} customer inquiries across all sales channels</p>
-            </div>
-            <div class="flex items-center gap-2">
-                <a
-                    href="/leads/export"
-                    class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-[#280047] shadow-sm transition-all"
-                >
-                    <Download class="w-4 h-4 text-gray-500" />
-                    <span>Export CSV</span>
-                </a>
-                <Link
-                    href="/leads/create"
-                    class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl text-white bg-[#F74D01] hover:bg-[#d94200] shadow-sm transition-all"
-                >
-                    <Plus class="w-4 h-4" />
-                    <span>Capture Lead</span>
-                </Link>
-            </div>
+  <Head title="Leads" />
+  <AppLayout>
+    <div class="space-y-5">
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-xl font-bold text-[#242424]">All Leads</h1>
+          <p class="text-xs text-[#6B6578] mt-0.5">
+            Showing <span class="font-semibold text-[#242424] font-mono-num">{{ leads.total }}</span> leads in your workspace
+          </p>
         </div>
-
-        <!-- Filter Bar -->
-        <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mb-6 flex flex-col md:flex-row gap-3">
-            <!-- Search Input -->
-            <div class="relative flex-1">
-                <Search class="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
-                <input
-                    v-model="search"
-                    type="text"
-                    placeholder="Search customer name, email, phone, company..."
-                    class="w-full pl-10 pr-4 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F74D01] focus:bg-white outline-none"
-                />
-            </div>
-
-            <!-- Stage Filter -->
-            <select
-                v-model="stageId"
-                @change="applyFilters"
-                class="px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F74D01] focus:bg-white outline-none text-gray-700"
-            >
-                <option value="">All Stages</option>
-                <option v-for="s in stages" :key="s.id" :value="s.id">{{ s.name }}</option>
-            </select>
-
-            <!-- Source Filter -->
-            <select
-                v-model="sourceId"
-                @change="applyFilters"
-                class="px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F74D01] focus:bg-white outline-none text-gray-700"
-            >
-                <option value="">All Sources</option>
-                <option v-for="src in sources" :key="src.id" :value="src.id">{{ src.name }}</option>
-            </select>
-
-            <!-- Status Filter -->
-            <select
-                v-model="status"
-                @change="applyFilters"
-                class="px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F74D01] focus:bg-white outline-none text-gray-700"
-            >
-                <option value="">All Statuses</option>
-                <option value="active">Active</option>
-                <option value="won">Won</option>
-                <option value="lost">Lost</option>
-            </select>
+        <div class="flex items-center gap-2.5">
+          <a href="/leads/export" class="btn-secondary text-xs">
+            <i class="fa-solid fa-download text-[#280047]"></i> Export CSV
+          </a>
+          <Link href="/pipeline" class="btn-secondary text-xs">
+            <i class="fa-solid fa-table-columns text-[#280047]"></i> Pipeline Board
+          </Link>
+          <Link href="/leads/create" class="btn-primary text-xs">
+            <i class="fa-solid fa-plus"></i> Add New Lead
+          </Link>
         </div>
+      </div>
 
-        <!-- Leads Table -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50/70 border-b border-gray-100 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                            <th class="py-3.5 px-4">Prospect / Company</th>
-                            <th class="py-3.5 px-4">Contact Details</th>
-                            <th class="py-3.5 px-4">Pipeline Stage</th>
-                            <th class="py-3.5 px-4">Estimated Value</th>
-                            <th class="py-3.5 px-4">Priority</th>
-                            <th class="py-3.5 px-4">Assigned Rep</th>
-                            <th class="py-3.5 px-4">Last Activity</th>
-                            <th class="py-3.5 px-4 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 text-xs text-[#242424]">
-                        <tr v-if="leads.data.length === 0">
-                            <td colspan="8" class="py-12 text-center text-gray-400 font-medium">
-                                No leads match your filters. Try clearing search or capture a new inquiry.
-                            </td>
-                        </tr>
-                        <tr v-for="lead in leads.data" :key="lead.id" class="hover:bg-gray-50/60 transition-colors">
-                            <!-- Prospect Info -->
-                            <td class="py-3.5 px-4">
-                                <Link :href="`/leads/${lead.id}`" class="font-bold text-[#280047] hover:text-[#F74D01] block">
-                                    {{ lead.customer_name }}
-                                </Link>
-                                <span v-if="lead.company_name" class="text-[11px] text-gray-500 block">
-                                    {{ lead.company_name }}
-                                </span>
-                                <span v-if="lead.requested_service" class="text-[10px] text-gray-400 block mt-0.5">
-                                    {{ lead.requested_service }}
-                                </span>
-                            </td>
+      <!-- Filter Bar with Custom Dropdowns -->
+      <div class="app-card p-3.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5">
+          <div class="lg:col-span-2 relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6578] text-xs"></i>
+            <input
+              v-model="search"
+              type="text"
+              placeholder="Search name, company, phone, or email..."
+              class="app-input pl-8"
+            />
+          </div>
 
-                            <!-- Contact Details -->
-                            <td class="py-3.5 px-4 space-y-0.5">
-                                <div v-if="lead.phone" class="flex items-center gap-1.5 text-gray-600">
-                                    <Phone class="w-3 h-3 text-gray-400" />
-                                    <span>{{ lead.phone }}</span>
-                                </div>
-                                <div v-if="lead.email" class="flex items-center gap-1.5 text-gray-500">
-                                    <Mail class="w-3 h-3 text-gray-400" />
-                                    <span>{{ lead.email }}</span>
-                                </div>
-                                <div v-if="lead.source" class="text-[10px] font-semibold text-gray-400 mt-1">
-                                    via {{ lead.source.name }}
-                                </div>
-                            </td>
+          <CustomSelect v-model="stage_id" :options="stageFilterOptions" placeholder="All Stages" />
 
-                            <!-- Pipeline Stage -->
-                            <td class="py-3.5 px-4">
-                                <span
-                                    v-if="lead.stage"
-                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold"
-                                    :style="{ backgroundColor: `${lead.stage.color}15`, color: lead.stage.color }"
-                                >
-                                    <span class="w-1.5 h-1.5 rounded-full" :style="{ backgroundColor: lead.stage.color }"></span>
-                                    {{ lead.stage.name }}
-                                </span>
-                            </td>
+          <CustomSelect v-model="source_id" :options="sourceFilterOptions" placeholder="All Sources" />
 
-                            <!-- Deal Value -->
-                            <td class="py-3.5 px-4 font-bold text-[#280047]">
-                                {{ formatMoney(lead.estimated_value, lead.currency) }}
-                            </td>
+          <CustomSelect v-model="assigned_to" :options="ownerFilterOptions" placeholder="All Owners" />
 
-                            <!-- Priority -->
-                            <td class="py-3.5 px-4">
-                                <span
-                                    class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md"
-                                    :class="{
-                                        'bg-red-50 text-red-700': lead.priority === 'urgent',
-                                        'bg-amber-50 text-amber-700': lead.priority === 'high',
-                                        'bg-blue-50 text-blue-700': lead.priority === 'medium',
-                                        'bg-gray-50 text-gray-600': lead.priority === 'low'
-                                    }"
-                                >
-                                    {{ lead.priority }}
-                                </span>
-                            </td>
-
-                            <!-- Assigned Rep -->
-                            <td class="py-3.5 px-4">
-                                <span v-if="lead.assigned_to" class="font-medium text-gray-700">
-                                    {{ lead.assigned_to.name }}
-                                </span>
-                                <span v-else class="text-gray-400 italic">Unassigned</span>
-                            </td>
-
-                            <!-- Last Activity -->
-                            <td class="py-3.5 px-4 text-gray-500">
-                                <span v-if="lead.last_contacted_at">
-                                    {{ new Date(lead.last_contacted_at).toLocaleDateString() }}
-                                </span>
-                                <span v-else class="text-gray-400">Never</span>
-                            </td>
-
-                            <!-- Actions -->
-                            <td class="py-3.5 px-4 text-right space-x-1">
-                                <Link
-                                    :href="`/leads/${lead.id}`"
-                                    class="inline-flex p-1.5 text-gray-500 hover:text-[#280047] hover:bg-gray-100 rounded-lg transition-colors"
-                                    title="View Dossier"
-                                >
-                                    <Eye class="w-4 h-4" />
-                                </Link>
-                                <button
-                                    @click="deleteLead(lead)"
-                                    class="inline-flex p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                    title="Archive Lead"
-                                >
-                                    <Trash2 class="w-4 h-4" />
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+          <div class="flex items-center gap-2">
+            <div class="flex-1">
+              <CustomSelect v-model="status" :options="statusFilterOptions" placeholder="All Statuses" align="right" />
             </div>
+            <button
+              v-if="search || stage_id || source_id || assigned_to || status"
+              type="button"
+              @click="clearFilters"
+              title="Reset filters"
+              class="h-[38px] px-2.5 rounded-md border border-[#D5CCE2] text-[#6B6578] hover:text-[#242424] hover:bg-[#F3F1F6] text-xs cursor-pointer"
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+      </div>
 
-            <!-- Pagination Bar -->
-            <div v-if="leads.links && leads.links.length > 3" class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
-                <span class="text-xs text-gray-500">
-                    Showing {{ leads.data.length }} of {{ leads.total }} leads
-                </span>
-                <div class="flex gap-1">
+      <!-- Leads Table -->
+      <div class="app-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[#F8F6FA] border-b border-[#E5E0EC] text-[11px] font-semibold uppercase tracking-wider text-[#6B6578]">
+                <th class="px-4 py-3">Contact & Company</th>
+                <th class="px-4 py-3">Service & Source</th>
+                <th class="px-4 py-3">Stage</th>
+                <th class="px-4 py-3">Deal Value</th>
+                <th class="px-4 py-3">Priority</th>
+                <th class="px-4 py-3">Owner</th>
+                <th class="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#E5E0EC] text-xs">
+              <tr v-if="leads.data.length === 0">
+                <td colspan="7" class="px-6 py-12 text-center">
+                  <div class="w-10 h-10 rounded-md bg-[#F3F1F6] text-[#280047] flex items-center justify-center mx-auto mb-2.5">
+                    <i class="fa-solid fa-address-book text-sm"></i>
+                  </div>
+                  <p class="font-semibold text-[#242424] text-sm">No matching leads found</p>
+                  <p class="text-xs text-[#6B6578] mt-0.5 mb-4">Try clearing your filters or add a new lead to get started.</p>
+                  <Link href="/leads/create" class="btn-primary text-xs">
+                    <i class="fa-solid fa-plus"></i> Add New Lead
+                  </Link>
+                </td>
+              </tr>
+
+              <tr
+                v-for="lead in leads.data"
+                :key="lead.id"
+                class="hover:bg-[#FAFAFB] transition-colors"
+              >
+                <td class="px-4 py-3.5">
+                  <div class="flex items-start gap-2.5">
+                    <div class="w-8 h-8 rounded-md bg-[#280047] text-[#FDFEBA] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                      {{ lead.customer_name.charAt(0).toUpperCase() }}
+                    </div>
+                    <div class="min-w-0">
+                      <Link
+                        :href="`/leads/${lead.id}`"
+                        class="font-semibold text-[#242424] hover:text-[#F74D01] transition-colors truncate block"
+                      >
+                        {{ lead.customer_name }}
+                      </Link>
+                      <p class="text-[#6B6578] truncate">{{ lead.company_name || 'Individual Client' }}</p>
+                      <p class="text-[11px] text-[#6B6578] font-mono-num mt-0.5">{{ lead.phone || lead.email || '—' }}</p>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="px-4 py-3.5">
+                  <p class="font-medium text-[#242424]">{{ lead.requested_service || 'General Inquiry' }}</p>
+                  <span class="inline-flex items-center gap-1 text-[11px] text-[#6B6578] mt-0.5">
+                    <i class="fa-solid fa-tag text-[9px] text-[#C3B6D3]"></i>
+                    {{ lead.source?.name || 'Direct' }}
+                  </span>
+                </td>
+
+                <td class="px-4 py-3.5">
+                  <span
+                    class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border bg-[#F3F1F6] text-[#280047] border-[#C3B6D3]"
+                  >
+                    {{ lead.stage?.name || 'Active' }}
+                  </span>
+                </td>
+
+                <td class="px-4 py-3.5 font-mono-num font-semibold text-[#242424]">
+                  {{ formatMoney(Number(lead.estimated_value), lead.currency) }}
+                </td>
+
+                <td class="px-4 py-3.5">
+                  <span class="capitalize flex items-center gap-1.5" :class="priorityBadge[lead.priority]">
+                    <i class="fa-solid fa-circle text-[6px]"></i>
+                    {{ lead.priority }}
+                  </span>
+                </td>
+
+                <td class="px-4 py-3.5 text-[#242424]">
+                  <span class="font-medium">{{ lead.assigned_to?.name || 'Unassigned' }}</span>
+                </td>
+
+                <td class="px-4 py-3.5 text-right">
+                  <div class="inline-flex items-center gap-1.5">
                     <Link
-                        v-for="(link, i) in leads.links"
-                        :key="i"
-                        :href="link.url || '#'"
-                        v-html="link.label"
-                        class="px-2.5 py-1 text-xs rounded-lg font-medium transition-colors"
-                        :class="link.active ? 'bg-[#280047] text-white' : 'text-gray-600 hover:bg-gray-100'"
-                    />
-                </div>
-            </div>
+                      :href="`/quotations/create?lead_id=${lead.id}`"
+                      class="px-2 py-1 rounded border border-[#E5E0EC] text-[#280047] hover:bg-[#F3F1F6] text-[11px] font-medium"
+                      title="Create Quotation"
+                    >
+                      <i class="fa-solid fa-file-invoice"></i> Quote
+                    </Link>
+                    <Link
+                      :href="`/leads/${lead.id}`"
+                      class="px-2.5 py-1 rounded bg-[#280047] text-white hover:bg-[#3a0066] text-[11px] font-medium"
+                    >
+                      View
+                    </Link>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-    </AppLayout>
+
+        <!-- Pagination -->
+        <div
+          v-if="leads.last_page > 1"
+          class="px-4 py-3 border-t border-[#E5E0EC] flex items-center justify-between text-xs text-[#6B6578] bg-[#FAFAFB]"
+        >
+          <span>Showing page {{ leads.current_page }} of {{ leads.last_page }} ({{ leads.total }} total)</span>
+          <div class="flex gap-1">
+            <Link
+              v-for="link in leads.links"
+              :key="link.label"
+              :href="link.url || '#'"
+              class="px-2.5 py-1 rounded border text-xs font-medium transition-colors"
+              :class="[
+                link.active
+                  ? 'bg-[#280047] text-white border-[#280047]'
+                  : 'bg-white text-[#242424] border-[#E5E0EC] hover:bg-[#F3F1F6]',
+                !link.url && 'opacity-40 pointer-events-none',
+              ]"
+              v-html="link.label"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </AppLayout>
 </template>
