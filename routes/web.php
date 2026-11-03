@@ -14,12 +14,15 @@ use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\RecoveryController;
 use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
 | Public Routes
 |--------------------------------------------------------------------------
 */
+Route::get('/', fn () => Inertia::render('Landing/Index'))->name('home');
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
@@ -39,7 +42,6 @@ Route::post('/quotes/{token}/respond', [PublicQuotationController::class, 'respo
 Route::middleware(['auth', 'tenant'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('/', fn () => redirect()->route('dashboard'));
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Leads Management
