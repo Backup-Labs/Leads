@@ -1,0 +1,78 @@
+name: Continuous Integration & Automated Verification
+
+on:
+  push:
+    branches: [ "main", "master", "develop" ]
+  pull_request:
+    branches: [ "main", "master", "develop" ]
+
+jobs:
+  backend-tests:
+    name: PHP / Laravel Test Suite
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: leads_testing
+          POSTGRES_USER: leads_runner
+          POSTGRES_PASSWORD: secret_runner_password
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP Runtime
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_pgsql, bcmath, zip, gd
+          coverage: none
+
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-interaction --optimize-autoloader
+
+      - name: Run Pest / PHPUnit Test Suite
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: leads_testing
+          DB_USERNAME: leads_runner
+          DB_PASSWORD: secret_runner_password
+          APP_KEY: base64:c3VwZXJzZWNyZXRrZXlmb3J0ZXN0aW5ncHVycG9zZXM=
+        run: php artisan test
+
+  frontend-build:
+    name: Frontend TypeScript & Bundle Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Strict TypeScript Verification
+        run: npm run type-check
+
+      - name: Build Vite Production Bundles
+        run: npm run build

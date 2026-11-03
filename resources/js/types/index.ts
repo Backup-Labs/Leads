@@ -1,0 +1,144 @@
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+    avatar_url?: string;
+}
+
+export interface Organization {
+    id: number;
+    name: string;
+    slug: string;
+    currency: string;
+    timezone: string;
+    billing_email?: string;
+    phone?: string;
+}
+
+export interface OrganizationMember {
+    id: number;
+    organization_id: number;
+    user_id: number;
+    role: 'owner' | 'admin' | 'manager' | 'sales';
+    role_label?: string;
+    user?: User;
+}
+
+export interface PipelineStage {
+    id: number;
+    name: string;
+    slug: string;
+    color: string;
+    sort_order: number;
+    is_won: boolean;
+    is_lost: boolean;
+    leads_count?: number;
+    total_value?: number;
+    leads?: Lead[];
+}
+
+export interface LeadSource {
+    id: number;
+    name: string;
+    slug: string;
+    color?: string;
+}
+
+export interface Activity {
+    id: number;
+    type: string;
+    subject: string;
+    description?: string;
+    created_at: string;
+    user?: User;
+    metadata?: Record<string, any>;
+}
+
+export interface FollowUp {
+    id: number;
+    lead_id: number;
+    title: string;
+    notes?: string;
+    scheduled_at: string;
+    completed_at?: string;
+    status: 'pending' | 'completed' | 'overdue' | 'cancelled';
+    completion_notes?: string;
+    lead?: Lead;
+    assigned_to?: User;
+}
+
+export interface QuotationItem {
+    id?: number;
+    description: string;
+    quantity: number;
+    unit_price: number;
+    total_price: number;
+    sort_order?: number;
+}
+
+export interface Quotation {
+    id: number;
+    lead_id: number;
+    quotation_number: string;
+    token: string;
+    customer_name: string;
+    customer_email?: string;
+    customer_phone?: string;
+    company_name?: string;
+    subtotal: number;
+    discount_amount: number;
+    tax_rate: number;
+    tax_amount: number;
+    total_amount: number;
+    currency: string;
+    status: 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired';
+    validity_date?: string;
+    notes?: string;
+    terms_and_conditions?: string;
+    sent_at?: string;
+    viewed_at?: string;
+    responded_at?: string;
+    items?: QuotationItem[];
+    lead?: Lead;
+    created_by?: User;
+}
+
+export interface RecoveryAlert {
+    id: number;
+    alert_type: string;
+    severity: 'critical' | 'warning' | 'notice';
+    reason: string;
+    suggested_action: string;
+    potential_revenue_at_risk: number;
+    lead?: Lead;
+    quotation?: Quotation;
+}
+
+export interface Lead {
+    id: number;
+    organization_id: number;
+    pipeline_stage_id: number;
+    lead_source_id?: number;
+    assigned_to_user_id?: number;
+    customer_name: string;
+    email?: string;
+    phone?: string;
+    company_name?: string;
+    requested_service?: string;
+    estimated_value: number;
+    currency: string;
+    priority: 'low' | 'medium' | 'high' | 'urgent';
+    status: 'active' | 'won' | 'lost';
+    description?: string;
+    lost_reason?: string;
+    last_contacted_at?: string;
+    converted_at?: string;
+    created_at: string;
+    stage?: PipelineStage;
+    source?: LeadSource;
+    assigned_to?: User;
+    activities?: Activity[];
+    follow_ups?: FollowUp[];
+    quotations?: Quotation[];
+    recovery_alerts?: RecoveryAlert[];
+}

@@ -1,0 +1,130 @@
+openapi: 3.0.3
+info:
+  title: Leads SaaS API
+  description: Multi-tenant B2B Lead Management and Revenue Recovery Platform API.
+  version: 1.0.0
+servers:
+  - url: /api/v1
+    description: Production & Local API Gateway v1
+paths:
+  /auth/login:
+    post:
+      summary: Authenticate user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Authentication successful
+        '422':
+          description: Validation error
+  /leads:
+    get:
+      summary: List tenant leads
+      parameters:
+        - name: stage_id
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, won, lost]
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated leads
+    post:
+      summary: Create new lead
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer_name]
+              properties:
+                customer_name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                company_name:
+                  type: string
+                estimated_value:
+                  type: number
+                pipeline_stage_id:
+                  type: integer
+                assigned_to_user_id:
+                  type: integer
+      responses:
+        '201':
+          description: Lead created
+  /pipeline/stages:
+    get:
+      summary: List organization pipeline stages
+      responses:
+        '200':
+          description: Pipeline stages ordered by sort_order
+  /quotations:
+    get:
+      summary: List quotations
+      responses:
+        '200':
+          description: Quotations list
+    post:
+      summary: Create new quotation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [lead_id, customer_name, items]
+              properties:
+                lead_id:
+                  type: integer
+                customer_name:
+                  type: string
+                discount_amount:
+                  type: number
+                tax_rate:
+                  type: number
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [description, quantity, unit_price]
+                    properties:
+                      description:
+                        type: string
+                      quantity:
+                        type: number
+                      unit_price:
+                        type: number
+      responses:
+        '201':
+          description: Quotation created
+  /recovery/alerts:
+    get:
+      summary: Get active revenue recovery opportunities & stalled leads
+      responses:
+        '200':
+          description: List of active recovery alerts
+
