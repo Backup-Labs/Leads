@@ -425,90 +425,149 @@ const nextTestimonial = () => {
             </ul>
           </div>
 
-          <!-- Right Column: Animated Isometric Workflow Diagram -->
-          <div class="lg:col-span-6 relative">
-            <div class="relative mx-auto max-w-lg bg-[#FAFAFB] border border-[#E5E0EC] rounded-lg p-3.5 sm:p-6 shadow-xs">
-              <!-- Live Self-Writing Status Bar -->
-              <div class="mb-4 sm:mb-5 px-3 py-2 rounded-md bg-brand-indigo text-white flex items-center justify-between gap-2 text-[11px]">
-                <div class="flex items-center gap-2 min-w-0">
-                  <span class="w-2 h-2 rounded-full bg-brand-orange animate-ping shrink-0"></span>
-                  <span class="font-mono-num truncate text-brand-yellow">{{ typedFeedText }}</span>
-                </div>
-                <span class="text-[9px] uppercase tracking-wider text-brand-purple shrink-0">Live</span>
-              </div>
+          <!-- Right Column: Pure SVG Isometric Architectural Engine Illustration -->
+          <div class="lg:col-span-6 relative flex items-center justify-center py-4 lg:py-0">
+            <!-- Subtle ambient backglow for depth with exact brand colors -->
+            <div class="absolute -top-10 -right-8 w-64 h-64 bg-brand-orange/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-8 -left-8 w-64 h-64 bg-brand-indigo/15 rounded-full blur-3xl pointer-events-none"></div>
 
-              <!-- Top Floating Source Node -->
-              <div class="flex flex-wrap items-center justify-between gap-2 mb-4 sm:mb-5">
-                <div class="inline-flex flex-wrap items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-md bg-white border border-[#E5E0EC] shadow-2xs text-xs animate-float">
-                  <span class="w-5 h-5 rounded bg-emerald-500 text-white flex items-center justify-center shrink-0">
-                    <i class="fa-brands fa-whatsapp text-xs"></i>
-                  </span>
-                  <span class="font-semibold text-brand-dark">WhatsApp Click-to-Chat</span>
-                  <span class="text-[10px] font-mono-num text-emerald-700 font-semibold">Connected</span>
-                </div>
+            <!-- Vector Artwork Container -->
+            <div class="relative w-full max-w-xl select-none">
+              <svg
+                viewBox="0 0 600 480"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-full h-auto drop-shadow-sm"
+                style="font-family: var(--font-sans);"
+              >
+                <defs>
+                  <!-- Application Brand Color Gradients -->
+                  <linearGradient id="brandIndigoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#280047" />
+                    <stop offset="100%" stop-color="#3D0B66" />
+                  </linearGradient>
 
-                <!-- Floating Status Node -->
-                <div class="w-8 h-8 rounded-full bg-white border border-[#E5E0EC] shadow-xs flex items-center justify-center text-brand-orange shrink-0">
-                  <i class="fa-solid fa-bolt text-xs"></i>
-                </div>
-              </div>
+                  <linearGradient id="brandOrangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#F74D01" />
+                    <stop offset="100%" stop-color="#FF6B26" />
+                  </linearGradient>
 
-              <!-- Central Hub Box (3D Layered Platform Node) -->
-              <div class="relative bg-white border-2 border-brand-indigo rounded-lg p-3.5 sm:p-4 shadow-md mb-4 sm:mb-5 transition-transform duration-300 hover:-translate-y-0.5">
-                <div class="flex flex-wrap items-start sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-[#E5E0EC]">
-                  <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-md bg-brand-indigo text-brand-yellow flex items-center justify-center font-bold text-xs shrink-0">
-                      GN
-                    </div>
-                    <div class="min-w-0">
-                      <p class="text-xs font-bold text-brand-dark wrap-break-word">Grace Nakato &bull; Crest Logistics</p>
-                      <p class="text-[11px] text-[#6B6578] wrap-break-word">Annual Fleet Maintenance Contract</p>
-                    </div>
-                  </div>
-                  <span class="px-2 py-0.5 rounded bg-brand-yellow text-brand-indigo border border-brand-purple text-[10px] font-bold uppercase shrink-0">
-                    Qualified
-                  </span>
-                </div>
+                  <!-- Filter for Minimalist Soft Shadow -->
+                  <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="125%">
+                    <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#280047" flood-opacity="0.06" />
+                  </filter>
+                </defs>
 
-                <!-- Mini Pipeline Progress Steps -->
-                <div class="grid grid-cols-4 gap-1.5 mb-3">
-                  <div class="h-1.5 rounded-full bg-brand-indigo"></div>
-                  <div class="h-1.5 rounded-full bg-brand-indigo"></div>
-                  <div class="h-1.5 rounded-full bg-brand-orange animate-pulse"></div>
-                  <div class="h-1.5 rounded-full bg-brand-purple"></div>
-                </div>
+                <!-- 1. MINIMAL ISOMETRIC BASE GRID -->
+                <g opacity="0.45">
+                  <path d="M140 355 L300 435 L460 355 L300 275 Z" fill="#FAF9FC" stroke="#D5CCE2" stroke-width="1" />
+                  <path d="M180 335 L340 415" stroke="#E5E0EC" stroke-width="1" stroke-dasharray="3 3" />
+                  <path d="M220 315 L380 395" stroke="#E5E0EC" stroke-width="1" stroke-dasharray="3 3" />
+                  <path d="M260 295 L420 375" stroke="#E5E0EC" stroke-width="1" stroke-dasharray="3 3" />
+                  <path d="M220 395 L380 315" stroke="#E5E0EC" stroke-width="1" stroke-dasharray="3 3" />
+                  <path d="M260 415 L420 335" stroke="#E5E0EC" stroke-width="1" stroke-dasharray="3 3" />
+                </g>
 
-                <div class="flex flex-wrap items-center justify-between gap-1.5 text-xs">
-                  <span class="text-[#6B6578]">
-                    <i class="fa-regular fa-clock text-brand-orange mr-1"></i>
-                    Follow-up: <strong class="text-brand-dark">Tomorrow, 10:00 AM</strong>
-                  </span>
-                  <span class="font-mono-num font-bold text-brand-indigo">$3,200</span>
-                </div>
-              </div>
+                <!-- 2. MINIMAL CIRCUIT CONNECTORS -->
+                <path d="M125 145 C125 195, 195 210, 255 230" stroke="#F74D01" stroke-width="1.8" stroke-dasharray="4 3" opacity="0.75" />
+                <path d="M475 145 C475 195, 405 210, 345 230" stroke="#280047" stroke-width="1.8" stroke-dasharray="4 3" opacity="0.75" />
+                <path d="M300 280 L300 335" stroke="#280047" stroke-width="1.8" stroke-dasharray="3 3" opacity="0.8" />
+                <path d="M300 335 C240 345, 190 355, 175 370" stroke="#280047" stroke-width="1.8" stroke-linecap="round" opacity="0.8" />
+                <path d="M300 335 C360 345, 410 355, 425 370" stroke="#F74D01" stroke-width="1.8" stroke-linecap="round" opacity="0.8" />
 
-              <!-- Connected Quotation & Recovery Cards -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div class="bg-white border border-[#E5E0EC] rounded-md p-3.5 hover:border-brand-indigo transition-colors">
-                  <div class="flex flex-wrap items-center justify-between gap-1 mb-1.5">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-[#6B6578]">Quotation Sent</span>
-                    <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold">
-                      Accepted
-                    </span>
-                  </div>
-                  <p class="text-xs font-bold text-brand-indigo font-mono-num">#QUO-2026-0042</p>
-                  <p class="text-[11px] text-[#6B6578] mt-1">Client approved via shareable link</p>
-                </div>
+                <!-- 3. TOP CARD 1: WhatsApp Inbound (Clean, Minimalist) -->
+                <g filter="url(#cardShadow)">
+                  <rect x="35" y="80" width="180" height="66" rx="8" fill="#FFFFFF" stroke="#E5E0EC" stroke-width="1" />
+                  
+                  <!-- Left indicator line -->
+                  <rect x="35" y="80" width="3" height="66" rx="1.5" fill="#280047" />
 
-                <div class="bg-white border border-brand-orange/40 rounded-md p-3.5 hover:border-brand-orange transition-colors">
-                  <div class="flex flex-wrap items-center justify-between gap-1 mb-1.5">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-brand-orange">Recovery Alert</span>
-                    <i class="fa-solid fa-bell text-brand-orange text-xs"></i>
-                  </div>
-                  <p class="text-xs font-bold text-brand-dark">2 Quotes Awaiting Reply</p>
-                  <p class="text-[11px] text-[#6B6578] mt-1">Auto-flagged after 3 days of silence</p>
-                </div>
-              </div>
+                  <!-- Icon & Text Info -->
+                  <rect x="50" y="95" width="36" height="36" rx="6" fill="#F8F6FA" stroke="#E5E0EC" stroke-width="1" />
+                  <path d="M63 108 C63 104.5 73 104.5 75 108 C75 110.5 71 111.5 71 114 M71 117 L71 118" stroke="#280047" stroke-width="2" stroke-linecap="round" />
+                  
+                  <text x="96" y="107" fill="#280047" font-size="13" font-weight="600">WhatsApp Lead</text>
+                  <text x="96" y="123" fill="#6B6578" font-size="11" font-weight="400">Direct Inbound</text>
+                </g>
+
+                <!-- 3. TOP CARD 2: Web & Phone Inquiries (Clean, Minimalist) -->
+                <g filter="url(#cardShadow)">
+                  <rect x="385" y="80" width="180" height="66" rx="8" fill="#FFFFFF" stroke="#E5E0EC" stroke-width="1" />
+                  
+                  <!-- Left indicator line -->
+                  <rect x="385" y="80" width="3" height="66" rx="1.5" fill="#F74D01" />
+
+                  <!-- Icon & Text Info -->
+                  <rect x="400" y="95" width="36" height="36" rx="6" fill="#FFF8F5" stroke="#FEE5D8" stroke-width="1" />
+                  <path d="M418 105 L413 113 L417 113 L415 120 L421 113 L417 113 Z" fill="#F74D01" />
+                  
+                  <text x="446" y="107" fill="#280047" font-size="13" font-weight="600">Web & Calls</text>
+                  <text x="446" y="123" fill="#6B6578" font-size="11" font-weight="400">Auto-Assigned</text>
+                </g>
+
+                <!-- 4. CENTRAL ARCHITECTURAL ENGINE (Clean Isometric Monolith) -->
+                <g filter="url(#cardShadow)">
+                  <!-- Prismatic Base Frame -->
+                  <polygon points="300,165 370,205 370,280 300,320 230,280 230,205" fill="url(#brandIndigoGrad)" stroke="#E5E0EC" stroke-width="1" />
+                  
+                  <!-- Architectural Facet Lighting -->
+                  <polygon points="300,165 370,205 300,242 230,205" fill="#3D0B66" opacity="0.9" />
+                  <polygon points="230,205 300,242 300,320 230,280" fill="#21003A" opacity="0.95" />
+                  <polygon points="300,242 370,205 370,280 300,320" fill="#4B0E79" opacity="0.8" />
+
+                  <!-- Minimalist Inner Architectural Glyphs -->
+                  <circle cx="300" cy="242" r="16" fill="none" stroke="#FDFEBA" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.8" />
+                  <path d="M295 236 L307 242 L295 248 Z" fill="#FDFEBA" opacity="0.9" />
+
+                  <!-- Minimalist Top Title Tag -->
+                  <rect x="235" y="132" width="130" height="24" rx="4" fill="#280047" stroke="#3D0B66" stroke-width="1" />
+                  <text x="300" y="148" fill="#FDFEBA" font-size="9.5" font-weight="600" text-anchor="middle" style="font-family: var(--font-mono); letter-spacing: 0.08em;">DEAL PIPELINE</text>
+                </g>
+
+                <!-- 5. BOTTOM CARD 1: Quotation (Clean, Minimalist) -->
+                <g filter="url(#cardShadow)">
+                  <rect x="45" y="355" width="205" height="78" rx="8" fill="#FFFFFF" stroke="#E5E0EC" stroke-width="1" />
+                  
+                  <!-- Top Bar Accent -->
+                  <rect x="45" y="355" width="205" height="2" fill="#280047" />
+
+                  <!-- Header Info -->
+                  <text x="60" y="382" fill="#280047" font-size="13" font-weight="600">Quote Accepted</text>
+                  <text x="60" y="398" fill="#6B6578" font-size="10.5" style="font-family: var(--font-mono);">#QUO-2026-0042</text>
+                  
+                  <!-- Divider Line -->
+                  <line x1="60" y1="409" x2="235" y2="409" stroke="#F0EDF5" stroke-width="1" />
+                  
+                  <!-- Value & Terms -->
+                  <text x="60" y="424" fill="#6B6578" font-size="11" font-weight="500">50% Deposit Paid</text>
+                  <text x="235" y="424" fill="#280047" font-size="13" font-weight="700" text-anchor="end" style="font-family: var(--font-mono);">$3,200</text>
+                </g>
+
+                <!-- 6. BOTTOM CARD 2: Recovery Sentinel (Clean, Minimalist) -->
+                <g filter="url(#cardShadow)">
+                  <rect x="350" y="355" width="205" height="78" rx="8" fill="#FFFFFF" stroke="#E5E0EC" stroke-width="1" />
+                  
+                  <!-- Top Bar Accent -->
+                  <rect x="350" y="355" width="205" height="2" fill="#F74D01" />
+
+                  <!-- Header Info -->
+                  <text x="365" y="382" fill="#280047" font-size="13" font-weight="600">Recovery Sentinel</text>
+                  <text x="365" y="398" fill="#F74D01" font-size="10.5" font-weight="500">3 Days Inactive</text>
+                  
+                  <!-- Divider Line -->
+                  <line x1="365" y1="409" x2="540" y2="409" stroke="#F0EDF5" stroke-width="1" />
+                  
+                  <!-- Action Note -->
+                  <text x="365" y="424" fill="#6B6578" font-size="11" font-weight="500">Auto-Flagged Lead</text>
+                  <text x="540" y="424" fill="#F74D01" font-size="11" font-weight="600" text-anchor="end">Follow-up</text>
+                </g>
+
+                <!-- 7. BOTTOM CENTER PILL -->
+                <g filter="url(#cardShadow)">
+                  <rect x="210" y="438" width="180" height="28" rx="4" fill="#280047" stroke="#3D0B66" stroke-width="1" />
+                  <text x="300" y="456" fill="#FDFEBA" font-size="9" font-weight="600" text-anchor="middle" style="font-family: var(--font-mono); letter-spacing: 0.08em;">REVENUE RECOVERY</text>
+                </g>
+              </svg>
             </div>
           </div>
         </div>
