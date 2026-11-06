@@ -20,6 +20,20 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    build: {
+        cssCodeSplit: true,
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('vue') || id.includes('@inertiajs') || id.includes('pinia')) {
+                            return 'vendor-core';
+                        }
+                    }
+                },
+            },
+        },
+    },
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './resources/js'),

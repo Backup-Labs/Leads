@@ -1,12 +1,39 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import CustomSelect from '@/components/CustomSelect.vue';
+import DashboardSkeleton from '@/components/DashboardSkeleton.vue';
 import { CURRENCY_OPTIONS } from '@/utils/currency';
 
 const page = usePage();
 const auth = computed(() => page.props.auth as any);
 const flash = computed(() => page.props.flash as any);
+
+const isPageNavigating = ref(false);
+let navigationTimer: ReturnType<typeof setTimeout> | null = null;
+
+let removeStartListener: (() => void) | null = null;
+let removeFinishListener: (() => void) | null = null;
+
+onMounted(() => {
+  removeStartListener = router.on('start', () => {
+    // Only show skeleton if navigation takes more than 80ms to avoid flicker on instant navigation
+    navigationTimer = setTimeout(() => {
+      isPageNavigating.value = true;
+    }, 80);
+  });
+
+  removeFinishListener = router.on('finish', () => {
+    if (navigationTimer) clearTimeout(navigationTimer);
+    isPageNavigating.value = false;
+  });
+});
+
+onUnmounted(() => {
+  if (removeStartListener) removeStartListener();
+  if (removeFinishListener) removeFinishListener();
+  if (navigationTimer) clearTimeout(navigationTimer);
+});
 
 const mobileMenuOpen = ref(false);
 const orgMenuOpen = ref(false);
@@ -392,7 +419,15 @@ const logout = () => {
             </div>
           </div>
 
-          <slot />
+          <!-- Page Content / Skeleton Transition -->
+          <Transition name="fade" mode="out-in">
+            <div v-if="isPageNavigating" key="skeleton">
+              <DashboardSkeleton />
+            </div>
+            <div v-else key="content">
+              <slot />
+            </div>
+          </Transition>
         </div>
       </main>
     </div>
